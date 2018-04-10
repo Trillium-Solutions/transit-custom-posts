@@ -509,12 +509,10 @@ function the_timetables( $args = array() ) {
 			$timetables->the_post();
 
 			// Get timetable metadata
-			$dir = get_post_meta( get_the_ID(), 'direction_label', true);
 			$days = get_post_meta( get_the_ID(), 'days_of_week', true);
 
 			// Create a timetable div with data attributes for optional JS manipulation
-			printf('<div class="timetable-holder" data-dir="%s" data-days="%s">', $dir, $days);
-			echo '<h2>' . $dir . '</h2>';
+			printf('<div class="timetable-holder" data-days="%s">', $days);
 			echo '<div class="subtitle">' . $days . '</div>';
 
 			// Should be HTML or an image
