@@ -225,7 +225,7 @@ function tcp_update_timetables( $timetable_file ) {
 			$timetable['thursday'], $timetable['friday'], $timetable['saturday'], $timetable['sunday']
 		);
 		$timetable['days_of_week'] = $days_of_week;
-		$timetable_name = trim($timetable['route_label'] . ' ' . $timetable['direction_label'] . ' ' . $timetable['days_of_week']);
+		$timetable_name = trim($timetable['route_label'] . ' ' . $timetable['days_of_week']);
 		$tag_name = str_replace(" ", "_", strtolower($timetable_name));
 		
 		// Find out if content exists in timetables folder
