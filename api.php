@@ -514,7 +514,9 @@ function the_timetables( $args = array() ) {
 
 			// Create a timetable div with data attributes for optional JS manipulation
 			printf('<div class="timetable-holder" data-dir="%s" data-days="%s">', $dir, $days);
-			echo '<h2>' . $dir . '</h2>';
+			if ($dir != ''):
+			   echo '<h2>' . $dir . '</h2>';
+			endif;
 			echo '<div class="subtitle">' . $days . '</div>';
 
 			// Should be HTML or an image
@@ -581,7 +583,7 @@ function tcp_route_name_from_tag( $route_tag ) {
 	$r_post = get_page_by_path( $route_tag, OBJECT, 'route' );
 
 	if ( empty( $r_post ) ) {
-		
+
 		if ( $route_tag == 'all' ) {
      			return 'All Routes';
     		}
