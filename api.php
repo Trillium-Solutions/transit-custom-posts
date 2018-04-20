@@ -363,7 +363,7 @@ function tcp_do_alerts( $args = array() ) {
 				'relation' => 'OR',
 				array(
 					'key'		=> 'affected_routes',
-					'value' 	=> 'all',
+					'value' 	=> 'all_routes',
 					'compare'	=> 'LIKE',
 				),
 				array(

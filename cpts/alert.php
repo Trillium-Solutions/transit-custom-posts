@@ -5,7 +5,7 @@ require_once( 'custom-post-type.php' );
 // Singleton Alert object
 class TCP_Alert extends TCP_CustomPostType {
 	private static $instance;
-	
+
 	protected function __construct() {
 		parent::__construct('Alert', array(
 				'menu_icon' => 'dashicons-warning',
@@ -27,18 +27,18 @@ class TCP_Alert extends TCP_CustomPostType {
 			),
 		));
 	}
-	
+
 	public static function getInstance() {
 		if (!isset(self::$instance)) {
 			self::$instance = new self();
 		}
 		return self::$instance;
 	}
-	
+
 	public static function isActive() {
 		return isset(self::$instance);
 	}
-	
+
 	public function custom_metabox( $post, $data ) {
 		// If 'route' custom posts not active, create default metaboxes
 		$custom_types = get_option('tcp_custom_types');
@@ -48,15 +48,15 @@ class TCP_Alert extends TCP_CustomPostType {
 			// Otherwise, populate with route names
 			$custom_fields = $data['args'][0];
 			$options = array();
-			
+
 			// TODO: Add options for sorting if GTFS doesn't include route sort order
 			$order = get_option('tcp_route_sortorder');
 			$orderby = $order == 'route_sort_order' ? array( 'meta_value_num' => 'ASC', 'title' => 'ASC') : 'title';
 			$routes = get_posts(array(
 				'posts_per_page' 	=> -1,
-				'post_type' 		=> 'route',
-				'meta_key'			=> $order,
-				'orderby'			=> $orderby,
+				'post_type' 			=> 'route',
+				'meta_key'				=> $order,
+				'orderby'					=> $orderby,
 			));
 			wp_reset_postdata();
 			if ( !$routes ) {
@@ -66,37 +66,37 @@ class TCP_Alert extends TCP_CustomPostType {
 			foreach ($routes as $route) {
 				$options[$route->post_name] = $route->post_title;
 			}
-			$options['all'] = 'All Routes';
+			$options['all_routes'] = 'All Routes';
 			$custom_fields['Affected Routes'] = array(
-				'type' 			=> 'multiple_checkbox',
-				'options' 		=> $options,
-                'placeholder'   => '',
-                'classes'       => '',
-                'helper'        => '',
-				'default'		=> array(),
+				'type' 					=> 'multiple_checkbox',
+				'options' 			=> $options,
+        'placeholder'   => '',
+        'classes'       => '',
+        'helper'        => '',
+				'default'				=> array(),
 			);
 			$data['args'][0] = $custom_fields;
 			parent::custom_metabox( $post, $data );
 		}
 	}
-	
+
 	public function register_widgets() {
 		register_widget( 'tcp_Alert_Widget' );
 	}
 }
 
 class TCP_Alert_Widget extends WP_Widget {
-	
+
 	function __construct() {
 		parent::__construct(
-			'tcp_alert_widget', 
-			'Alerts', 
+			'tcp_alert_widget',
+			'Alerts',
 			array(
-				'description' => 'A list of the most recent alerts.', 
-			) 
+				'description' => 'A list of the most recent alerts.',
+			)
 		);
 	}
-	
+
 	// Back-end Display Form
 	function form($instance) {
 		$show_num = ! empty( $instance['show_num'] ) ? $instance['show_num'] : '5';
@@ -112,7 +112,7 @@ class TCP_Alert_Widget extends WP_Widget {
 		</p>
 		<?php
 	}
-	
+
 	// Update instance
 	function update($new_instance, $old_instance) {
 		$instance = $old_instance;
@@ -120,7 +120,7 @@ class TCP_Alert_Widget extends WP_Widget {
 		$instance['show_affected'] = $new_instance['show_affected'];
 		return $instance;
 	}
-	
+
 	// Front-end Display
 	// TODO: Add underscores translation support basically everywhere
 	function widget($args, $instance) {
@@ -132,8 +132,8 @@ class TCP_Alert_Widget extends WP_Widget {
 		// Link to all alerts page/archive?
 		echo $args['after_widget'];
 	}
-	
-	// Show all alerts regardless of whether they are in effect yet. 
+
+	// Show all alerts regardless of whether they are in effect yet.
 	//TODO: Add sortby effective date
 	function the_alerts_list($instance) {
 		$args = array(
@@ -155,12 +155,12 @@ class TCP_Alert_Widget extends WP_Widget {
 			),
 		);
 		$my_query = new WP_Query($args);
-		if ( $my_query->have_posts() ) : 
+		if ( $my_query->have_posts() ) :
 			echo '<ul class="tcp-alert-list">';
 			while ( $my_query->have_posts() ) : $my_query->the_post();
-				printf('<li><a href="%s">%s</a> <span class="effective-date small">Effective: %s</span></li>', 
+				printf('<li><a href="%s">%s</a> <span class="effective-date small">Effective: %s</span></li>',
 				get_the_permalink(), get_the_title(), get_post_meta(get_the_ID(), 'effective_date', true) );
-			endwhile; 
+			endwhile;
 			echo '</ul>';
 			printf('<a href="%s">See all alerts &raquo;</a>', get_post_type_archive_link( 'alert') );
 		else:
