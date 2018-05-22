@@ -388,7 +388,13 @@ function tcp_do_alerts( $args = array() ) {
 			// Retrieve formatted date text for effective date(s)
 			$date_text = tcp_get_alert_dates( get_the_ID() );
 
-			$affected_text = $args['show_affected'] ? $args['affected_text'] . tcp_get_affected( get_the_ID(), $args['sep_affected'] ) : '';
+			$affected_routes = tcp_get_affected( get_the_ID(), $args['sep_affected'] );
+
+			$affected_text = '';
+
+			if ($affected_routes != '' && $args['show_affected']) {
+				$affected_text = $args['affected_text'] . $affected_routes;
+			}
 
 			echo '<div class="tcp_panel">';
 
@@ -551,6 +557,10 @@ function tcp_get_affected( $post_id = null, $sep = ', ') {
 	}
 
 	$the_affected = get_post_meta( $post_id, 'affected_routes', true );
+
+	if ($the_affected == '') {
+		return;
+	}
 
 	if ( get_option('tcp_alert_custom_display_affected') ) {
 
