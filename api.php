@@ -104,19 +104,6 @@ function tcp_list_routes( $args = array() ) {
 						),
 					),
 					array(
-						'relation' => 'OR',
-						array(
-							'key'		=> 'effective_date',
-							'compare'	=> 'NOT EXISTS',
-						),
-						array(
-							'key'		=> 'effective_date',
-							'value' 	=> $dt->format("Y-m-d"),
-							'compare'	=> '<=',
-							'type'		=> 'DATE',
-						)
-					),
-					array(
 						'key'		=> 'affected_routes',
 						'value'		=> $route->post_name,
 						'compare'	=> 'LIKE',
@@ -346,32 +333,16 @@ function tcp_do_alerts( $args = array() ) {
 		'post_type'			=> 'alert',
 		'posts_per_page'	=> $args['number_posts'],
 		'meta_query' => array(
-			'relation'	=> 'AND',
+			'relation' => 'OR',
 			array(
-				'relation' => 'OR',
-				array(
-					'key'		=> 'end_date',
-					'compare'	=> 'NOT EXISTS',
-				),
-				array(
-					'key'		=> 'end_date',
-					'value' 	=> $dt->format("Y-m-d"),
-					'compare'	=> '>=',
-					'type'		=> 'DATE',
-				),
+				'key'		=> 'end_date',
+				'compare'	=> 'NOT EXISTS',
 			),
 			array(
-				'relation' => 'OR',
-				array(
-					'key'		=> 'effective_date',
-					'compare'	=> 'NOT EXISTS',
-				),
-				array(
-					'key'		=> 'effective_date',
-					'value' 	=> $dt->format("Y-m-d"),
-					'compare'	=> '<=',
-					'type'		=> 'DATE',
-				)
+				'key'		=> 'end_date',
+				'value' 	=> $dt->format("Y-m-d"),
+				'compare'	=> '>=',
+				'type'		=> 'DATE',
 			),
 		),
 	);
@@ -392,19 +363,6 @@ function tcp_do_alerts( $args = array() ) {
 					'compare'	=> '>=',
 					'type'		=> 'DATE',
 				),
-			),
-			array(
-				'relation' => 'OR',
-				array(
-					'key'		=> 'effective_date',
-					'compare'	=> 'NOT EXISTS',
-				),
-				array(
-					'key'		=> 'effective_date',
-					'value' 	=> $dt->format("Y-m-d"),
-					'compare'	=> '<=',
-					'type'		=> 'DATE',
-				)
 			),
 			array(
 				'relation' => 'OR',
