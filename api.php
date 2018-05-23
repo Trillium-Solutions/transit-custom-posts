@@ -79,6 +79,11 @@ function tcp_list_routes( $args = array() ) {
 
 		if ( $args['show_alert'] ) {
 
+			// Get current date using timezone set in Wordpress
+			$timestamp = time();
+			$dt = new DateTime("now", new DateTimeZone(get_option('timezone_string')));
+			$dt->setTimestamp($timestamp);
+
 			// Query active alerts for the route
 			$query_args = array(
 				'post_type'			=> 'alert',
@@ -89,12 +94,11 @@ function tcp_list_routes( $args = array() ) {
 						'relation' => 'OR',
 						array(
 							'key'		=> 'end_date',
-							'value'		=> '',
-							'compare'	=> '==',
+							'compare'	=> 'NOT EXISTS',
 						),
 						array(
 							'key'		=> 'end_date',
-							'value' 	=> date("Y-m-d"),
+							'value' 	=> $dt->format("Y-m-d"),
 							'compare'	=> '>=',
 							'type'		=> 'DATE',
 						),
@@ -319,9 +323,12 @@ function tcp_do_alerts( $args = array() ) {
 	// Overwrite defaults with supplied $args
 	$args = wp_parse_args( $args, $defaults );
 
-	// Get alerts where the end date is either not set
-	// or is in the future.
-	// TODO: alerts with no end date are still not appearing.
+	// Get current date using timezone set in Wordpress
+	$timestamp = time();
+	$dt = new DateTime("now", new DateTimeZone(get_option('timezone_string')));
+	$dt->setTimestamp($timestamp);
+
+	// Get alerts where the end date is either not set or is in the future.
 	$query_args = array(
 		'post_type'			=> 'alert',
 		'posts_per_page'	=> $args['number_posts'],
@@ -329,12 +336,11 @@ function tcp_do_alerts( $args = array() ) {
 			'relation' => 'OR',
 			array(
 				'key'		=> 'end_date',
-				'value'		=> '',
-				'compare'	=> '==',
+				'compare'	=> 'NOT EXISTS',
 			),
 			array(
 				'key'		=> 'end_date',
-				'value' 	=> date("Y-m-d"),
+				'value' 	=> $dt->format("Y-m-d"),
 				'compare'	=> '>=',
 				'type'		=> 'DATE',
 			),
@@ -349,12 +355,11 @@ function tcp_do_alerts( $args = array() ) {
 				'relation' => 'OR',
 				array(
 					'key'		=> 'end_date',
-					'value'		=> '',
-					'compare'	=> '==',
+					'compare'	=> 'NOT EXISTS',
 				),
 				array(
 					'key'		=> 'end_date',
-					'value' 	=> date("Y-m-d"),
+					'value' 	=> $dt->format("Y-m-d"),
 					'compare'	=> '>=',
 					'type'		=> 'DATE',
 				),
