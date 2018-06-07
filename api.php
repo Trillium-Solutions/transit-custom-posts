@@ -93,8 +93,9 @@ function tcp_list_routes( $args = array() ) {
 					array(
 						'relation' => 'OR',
 						array(
-							'key'		=> 'end_date',
+							'key'		  => 'end_date',
 							'compare'	=> 'NOT EXISTS',
+              'value'   => '',
 						),
 						array(
 							'key'		=> 'end_date',
@@ -337,6 +338,7 @@ function tcp_do_alerts( $args = array() ) {
 			array(
 				'key'		=> 'end_date',
 				'compare'	=> 'NOT EXISTS',
+        'value'   => '',
 			),
 			array(
 				'key'		=> 'end_date',
@@ -356,6 +358,7 @@ function tcp_do_alerts( $args = array() ) {
 				array(
 					'key'		=> 'end_date',
 					'compare'	=> 'NOT EXISTS',
+          'value'   => '',
 				),
 				array(
 					'key'		=> 'end_date',
