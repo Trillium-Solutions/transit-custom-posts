@@ -116,10 +116,10 @@ function tcp_list_routes( $args = array() ) {
 			$q = new WP_Query( $query_args );
 
       if ( $q->have_posts() ) {
-        if ($args['icon_markup'] === 'default') {
+        if ($args['alert_markup'] === 'default') {
           $alert_icon = file_get_contents( plugin_dir_path( __FILE__ ) . 'inc/icon-alert.php' );
         } else {
-				  $alert_icon = $args['icon_markup'];
+				  $alert_icon = $args['alert_markup'];
         }
 			}
 		}
