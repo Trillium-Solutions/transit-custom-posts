@@ -81,8 +81,13 @@ function tcp_list_routes( $args = array() ) {
 		if ( $args['show_alert'] ) {
 
 			// Get current date using timezone set in Wordpress
+      // Set default to PST due to majority of clients
 			$timestamp = time();
-			$dt = new DateTime("now", new DateTimeZone(get_option('timezone_string')));
+      $zone_string = 'America/Los_Angeles';
+      if (get_option('timezone_string')) {
+        $zone_string = get_option('timezone_string');
+      }
+			$dt = new DateTime("now", new DateTimeZone( $zone_string ));
 			$dt->setTimestamp($timestamp);
 
 			// Query active alerts for the route
@@ -331,7 +336,11 @@ function tcp_do_alerts( $args = array() ) {
 
 	// Get current date using timezone set in Wordpress
 	$timestamp = time();
-	$dt = new DateTime("now", new DateTimeZone(get_option('timezone_string')));
+  $zone_string = 'America/Los_Angeles';
+  if (get_option('timezone_string')) {
+    $zone_string = get_option('timezone_string');
+  }
+	$dt = new DateTime("now", new DateTimeZone( $zone_string ));
 	$dt->setTimestamp($timestamp);
 
 	// Get alerts where the end date is either not set or is in the future.
