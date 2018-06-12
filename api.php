@@ -57,6 +57,7 @@ function tcp_list_routes( $args = array() ) {
 		'show_circle'	=> false,
 		'route_name'	=> 'long_name',
 		'show_alert'	=> false,
+    'alert_markup' => 'default',
 
 	);
 	$args = wp_parse_args( $args, $defaults );
@@ -114,12 +115,16 @@ function tcp_list_routes( $args = array() ) {
 
 			$q = new WP_Query( $query_args );
 
-			if ( $q->have_posts() ) {
-				$alert_icon = file_get_contents( plugin_dir_path( __FILE__ ) . 'inc/icon-alert.php' );
+      if ( $q->have_posts() ) {
+        if ($args['icon_markup'] === 'default') {
+          $alert_icon = file_get_contents( plugin_dir_path( __FILE__ ) . 'inc/icon-alert.php' );
+        } else {
+				  $alert_icon = $args['icon_markup'];
+        }
 			}
 		}
 		// Add formatted route link to an array
-		$routes[] = '<a href="' . get_the_permalink($route->ID) . '" class="' . $route->post_name . '"' . $rcolor . '>' . $alert_icon .get_route_name($route->ID) . '</a>';
+		$routes[] = '<a href="' . get_the_permalink($route->ID) . '" class="' . $route->post_name . '"' . $rcolor . '>' . get_route_name($route->ID) . $alert_icon . '</a>';
 
 	}
 	echo $args['before'] . join( $args['sep'], $routes ) . $args['after'];
