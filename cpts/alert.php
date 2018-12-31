@@ -64,7 +64,7 @@ class TCP_Alert extends TCP_CustomPostType {
 				return;
 			}
 			foreach ($routes as $route) {
-				$options[$route->post_name] = $route->post_title;
+				$options[$route->post_name] = get_route_name($route->ID);
 			}
 			$options['all_routes'] = 'All Routes';
 			$custom_fields['Affected Routes'] = array(
