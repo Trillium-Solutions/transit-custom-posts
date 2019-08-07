@@ -49,14 +49,24 @@ class TCP_Alert extends TCP_CustomPostType {
 			$custom_fields = $data['args'][0];
 			$options = array();
 
-			// TODO: Add options for sorting if GTFS doesn't include route sort order
-			$order = get_option('tcp_route_sortorder');
-			$orderby = $order == 'route_sort_order' ? array( 'meta_value_num' => 'ASC', 'title' => 'ASC') : 'title';
+			$sort_order = get_option('tcp_route_sortorder');
+			
+			if ($sort_order == 'route_short_name'):
+				$orderby = 'meta_value_num';
+			elseif ($sort_order == 'route_long_name'):
+				$orderby = 'meta_value';
+			elseif ($sort_order == 'route_sort_order'):
+				$orderby = array( 'meta_value_num' => 'ASC', 'title' => 'ASC');
+			else:
+				$orderby = 'title';
+			endif;
+			
 			$routes = get_posts(array(
 				'posts_per_page' 	=> -1,
-				'post_type' 			=> 'route',
-				'meta_key'				=> $order,
-				'orderby'					=> $orderby,
+				'post_type' 		=> 'route',
+				'meta_key'			=> $sort_order,
+				'orderby'			=> $orderby,
+				'order'				=> 'ASC'
 			));
 			wp_reset_postdata();
 			if ( !$routes ) {
@@ -64,7 +74,7 @@ class TCP_Alert extends TCP_CustomPostType {
 				return;
 			}
 			foreach ($routes as $route) {
-				$options[$route->post_name] = $route->post_title;
+				$options[$route->post_name] = get_route_name($route->ID);
 			}
 			$options['all_routes'] = 'All Routes';
 			$custom_fields['Affected Routes'] = array(
