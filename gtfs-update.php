@@ -1,10 +1,11 @@
 <?php
-/* 
- * Automatic GTFS Update 
+/*
+ * Automatic GTFS Update
  */
 
 function the_gtfs_update_form() {
 	?>
+	<style type="text/css">#wpfooter {display: none;}</style>
 	<h2>GTFS Site Update</h2>
 	<p>GTFS update will automatically create and update route pages (if active) and timetables (if the optional <em>timetables.txt</em> file is included in the feed). Do not perform an update if you are not sure what you are doing. Performing GTFS update will automatically download the most recent version of your feed from the given feed URL.</p>
 	<form method="POST" action="<?php echo admin_url( 'admin.php' ); ?>" enctype="multipart/form-data">
@@ -22,9 +23,13 @@ function the_gtfs_update_form() {
 				<input type="hidden" name="action" value="tcp_gtfs_update" />
 			</tbody>
 		</table>
-		<p>(Optional) Use manually uploaded feed</p>
+		<p>(Optional) Manually upload feed. This will override existing routes.</p>
 		<input type="checkbox" id="alternate_feed" name="alternate_feed" value="true">
-		<p class="description">E.g. if you have a more recent feed update or have not yet set up a public feed. Feed should be uploaded (and unzipped) to the plugin directory in <code>custom-posts-plugin/transit-data</code>.</p>
+		<p class="description">E.g. if you have a more recent feed update or have not yet set up a public feed. Upload your feed by choosing a zip file below. You can still choose to update by URL at any time.</p>
+		<tr>
+			<label for="gtfs_zip_input">Select a .zip</label>
+			<input type="file" id="gtfs_zip_input" name="gtfs_zip_input" accept="application/zip,application/x-zip,application/x-zip-compressed" />
+		</tr>
 		<p class="submit">
 			<input type="submit" value="GTFS Update" class="button button-primary"/>
 		</p>
@@ -59,33 +64,33 @@ function tcp_gtfs_update() {
     // Ensure backup was checked
 	if(! isset($_POST['backup'])) {
 		tcp_status_redirect('102');
-	} 
+	}
     // Ensure this theme is actually using custom Route types
 	if ( !post_type_exists( 'route' ) ) {
 		tcp_status_redirect('103');
 	}
-    
+
 	$feed_path = tcp_download_feed();
-    
+
     if ( !$feed_path ) {
 		tcp_status_redirect('104');
     }
-	
+
 	$routes_txt = $feed_path . 'routes.txt';
-	
+
 	if ( !file_exists( $routes_txt) ) {
        tcp_status_redirect('104');
 	}
-	
+
 	if ( !($res = tcp_update_routes($routes_txt)) ) {
 		tcp_status_redirect('104');
 	}
 	if ( !post_type_exists( 'timetable' ) ) {
 		tcp_status_redirect('200');
 	}
-	
+
 	$timetables_txt = $feed_path . 'timetables.txt';
-	
+
 	if ( !file_exists( $timetables_txt ) ) {
 		tcp_status_redirect('201');
 	}
@@ -97,25 +102,53 @@ function tcp_gtfs_update() {
 }
 
 function tcp_download_feed() {
+	error_log(isset($_POST['alternate_feed']));
+
 	if ( !get_option('tcp_gtfs_url') && !isset($_POST['alternate_feed']) ) {
+		error_log('returning null');
 		return null;
 	}
-	
+
 	$feed_dir = plugin_dir_path( __FILE__ ) . 'transit-data/';
-	
+
 	// If using a manually uploaded feed, continue to next step
-	if ( isset($_POST['alternate_feed']) && file_exists($feed_dir) ) {
-		return $feed_dir;
-	}
-	
-	$gtfs_feed = esc_url( get_option('tcp_gtfs_url') );
-	
+	// if ( isset($_POST['alternate_feed']) && file_exists($feed_dir) ) {
+	// 	return $feed_dir;
+	// }
+
+
 	// Erase all old files; will delete any custom uploaded files as well
 	array_map('unlink', glob( $feed_dir . '*.txt' ) );
-	
+
 	if ( !file_exists( $feed_dir ) ) {
 		mkdir( $feed_dir, 0777, true );
 	}
+
+	// If using .zip direct upload, extract the zip to the feed Directory
+	if (isset($_POST['alternate_feed'])) {
+		error_log('using alternate feed');
+		$download_path = $feed_dir . 'gtfs-feed.zip';
+		$tmp_path = $_FILES['gtfs_zip_input']['tmp_name'];
+		$feed_download = @file_get_contents($tmp_path, true);
+		file_put_contents( $download_path, $feed_download );
+		$zip = new ZipArchive;
+		$res = $zip->open( $download_path );
+		if ( $res != TRUE )  {
+			return null;
+		}
+		$zip->extractTo( $feed_dir );
+		$zip->close();
+		return $feed_dir;
+	}
+
+
+
+	error_log('using url feed');
+
+
+	$gtfs_feed = esc_url( get_option('tcp_gtfs_url') );
+
+
 	if (!filter_var($gtfs_feed, FILTER_VALIDATE_URL)) {
 		return null;
 	}
@@ -152,13 +185,13 @@ function tcp_update_routes( $route_file ) {
 		wp_delete_post( $to_delete->ID, true );
 	}
 	wp_reset_postdata();
-    
+
     foreach( $gtfs_data as $ind=>$route ) {
         // If route_long_name exists, use it as the default name for post title and name
         $default_name = ($route['route_long_name'] == "") ? $route['route_short_name'] : $route['route_long_name'];
         $tag_name = trim(str_replace(" ", "_", strtolower($default_name)));
         $route_id = $route['route_id'];
-        	
+
 		//Check if the route post already exists. If not, create new route
 		$post_to_update_id = null;
 		$args = array(
@@ -174,7 +207,7 @@ function tcp_update_routes( $route_file ) {
 			$updated = array(
 				'ID'			=> $post_to_update_id,
 				'post_title'	=> $default_name,
-				'post_name'		=> $tag_name		
+				'post_name'		=> $tag_name
 			);
 			wp_update_post( $updated );
 		} else {
@@ -191,9 +224,9 @@ function tcp_update_routes( $route_file ) {
         // Update route meta fields from GTFS data
         foreach ( $route as $key=>$value ) {
             if ( $key != "" ) {
-                update_post_meta($post_to_update_id, $key, $value);  
-            }          
-        }       
+                update_post_meta($post_to_update_id, $key, $value);
+            }
+        }
 	}
 	return true;
 }
@@ -216,18 +249,18 @@ function tcp_update_timetables( $timetable_file ) {
 		wp_delete_post( $to_delete->ID, true );
 	}
 	wp_reset_postdata();
-	
+
 	foreach( $gtfs_data as $ind=>$timetable ) {
 		// Figure out days of week for timetable
 		$days_of_week = tcp_timetable_days( $timetable );
-		unset( 
-			$timetable['monday'], $timetable['tuesday'], $timetable['wednesday'], 
+		unset(
+			$timetable['monday'], $timetable['tuesday'], $timetable['wednesday'],
 			$timetable['thursday'], $timetable['friday'], $timetable['saturday'], $timetable['sunday']
 		);
 		$timetable['days_of_week'] = $days_of_week;
 		$timetable_name = trim($timetable['route_label'] . ' ' . $timetable['direction_label'] . ' ' . $timetable['days_of_week']);
 		$tag_name = str_replace(" ", "_", strtolower($timetable_name));
-		
+
 		// Find out if content exists in timetables folder
 		// TODO replace with more robust, easy to use utility
 		$timetable_dir = plugin_dir_path( __FILE__ ) . 'transit-data/timetables/';
@@ -238,7 +271,7 @@ function tcp_update_timetables( $timetable_file ) {
 				$content = file_get_contents($timetable_file, true);
 			}
 		}
-		
+
 		// Check if the timetable post already exists. If not, create new timetable
 		$post_to_update_id = null;
 		$args = array(
@@ -273,9 +306,9 @@ function tcp_update_timetables( $timetable_file ) {
         // Update route meta fields from GTFS data
         foreach ( $timetable as $key=>$value ) {
             if ( $key != "" ) {
-                update_post_meta($post_to_update_id, $key, $value);  
-            }          
-        }       
+                update_post_meta($post_to_update_id, $key, $value);
+            }
+        }
 	}
 	return true;
 }

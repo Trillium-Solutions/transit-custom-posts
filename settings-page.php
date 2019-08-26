@@ -14,7 +14,7 @@ function tcp_settings_pages() {
     $icon = 'dashicons-location';
     $position = 85;
     add_menu_page($page_title, $menu_title, $capability, $menu_slug, $callback, $icon, $position);
-    
+
     $parent_slug = 'tcp_settings_page';
     $page_title = 'Custom Post Types';
     $menu_title = 'Custom Post Types';
@@ -22,7 +22,7 @@ function tcp_settings_pages() {
     $menu_slug = 'tcp_settings_page';
     $callback = 'tcp_custom_post_settings_content';
     add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback);
-    
+
     $parent_slug = 'tcp_settings_page';
     $page_title = 'GTFS Settings';
     $menu_title = 'GTFS Settings';
@@ -35,7 +35,8 @@ add_action( 'admin_menu', 'tcp_settings_pages');
 
 function tcp_setup_settings_sections() {
 	add_settings_section( 'cpt_fields', '', '', 'tcp_cpt_fields'  );
-	add_settings_section( 'gtfs_fields', '', '', 'tcp_gtfs_fields' );
+    add_settings_section( 'gtfs_fields', '', '', 'tcp_gtfs_fields' );
+    add_settings_section( 'gtfs_file', '', '', 'tcp_gtfs_files' );
 }
 add_action( 'admin_init', 'tcp_setup_settings_sections' );
 
@@ -61,7 +62,7 @@ function tcp_setup_fields() {
 		),
 		array(
 			'uid' 		=> 'tcp_route_display',
-			'label' 	=> 'Route Display',	
+			'label' 	=> 'Route Display',
 			'section'	=> 'tcp_routes_options',
 			'type'		=> 'text',
 			'options'	=> false,
@@ -69,12 +70,12 @@ function tcp_setup_fields() {
 			'helper'	=> '',
 			'supplemental' => 'How to display route names on this site. Available keywords include %short_name%, %long_name%, and %route_circle%. This format can be overwritten by individual routes within their edit screens.',
 			'default' => '%short_name%: %long_name%',
-			'settings' => 'tcp_cpt_fields',		
-			'classes' => 'regular-text',					
+			'settings' => 'tcp_cpt_fields',
+			'classes' => 'regular-text',
 		),
 		array(
 			'uid' 		=> 'tcp_route_sortorder',
-			'label' 	=> 'Sort Order',	
+			'label' 	=> 'Sort Order',
 			'section'	=> 'tcp_routes_options',
 			'type'		=> 'select',
 			'options'	=> array(
@@ -86,12 +87,12 @@ function tcp_setup_fields() {
 			'helper'	=> '',
 			'supplemental' => '',
 			'default' => 'sort_order',
-			'settings' => 'tcp_cpt_fields',		
-			'classes' => '',					
+			'settings' => 'tcp_cpt_fields',
+			'classes' => '',
 		),
 		array(
 			'uid' 		=> 'tcp_alert_custom_display_affected',
-			'label' 	=> 'Advanced: Custom display affected routes',	
+			'label' 	=> 'Advanced: Custom display affected routes',
 			'section'	=> 'tcp_alerts_options',
 			'type'		=> 'checkbox',
 			'options'	=> false,
@@ -99,8 +100,8 @@ function tcp_setup_fields() {
 			'helper'	=> 'Check only if you hook into the "tcp_display_affected" filter in your theme.',
 			'supplemental' => '',
 			'default' => false,
-			'settings' => 'tcp_cpt_fields',		
-			'classes' => '',					
+			'settings' => 'tcp_cpt_fields',
+			'classes' => '',
 		),
 		array(
 			'uid'		=> 'tcp_board_fields',
@@ -121,7 +122,7 @@ function tcp_setup_fields() {
 		),
 		array(
 			'uid' 		=> 'tcp_board_posts_per_page',
-			'label' 	=> 'Board meetings page shows at most',	
+			'label' 	=> 'Board meetings page shows at most',
 			'section'	=> 'tcp_board_options',
 			'type'		=> 'number',
 			'options'	=> false,
@@ -129,8 +130,8 @@ function tcp_setup_fields() {
 			'helper'	=> 'meetings per page',
 			'supplemental' => '',
 			'default' => 20,
-			'settings' => 'tcp_cpt_fields',		
-			'classes' => 'small-text',					
+			'settings' => 'tcp_cpt_fields',
+			'classes' => 'small-text',
 		),
 		array(
 			'uid'			=> 'tcp_gtfs_url',
@@ -144,7 +145,20 @@ function tcp_setup_fields() {
 			'default'		=> '',
 			'settings'		=> 'tcp_gtfs_fields',
 			'classes'		=> 'regular-text',
-		),	
+		),
+        array(
+            'uid'			=> 'tcp_gtfs_file',
+            'label'			=> 'GTFS Feed File',
+            'section'		=> 'gtfs_file',
+            'type'			=> 'file',
+            'options'		=> false,
+            'placeholder'	=> '',
+            'helper'		=> '',
+            'supplemental'	=> 'Should point to a ZIP of your GTFS feed',
+            'default'		=> '',
+            'settings'		=> 'tcp_gtfs_files',
+            'classes'		=> 'regular-text',
+        ),
 	);
 	foreach ( $fields as $field ) {
 		add_settings_field( $field['uid'], $field['label'], 'tcp_field_callback', $field['settings'], $field['section'], $field);
@@ -154,9 +168,9 @@ function tcp_setup_fields() {
 add_action( 'admin_init', 'tcp_setup_fields' );
 
 function tcp_field_callback( $arguments ) {
-    $value = get_option( $arguments['uid'] ); 
-    if( ! $value ) { 
-       $value = $arguments['default']; 
+    $value = get_option( $arguments['uid'] );
+    if( ! $value ) {
+       $value = $arguments['default'];
    }
 // Check which type of field we want
 switch( $arguments['type'] ){
@@ -208,11 +222,14 @@ switch( $arguments['type'] ){
                     printf( '<fieldset>%s</fieldset>', $options_markup );
                 }
                 break;
+            case 'file':
+                printf('<label for="gtfs_zip_input">Select a .zip</label><input type="file" accept="application/zip,application/x-zip,application/x-zip-compressed" name="gtfs_zip_input"/>');
+                break;
         }
 
 // If there is help text
    if( $helper = $arguments['helper'] ){
-       printf( '<span class="helper"> %s</span>', $helper ); 
+       printf( '<span class="helper"> %s</span>', $helper );
    }
 
 // If there is supplemental text
