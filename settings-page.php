@@ -3,6 +3,7 @@
  * Creates the plugin settings page using Wordpress settings API
  */
 require_once('gtfs-update.php');
+require_once('timetable-upload.php');
 
 function tcp_settings_pages() {
     // Root menu for Plugin
@@ -30,6 +31,14 @@ function tcp_settings_pages() {
     $menu_slug = 'tcp_gtfs_settings';
     $callback = 'tcp_gtfs_settings_content';
     add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback);
+
+    $parent_slug = 'tcp_settings_page';
+    $page_title = 'Timetable Upload';
+    $menu_title = 'Timetables';
+    $capability = 'manage_options';
+    $menu_slug = 'tcp_timetable_upload';
+    $callback = 'tcp_timetable_upload_content';
+    add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback);
 }
 add_action( 'admin_menu', 'tcp_settings_pages');
 
@@ -37,6 +46,7 @@ function tcp_setup_settings_sections() {
 	add_settings_section( 'cpt_fields', '', '', 'tcp_cpt_fields'  );
     add_settings_section( 'gtfs_fields', '', '', 'tcp_gtfs_fields' );
     add_settings_section( 'gtfs_file', '', '', 'tcp_gtfs_files' );
+    add_settings_section( 'gtfs_timetables', '', '', 'tcp_timetable_files' );
 }
 add_action( 'admin_init', 'tcp_setup_settings_sections' );
 
@@ -278,6 +288,16 @@ function tcp_gtfs_settings_content() {
 	<?php
 }
 
+function tcp_timetable_upload_content() {
+    ?>
+    <div class="wrap">
+        <h1>Timetables Upload</h1>
+        <?php settings_errors(); ?>
+        <?php the_timetable_upload_form(); ?>
+    </div>
+    <?php
+}
+
 if ( get_option('tcp_custom_types') ) {
 	$custom_types = get_option('tcp_custom_types');
 
@@ -304,7 +324,7 @@ function tcp_setup_alert_options() {
 }
 
 function tcp_setup_timetable_options() {
-	add_settings_section( 'tcp_timetables_options', 'Timetable Options', '', 'tcp_cpt_fields' );
+	add_settings_section( 'tcp_timetable_options', 'Timetable Options', '', 'tcp_cpt_fields' );
 }
 
 function tcp_setup_board_options() {
