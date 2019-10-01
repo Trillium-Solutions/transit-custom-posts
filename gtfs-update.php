@@ -7,9 +7,14 @@ function the_gtfs_update_form() {
 	?>
 	<style type="text/css">#wpfooter {display: none;}</style>
 	<h2>GTFS Site Update</h2>
-	<p>GTFS update will automatically create and update route pages (if active) and timetables (if the optional <em>timetables.txt</em> file is included in the feed). Do not perform an update if you are not sure what you are doing. Performing GTFS update will automatically download the most recent version of your feed from the given feed URL.</p>
+	<p>
+	GTFS update will automatically create and update route pages (if active) and timetables (if the optional <em>timetables.txt</em> file is included in the feed). Do not perform an update if you are not sure what you are doing.
+	Performing GTFS update will automatically download the most recent version of your feed from the given feed URL.<br />
+	For more information see the <a href="https://trilliumtransit.github.io/transit-custom-posts/gtfs-update.html">GTFS Update usage guide</a>.
+	</p>
+	<p><small></small></p>
 	<form method="POST" action="<?php echo admin_url( 'admin.php' ); ?>" enctype="multipart/form-data">
-		<table class="form-table">
+		<table class="form-table" role="presentation">
 			<tbody>
 				<tr>
 					<th scope="row">
@@ -19,17 +24,38 @@ function the_gtfs_update_form() {
 						<input type="checkbox" id="backup" name="backup" value="true" />
 					</td>
 				</tr>
+				<tr>
+					<th scope="row">GTFS Feed Source</th>
+					<td id="feed-source">
+						<fieldset>
+							<legend class="screen-reader-text">
+								<span>GTFS Feed Source</span>
+							</legend>
+							<p>
+								<label>
+									<input name="alternate_feed" type="radio" value="false" class="tog" checked="checked">
+									Use feed from export location URL specified above
+								</label>
+							</p>
+							<p>
+								<label>
+									<input name="alternate_feed" type="radio" value="true" class="tog">
+									Upload feed manually (select below)
+								</label>
+							</p>
+							<ul class="export-filters">
+								<li>
+									<label for="gtfs_zip_input">Select a .zip</label>
+									<input type="file" id="gtfs_zip_input" name="gtfs_zip_input" accept="application/zip,application/x-zip,application/x-zip-compressed" />
+								</li>
+							</ul>
+						</fieldset>
+					</td>
+				</tr>
                 <input type="hidden" name="gtfsupdate_noncename" id="gtfsupdate_noncename" value="<?php echo wp_create_nonce( 'gtfs-update' )?>">
 				<input type="hidden" name="action" value="tcp_gtfs_update" />
 			</tbody>
 		</table>
-		<p>(Optional) Manually upload feed. This will override existing routes.</p>
-		<input type="checkbox" id="alternate_feed" name="alternate_feed" value="true">
-		<p class="description">E.g. if you have a more recent feed update or have not yet set up a public feed. Upload your feed by choosing a zip file below. You can still choose to update by URL at any time.</p>
-		<tr>
-			<label for="gtfs_zip_input">Select a .zip</label>
-			<input type="file" id="gtfs_zip_input" name="gtfs_zip_input" accept="application/zip,application/x-zip,application/x-zip-compressed" />
-		</tr>
 		<p class="submit">
 			<input type="submit" value="GTFS Update" class="button button-primary"/>
 		</p>
@@ -102,19 +128,11 @@ function tcp_gtfs_update() {
 }
 
 function tcp_download_feed() {
-	error_log(isset($_POST['alternate_feed']));
-
-	if ( !get_option('tcp_gtfs_url') && !isset($_POST['alternate_feed']) ) {
-		error_log('returning null');
+	if ( !get_option('tcp_gtfs_url') && !($_POST['alternate_feed'] == 'true') ) {
 		return null;
 	}
 
 	$feed_dir = plugin_dir_path( __FILE__ ) . 'transit-data/';
-
-	// If using a manually uploaded feed, continue to next step
-	// if ( isset($_POST['alternate_feed']) && file_exists($feed_dir) ) {
-	// 	return $feed_dir;
-	// }
 
 
 	// Erase all old files; will delete any custom uploaded files as well
@@ -125,36 +143,24 @@ function tcp_download_feed() {
 	}
 
 	// If using .zip direct upload, extract the zip to the feed Directory
-	if (isset($_POST['alternate_feed'])) {
-		error_log('using alternate feed');
-		$download_path = $feed_dir . 'gtfs-feed.zip';
+	if ($_POST['alternate_feed'] == 'true') {
 		$tmp_path = $_FILES['gtfs_zip_input']['tmp_name'];
-		$feed_download = @file_get_contents($tmp_path, true);
-		file_put_contents( $download_path, $feed_download );
-		$zip = new ZipArchive;
-		$res = $zip->open( $download_path );
-		if ( $res != TRUE )  {
+
+		if ( !( $feed_download = @file_get_contents($tmp_path, true) ) ) {
 			return null;
 		}
-		$zip->extractTo( $feed_dir );
-		$zip->close();
-		return $feed_dir;
+	} else {
+		$gtfs_feed = esc_url( get_option('tcp_gtfs_url') );
+
+		if (!filter_var($gtfs_feed, FILTER_VALIDATE_URL)) {
+			return null;
+		}
+
+		if ( !( $feed_download = @file_get_contents($gtfs_feed, true) ) ) {
+			return null;
+		}
 	}
 
-
-
-	error_log('using url feed');
-
-
-	$gtfs_feed = esc_url( get_option('tcp_gtfs_url') );
-
-
-	if (!filter_var($gtfs_feed, FILTER_VALIDATE_URL)) {
-		return null;
-	}
-	if ( !( $feed_download = @file_get_contents($gtfs_feed, true) ) ) {
-		return null;
-	}
 	$download_path = $feed_dir . 'gtfs-feed.zip';
 	file_put_contents( $download_path, $feed_download );
 	$zip = new ZipArchive;
@@ -327,7 +333,7 @@ function tcp_get_status_message( $code ) {
 		'104' => 'Error downloading feed. Please set GTFS feed correctly in GTFS settings first.',
 		'105' => 'No routes.txt present. Unable to perform update.',
 		'200' => 'GTFS Update Success. Please ensure <strong>Routes</strong> contain correct information.',
-		'201' => 'GTFS Update Success. Please ensure <strong>Routes</strong> contain correct information. No timetables.txt present; timetables not updated.',
+		'201' => 'GTFS Update Success. Please ensure <strong>Routes</strong> contain correct information. No timetables.txt present (timetables not updated).',
 	);
 	if ($codes[$code]) {
 		return $codes[$code];
