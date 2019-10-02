@@ -295,7 +295,7 @@ function tcp_update_timetables( $timetable_file ) {
 			$timetable['thursday'], $timetable['friday'], $timetable['saturday'], $timetable['sunday']
 		);
 		$timetable['days_of_week'] = $days_of_week;
-		$timetable_name = trim($timetable['route_label'] . ' ' . $timetable['direction_label'] . ' ' . $timetable['days_of_week']);
+		$timetable_name = tcp_timetable_name( $timetable );
 		$tag_name = str_replace(" ", "_", strtolower($timetable_name));
 
 		// Find out if content exists in timetables folder
@@ -348,6 +348,16 @@ function tcp_update_timetables( $timetable_file ) {
         }
 	}
 	return true;
+}
+
+function tcp_timetable_name( $timetable ) {
+	if ( array_key_exists('timetable_label', $timetable) ) {
+		return $timetable['timetable_label'] . ' ' . $timetable['direction_label'] . ' ' . $timetable['days_of_week'];
+	} else if ( array_key_exists('route_label', $timetable) ) {
+		return $timetable['route_label'] . ' ' . $timetable['direction_label'] . ' ' . $timetable['days_of_week'];
+	} else {
+		return $timetable['timetable_id'] . ' ' . $timetable['direction_label'] . ' ' . $timetable['days_of_week'];
+	}
 }
 
 function tcp_upload_timetables() {
