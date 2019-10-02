@@ -45,10 +45,29 @@ function the_gtfs_update_form() {
 							</p>
 							<ul class="export-filters">
 								<li>
-									<label for="gtfs_zip_input">Select a .zip</label>
-									<input type="file" id="gtfs_zip_input" name="gtfs_zip_input" accept="application/zip,application/x-zip,application/x-zip-compressed" />
+									<label for="gtfs_zip_input">
+									    Select a .zip
+										<input type="file" id="gtfs_zip_input" name="gtfs_zip_input" accept="application/zip,application/x-zip,application/x-zip-compressed" />
+									</label>
 								</li>
 							</ul>
+						</fieldset>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">Upload Timetables</th>
+					<td id="timetable-upload">
+						<fieldset>
+							<legend class="screen-reader-text">
+								<span>Upload Timetables</span>
+							</legend>
+							<p>
+								<label>
+									Select a .zip file containing your HTML timetables <br />
+									<input type="file" id="timetable_zip_input" name="timetable_zip_input" accept="application/zip,application/x-zip,application/x-zip-compressed" />
+								</label>
+							</p>
+							<p class="description">If no timetables are provided, GTFS Update will still update routes as well as any changes to timetable fields present in <em>timetables.txt</em></p>
 						</fieldset>
 					</td>
 				</tr>
@@ -238,6 +257,18 @@ function tcp_update_routes( $route_file ) {
 }
 
 function tcp_update_timetables( $timetable_file ) {
+
+	// Check to see if we have timetables to upload
+	$upload_status = $_FILES['timetable_zip_input']['error'];
+	if ($upload_status == 0) {
+		tcp_upload_timetables();
+	}
+
+	// If files were attached but there is an error
+	if (($upload_status != 0) && ($upload_status != 4)) {
+		return null;
+	}
+
     $gtfs_data = array_map('str_getcsv', file($timetable_file));
     $header = array_shift($gtfs_data);
     array_walk($gtfs_data, '_combine_array', $header);
@@ -317,6 +348,34 @@ function tcp_update_timetables( $timetable_file ) {
         }
 	}
 	return true;
+}
+
+function tcp_upload_timetables() {
+	$timetable_dir = plugin_dir_path( __FILE__ ) . 'transit-data/timetables/';
+
+	if ( !file_exists( $timetable_dir ) ) {
+		mkdir( $timetable_dir, 0777, true );
+	} else {
+		array_map('unlink', glob( $timetable_dir . '*.html' ) );
+	}
+	$tmp_path = $_FILES['timetable_zip_input']['tmp_name'];
+	$download_path = $timetable_dir . 'timetables.zip';
+	$file_download = @file_get_contents( $tmp_path, true );
+	file_put_contents( $download_path, $file_download );
+	$zip = new ZipArchive;
+	$res = $zip->open( $download_path );
+	if ( $res != TRUE )  {
+		return null;
+	}
+	// Only copy over HTML files and flatten directory structure
+	for($i = 0; $i < $zip->numFiles; $i++) {
+		$entry = $zip->getNameIndex($i);
+		if ( preg_match('#\.(html)$#i', $entry) ) {
+			$fileinfo = pathinfo($entry);
+			copy( "zip://" . $download_path . "#" . $entry, $timetable_dir . $fileinfo['basename'] );
+		}
+	}
+	$zip->close();
 }
 
 function tcp_status_redirect( $code ) {
