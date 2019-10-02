@@ -67,7 +67,8 @@ function the_gtfs_update_form() {
 									<input type="file" id="timetable_zip_input" name="timetable_zip_input" accept="application/zip,application/x-zip,application/x-zip-compressed" />
 								</label>
 							</p>
-							<p class="description">If no timetables are provided, GTFS Update will still update routes as well as any changes to timetable fields present in <em>timetables.txt</em></p>
+							<p class="description">If no timetables are provided, GTFS Update will still update routes as well as any changes to timetable fields present in <em>timetables.txt</em>.
+							Previously uploaded timetable HTML will only be overwritten if new timetables are uploaded.</p>
 						</fieldset>
 					</td>
 				</tr>
