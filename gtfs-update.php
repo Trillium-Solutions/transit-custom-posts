@@ -213,8 +213,8 @@ function tcp_update_routes( $route_file ) {
 
     foreach( $gtfs_data as $ind=>$route ) {
         // If route_long_name exists, use it as the default name for post title and name
-        $default_name = ($route['route_long_name'] == "") ? $route['route_short_name'] : $route['route_long_name'];
-        $tag_name = trim(str_replace(" ", "_", strtolower($default_name)));
+        $default_name = ($route['route_short_name'] == "") ? $route['route_long_name'] : 'Route ' . $route['route_short_name'];
+        $tag_name = tcp_route_url($default_name);
         $route_id = $route['route_id'];
 
 		//Check if the route post already exists. If not, create new route
@@ -254,6 +254,11 @@ function tcp_update_routes( $route_file ) {
         }
 	}
 	return true;
+}
+
+function tcp_route_url( $route_name ) {
+	$default_name = str_replace("-", " ", str_replace(" - ", " ", $route_name));
+	return trim(str_replace(" ", "-", strtolower($default_name)));
 }
 
 function tcp_update_timetables( $timetable_file ) {
