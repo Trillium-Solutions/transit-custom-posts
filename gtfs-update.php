@@ -188,7 +188,14 @@ function tcp_download_feed() {
 	if ( $res != TRUE )  {
 		return null;
 	}
-	$zip->extractTo( $feed_dir );
+	// Only copy over txt files and flatten directory structure
+	for($i = 0; $i < $zip->numFiles; $i++) {
+		$entry = $zip->getNameIndex($i);
+		if ( preg_match('#\.(txt)$#i', $entry) ) {
+			$fileinfo = pathinfo($entry);
+			copy( "zip://" . $download_path . "#" . $entry, $feed_dir . $fileinfo['basename'] );
+		}
+	}
 	$zip->close();
 	return $feed_dir;
 }

@@ -3,7 +3,7 @@
 * Plugin Name: Transit Custom Posts
 * Plugin URI: https://trilliumtransit.github.io/transit-custom-posts/
 * Description: Creates route, alert, timetable, and other custom post types used for transit sites. Programmatically updates data from a GTFS feed.
-* Version: 0.9.1
+* Version: 0.9.3
 * Author: NomeQ
 * Author URI: https://trilliumtransit.com/
 * License: GPL2
@@ -24,7 +24,7 @@ require_once( plugin_dir_path( __FILE__ ) . 'cpts/board-meeting.php');
 // Settings page custom post type options
 if ( get_option('tcp_custom_types') ) {
 	$custom_types = get_option('tcp_custom_types');
-	
+
 	if ( in_array('tcp_use_routes', $custom_types) ) {
 		$routes = TCP_Route::getInstance();
 	}
