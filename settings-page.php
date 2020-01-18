@@ -91,6 +91,22 @@ function tcp_setup_fields() {
 			'classes' => '',
 		),
 		array(
+			'uid' 		=> 'tcp_timetable_expire',
+			'label' 	=> 'Timetable Expiration',
+			'section'	=> 'tcp_timetable_options',
+			'type'		=> 'select',
+			'options'	=> array(
+				'immediate' => 'Remove immediately on expiration date',
+				'never' => 'Show expired timetables if current unavailable',
+			),
+			'placeholder' => '',
+			'helper'	=> '',
+			'supplemental' => 'For schedules that rarely change, it may be best to ignore the timetable end date.',
+			'default' => 'never',
+			'settings' => 'tcp_cpt_fields',
+			'classes' => '',
+		),
+		array(
 			'uid' 		=> 'tcp_alert_custom_display_affected',
 			'label' 	=> 'Advanced: Custom display affected routes',
 			'section'	=> 'tcp_alerts_options',

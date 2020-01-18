@@ -336,10 +336,10 @@ function tcp_do_alerts( $args = array() ) {
 
 	// Get current date using timezone set in Wordpress
 	$timestamp = time();
-  $zone_string = 'America/Los_Angeles';
-  if (get_option('timezone_string')) {
-    $zone_string = get_option('timezone_string');
-  }
+	$zone_string = 'America/Los_Angeles';
+	if (get_option('timezone_string')) {
+		$zone_string = get_option('timezone_string');
+	}
 	$dt = new DateTime("now", new DateTimeZone( $zone_string ));
 	$dt->setTimestamp($timestamp);
 
@@ -483,7 +483,46 @@ function tcp_get_alert_dates( $post_id = null ) {
 * @param array $args Not implemented.
 */
 function the_timetables( $args = array() ) {
+	$timetables = get_timetables();
 
+	if ( $timetables->have_posts() ) {
+		while ( $timetables->have_posts() ) {
+			$timetables->the_post();
+
+			// Get timetable metadata
+			$dir = get_post_meta( get_the_ID(), 'direction_label', true);
+			$days = get_post_meta( get_the_ID(), 'days_of_week', true);
+
+			// Create a timetable div with data attributes for optional JS manipulation
+			printf('<div class="timetable-holder" data-dir="%s" data-days="%s">', $dir, $days);
+
+			// Should be HTML or an image
+			the_content();
+
+			echo '</div>';
+		}
+		wp_reset_postdata();
+	}
+}
+
+/**
+* Returns a WP Query post object
+*
+* @global WP_Post $post
+*
+* @param array $args {
+*     Optional. An array of arguments.
+*
+*     @type bool "upcoming" Return upcoming (not yet active) timetables
+*         Default: false
+*     @type bool "use_expired" Return expired timetables if none are current
+*         Default: WP_Option $tcp_timetable_expire
+*     @type string "upcoming_time" Time interval to fetch upcoming timetables
+*         Default: 'P14D'
+* }
+* @return WP_Query timetable query object
+*/
+function get_timetables( $args = array() ) {
 	global $post;
 
 	if ( !post_type_exists( 'timetable' ) || $post->post_type != 'route') {
@@ -491,17 +530,75 @@ function the_timetables( $args = array() ) {
 		return;
 	}
 
-	$route_id = get_post_meta($post->ID, 'route_id', true);
+	$use_expired = get_option('tcp_timetable_expire') === 'never';
 
+	$defaults = array(
+		'upcoming'			=> false,
+		'use_expired'		=> $use_expired,
+		'upcoming_time'		=> 'P14D',
+	);
+	// Overwrite defaults with supplied $args
+	$args = wp_parse_args( $args, $defaults );
+
+	$route_id = get_post_meta($post->ID, 'route_id', true);
 	$date = new DateTime();
 	$today = intval($date->format('Ymd'));
 
-	// Set a date 3 days in the future from today
-	$date->add(new DateInterval('P3D'));
+	// Set a date in the future using upcoming_time $args
+	$date->add(new DateInterval($args['upcoming_time']));
 	$soon = intval($date->format('Ymd'));
 
-	// Only grab timetables that are active or will be active starting $soon
+	$start = array(
+		'key' 		=> 'start_date',
+		'type' 		=> 'NUMERIC',
+		'compare'	=> '<=',
+		'value'		=> $today,
+	);
+
+	$end = array(
+		'key'		=> 'end_date',
+		'type'		=> 'NUMERIC',
+		'compare'	=> '>=',
+		'value'		=> $today,
+	);
+
+	// Hacky looking little way of resetting args to get
+	// timetables that are upcoming in an *upcoming_time* interval
+	if ($args['upcoming']) {
+		$start['compare'] = '>';
+		$end['value'] = $soon;
+		$end['key'] = 'start_date';
+		$end['compare'] = '<=';
+	}
+
 	$timetable_args = array(
+		'post_type'			=> 'timetable',
+		'posts_per_page'	=> -1,
+		'orderby'			=> 'meta_value_num',
+		'meta_key'			=> 'timetable_id',
+		'order'				=> 'ASC',
+		'meta_query'		=> array(
+			'relation'	=> 'AND',
+			array(
+				'key' => 'route_id',
+				'value' => $route_id,
+			),
+			array(
+				'relation' => 'AND',
+				$start,
+				$end,
+			),
+		),
+	);
+
+	$timetables = new WP_Query( $timetable_args );
+	if ( $timetables->have_posts() || !$use_expired ) {
+		return $timetables;
+	}
+
+	// If here, there were no current timetables and
+	// we are willing to use expired
+	$expired_timetable_args = array(
 		'post_type'			=> 'timetable',
 		'posts_per_page'	=> -1,
 		'orderby'			=> 'meta_value_num',
@@ -517,43 +614,16 @@ function the_timetables( $args = array() ) {
 				'relation' => 'AND',
 				array(
 					'key' => 'start_date',
-					'value' => $soon,
-					'compare'=> '<=',
-					'type' => 'NUMERIC',
-				),
-				array(
-					'key' => 'end_date',
 					'value' => $today,
-					'compare' => '>=',
+					'compare'=> '<=',
 					'type' => 'NUMERIC',
 				),
 			),
 		),
 	);
-	$timetables = new WP_Query( $timetable_args );
 
-	if ( $timetables->have_posts() ) {
-		while ( $timetables->have_posts() ) {
-			$timetables->the_post();
-
-			// Get timetable metadata
-			$dir = get_post_meta( get_the_ID(), 'direction_label', true);
-			$days = get_post_meta( get_the_ID(), 'days_of_week', true);
-
-			// Create a timetable div with data attributes for optional JS manipulation
-			printf('<div class="timetable-holder" data-dir="%s" data-days="%s">', $dir, $days);
-			if ($dir != ''):
-			   echo '<h2>' . $dir . '</h2>';
-			endif;
-			echo '<div class="subtitle">' . $days . '</div>';
-
-			// Should be HTML or an image
-			the_content();
-
-			echo '</div>';
-		}
-		wp_reset_postdata();
-	}
+	$expired_timetables = new WP_Query( $expired_timetable_args );
+	return $expired_timetables;
 }
 
 /**
