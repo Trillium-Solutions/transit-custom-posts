@@ -188,12 +188,11 @@ function get_route_name( $post_id = NULL ) {
 		global $post;
 		$post_id = $post->ID;
 	}
-
+	$format = get_option('tcp_route_display');
 	// Allow name to be overridden
 	if ( get_post_meta( $post_id, 'route_custom_name', true ) != '' ) {
-		return get_post_meta( $post_id, 'route_custom_name', true );
+		 $format = get_post_meta( $post_id, 'route_custom_name', true );
 	}
-	$format = get_option('tcp_route_display');
 
 	// Replace magic tags with meta values
 	$format = str_replace('%short_name%', get_post_meta($post_id, 'route_short_name', true), $format);
@@ -686,7 +685,7 @@ function tcp_route_name_from_tag( $route_tag ) {
 
 	if ( empty( $r_post ) ) {
 
-		if ( $route_tag == 'all' ) {
+		if ( $route_tag == 'all_routes' ) {
      			return 'All Routes';
     		}
 
