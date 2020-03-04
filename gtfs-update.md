@@ -8,7 +8,8 @@ From the WP Admin screen, you can access GTFS Update from Transit Custom Posts >
 
 * **GTFS Feed Url** : This should be set to the source for the exported ZIP of your feed and saved before attempting to perform an update, unless you are manually supplying a feed.
 * **Verify Backup** : GTFS update will modify your site database. We recommend always backing up your site before performing an update.
-* **Use manually uploaded feed** : Check this if you have already uploaded and unzipped your feed in the plugin directory in `plugins/transit-custom-posts/transit-data`. This should rarely be necessary. 
+* **GTFS Feed Source** : Default is to use feed from export location URL. If your feed is not available from an export URL or the exported feed does not contain `timetables.txt`, you may instead choose to upload a feed zip from you computer.
+* **Upload Timetables** : Upload a zipped folder containing timetable HTML files. If the plugin has trouble finding the timetables during GTFS update, check that all timetables are in the same folder, and there are not nested folders.
 
 ## Performing the Update
 
@@ -48,7 +49,7 @@ Success: However, `timetables.txt` not present; assumed to be intentional. Uploa
 
 ## Timetables
 
-In order to programmatically add timetables to your site, you will need to be able to run a Node app ([GTFS-to-HTML](https://github.com/BlinkTagInc/gtfs-to-html)) and have FTP access to your website server. There are plans to automate this process in the future using a web service version of GTFS-to-HTML, but as it stands the process requires some comfort with development tools.
+In order to programmatically add timetables to your site, you will need to be able to run a Node app ([GTFS-to-HTML](https://github.com/BlinkTagInc/gtfs-to-html)). There are plans to automate this process in the future using a web service version of GTFS-to-HTML, but as it stands the process requires some comfort with development tools.
 
 The timetable custom post type can still be used without either of these abilities, but will require manually adding timetable content from the WP Admin area.
 
@@ -80,7 +81,6 @@ This file should be a CSV with the following columns at minimum:
 
 If you would like to automatically generate timetable posts but you are not able to export `timetables.txt` with your feed or you would like to use HTML timetables generated with [GTFS-to-HTML](https://github.com/BlinkTagInc/gtfs-to-html), you can use the following process:
 
-1. Run GTFS Update with regular instructions and your GTFS Feed Url. This will update routes and upload the GTFS feed to the plugin directory.
-2. Create timetables.txt and use FTP or SFTP to upload it to `wp-content/plugins/transit-custom-posts/transit-data/`
-3. (Optional) Use GTFS-to-HTML to generate timetable HTML (using the same `timetables.txt`). Upload timetable HTML files to `wp-content/plugins/transit-custom-posts/transit-data/timetables`. You will most likely need to create the timetables directory.
-4. Run GTFS Update a second time, this time check the box for `Use manually uploaded feed`.
+1. Create `timetables.txt` and add it to your feed. Use a zip utility to compress the feed with timetables.txt included.
+3. (Optional) Use GTFS-to-HTML to generate timetable HTML (using the same `timetables.txt`).
+4. Run GTFS Update, select the option to `Upload feed manually` and upload your timetables as well.
