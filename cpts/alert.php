@@ -8,13 +8,13 @@ class TCP_Alert extends TCP_CustomPostType {
 
 	protected function __construct() {
 		parent::__construct('Alert', array(
-				'menu_icon' => 'dashicons-warning',
-				'rewrite'	=> array( 'slug' => 'alerts' ),
+				'menu_icon'   => 'dashicons-warning',
+				'rewrite'	  => array( 'slug' => 'alerts' ),
 				'has_archive' => true,
 		));
 		$this->add_meta_box('Affected Routes', array(
 			'Affected Routes' => array(
-				'type' => 'text',
+				'type'   => 'text',
 				'helper' => 'Enable <em>route</em> custom posts to attach affected routes',
 			),
 		), 'side');
@@ -41,7 +41,8 @@ class TCP_Alert extends TCP_CustomPostType {
 
 	public function custom_metabox( $post, $data ) {
 		// If 'route' custom posts not active, create default metaboxes
-		$custom_types = get_option('tcp_custom_types');
+		$custom_types = TCP_CUSTOM_TYPES;
+
 		if ( ! in_array('tcp_use_routes', $custom_types) || $data['id'] != 'affected_routes' ) {
 			parent::custom_metabox( $post, $data );
 		} else {
@@ -78,12 +79,12 @@ class TCP_Alert extends TCP_CustomPostType {
 			}
 			$options['all_routes'] = 'All Routes';
 			$custom_fields['Affected Routes'] = array(
-				'type' 					=> 'multiple_checkbox',
-				'options' 			=> $options,
-        'placeholder'   => '',
-        'classes'       => '',
-        'helper'        => '',
-				'default'				=> array(),
+				'type' 	      => 'multiple_checkbox',
+				'options'     => $options,
+        		'placeholder' => '',
+        		'classes'     => '',
+        		'helper'      => '',
+				'default'	  => array(),
 			);
 			$data['args'][0] = $custom_fields;
 			parent::custom_metabox( $post, $data );

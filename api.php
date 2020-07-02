@@ -7,7 +7,7 @@
  * Returns a sorted array of route objects.
  */
  function tcp_get_routes() {
- 	if ( !post_type_exists( 'route') ) {
+ 	if ( ! post_type_exists( 'route') ) {
  		// Fail silently
  		return;
  	}
@@ -16,10 +16,10 @@
  	$order = get_option('tcp_route_sortorder');
  	$orderby = $order == 'route_sort_order' ? array( 'meta_value_num' => 'ASC', 'title' => 'ASC') : 'title';
  	$route_args = array(
- 		'post_type'		=> 'route',
- 		'numberposts'	=> -1,
- 		'meta_key'			=> $order,
- 		'orderby'			=> $orderby,
+ 		'post_type'	  => 'route',
+ 		'numberposts' => -1,
+ 		'meta_key'	  => $order,
+ 		'orderby'	  => $orderby,
  	);
  	return get_posts( $route_args );
 }
@@ -45,7 +45,7 @@
 * }
 */
 function tcp_list_routes( $args = array() ) {
-	if ( !post_type_exists( 'route') ) {
+	if ( ! post_type_exists( 'route') ) {
 		// Fail silently
 		return;
 	}
@@ -83,42 +83,14 @@ function tcp_list_routes( $args = array() ) {
 			// Get current date using timezone set in Wordpress
       // Set default to PST due to majority of clients
 			$timestamp = time();
-      $zone_string = 'America/Los_Angeles';
-      if (get_option('timezone_string')) {
-        $zone_string = get_option('timezone_string');
-      }
+      		$zone_string = 'America/Los_Angeles';
+      		if ( get_option('timezone_string')) {
+        		$zone_string = get_option('timezone_string');
+      		}
 			$dt = new DateTime("now", new DateTimeZone( $zone_string ));
 			$dt->setTimestamp($timestamp);
 
-			// Query active alerts for the route
-			$query_args = array(
-				'post_type'			=> 'alert',
-				'posts_per_page'	=> -1,
-				'meta_query'		=> array(
-					'relation'	=> 'AND',
-					array(
-						'relation' => 'OR',
-						array(
-							'key'		  => 'end_date',
-							'compare'	=> 'NOT EXISTS',
-              'value'   => '',
-						),
-						array(
-							'key'		=> 'end_date',
-							'value' 	=> $dt->format("Y-m-d"),
-							'compare'	=> '>=',
-							'type'		=> 'DATE',
-						),
-					),
-					array(
-						'key'		=> 'affected_routes',
-						'value'		=> $route->post_name,
-						'compare'	=> 'LIKE',
-					)
-				)
-			);
-
-			$q = new WP_Query( $query_args );
+	 
 
       if ( $q->have_posts() ) {
         if ($args['alert_markup'] === 'default') {
@@ -157,8 +129,8 @@ function the_route_title() {
 
 	// Use route color as background if route circle not in use
 	if ( strpos(get_option('tcp_route_display'), '%route_circle%') === false ) {
-		$color = '#' . get_post_meta( $post->ID, 'route_color', true);
-		$text = '#' . get_post_meta( $post->ID, 'route_text_color', true);
+		$color = '#' . get_post_meta( $post->ID, 'route_color', true );
+		$text = '#' . get_post_meta( $post->ID, 'route_text_color', true );
 		$style = 'style="background:' . $color . '; color:' . $text . ';"';
 	}
 
@@ -177,7 +149,7 @@ function the_route_title() {
 */
 function get_route_name( $post_id = NULL ) {
 
-	if ( !post_type_exists( 'route' ) ) {
+	if ( ! post_type_exists( 'route' ) ) {
 
 		// Return empty string if routes not in use
 		return '';
@@ -195,16 +167,16 @@ function get_route_name( $post_id = NULL ) {
 	}
 
 	// Replace magic tags with meta values
-	$format = str_replace('%short_name%', get_post_meta($post_id, 'route_short_name', true), $format);
-	$format = str_replace('%long_name%', get_post_meta($post_id, 'route_long_name', true), $format);
-	$format = str_replace('%route_circle%', get_route_circle($post_id), $format);
+	$format = str_replace( '%short_name%', get_post_meta( $post_id, 'route_short_name', true), $format );
+	$format = str_replace( '%long_name%', get_post_meta( $post_id, 'route_long_name', true ), $format );
+	$format = str_replace( '%route_circle%', get_route_circle( $post_id ), $format );
 
 	/**
 	* Filters the formatted route name.
 	*
 	* @param string $format The formatted route name
 	*/
-	$format = apply_filters('tcp_route_name', $format);
+	$format = apply_filters( 'tcp_route_name', $format );
 
 	return $format;
 }
@@ -235,7 +207,6 @@ function get_route_circle( $post_id = NULL, $size = "medium" ) {
 	}
 
 	if ( empty( $post_id ) ) {
-
 		// Setup global postdata.
 		global $post;
 		$post_id = $post->ID;
@@ -311,7 +282,7 @@ function the_route_description($args = array()) {
 */
 function tcp_do_alerts( $args = array() ) {
 
-	if ( !post_type_exists( 'alert' ) ) {
+	if ( ! post_type_exists( 'alert' ) ) {
 		return false;
 	}
 
@@ -325,9 +296,10 @@ function tcp_do_alerts( $args = array() ) {
 	);
 
 	global $post;
+
 	if ( $post->post_type == 'route' ) {
-		$defaults['single_route']	= true;
-		$defaults['show_affected']	= false;
+		$defaults['single_route']  = true;
+		$defaults['show_affected'] = false;
 	}
 
 	// Overwrite defaults with supplied $args
@@ -349,15 +321,15 @@ function tcp_do_alerts( $args = array() ) {
 		'meta_query' => array(
 			'relation' => 'OR',
 			array(
-				'key'		=> 'end_date',
-				'compare'	=> 'NOT EXISTS',
-        'value'   => '',
+				'key'	  => 'end_date',
+				'compare' => 'NOT EXISTS',
+        		'value'   => '',
 			),
 			array(
-				'key'		=> 'end_date',
-				'value' 	=> $dt->format("Y-m-d"),
-				'compare'	=> '>=',
-				'type'		=> 'DATE',
+				'key'	  => 'end_date',
+				'value'   => $dt->format("Y-m-d"),
+				'compare' => '>=',
+				'type'	  => 'DATE',
 			),
 		),
 	);
@@ -423,13 +395,14 @@ function tcp_do_alerts( $args = array() ) {
 
 			// Create collapisble panel with the_content() of alert
 			if ( $args['collapse'] ) {
-				printf('<div class="panel_body" id="%s">%s</div>', 'panel_' . get_the_ID(), get_the_content());
+				printf('<div class="panel_body" id="%s">%s</div>', 'panel_' . get_the_ID(), get_the_content() );
 			}
 			echo '</div>';
 		}
 		echo '</div></div>';
 
 		wp_reset_postdata();
+
 		return $alert_query->post_count;
 	}
 	return false;
@@ -637,24 +610,23 @@ function get_timetables( $args = array() ) {
 */
 function tcp_get_affected( $post_id = null, $sep = ', ') {
 
-	if ( !post_type_exists('route') || !post_type_exists('alert')) {
+	if ( ! post_type_exists( 'route' ) || ! post_type_exists( 'alert' ) ) {
 		// Fail silently.
 		return;
 	}
 
-	if ( empty($post_id) ) {
+	if ( empty( $post_id ) ) {
 		global $post;
 		$post_id = $post->ID;
 	}
 
 	$the_affected = get_post_meta( $post_id, 'affected_routes', true );
 
-	if ($the_affected == '') {
+	if ( $the_affected == '' ) {
 		return;
 	}
 
-	if ( get_option('tcp_alert_custom_display_affected') ) {
-
+	if ( get_option( 'tcp_alert_custom_display_affected' ) ) {
 		/**
 		* Filters the display text for an alert's affected routes.
 		*
@@ -663,9 +635,7 @@ function tcp_get_affected( $post_id = null, $sep = ', ') {
 		$the_affected = apply_filters( 'tcp_display_affected', $the_affected );
 
 	} else {
-
 		$the_affected = array_map( 'tcp_route_name_from_tag', $the_affected );
-
 	}
 
 	return join($the_affected, $sep);
@@ -686,9 +656,8 @@ function tcp_route_name_from_tag( $route_tag ) {
 	if ( empty( $r_post ) ) {
 
 		if ( $route_tag == 'all_routes' ) {
-     			return 'All Routes';
-    		}
-
+     		return 'All Routes';
+    	}
 		// Page doesn't exist or filter was applied
 		return $route_tag;
 	}

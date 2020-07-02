@@ -13,7 +13,7 @@ function tcp_settings_pages() {
     $callback = 'tcp_custom_post_settings_content';
     $icon = 'dashicons-location';
     $position = 85;
-    add_menu_page($page_title, $menu_title, $capability, $menu_slug, $callback, $icon, $position);
+    add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $callback, $icon, $position );
 
     $parent_slug = 'tcp_settings_page';
     $page_title = 'Custom Post Types';
@@ -21,7 +21,7 @@ function tcp_settings_pages() {
     $capability = 'manage_options';
     $menu_slug = 'tcp_settings_page';
     $callback = 'tcp_custom_post_settings_content';
-    add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback);
+    add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback );
 
     $parent_slug = 'tcp_settings_page';
     $page_title = 'GTFS Settings';
@@ -29,12 +29,12 @@ function tcp_settings_pages() {
     $capability = 'manage_options';
     $menu_slug = 'tcp_gtfs_settings';
     $callback = 'tcp_gtfs_settings_content';
-    add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback);
+    add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback );
 }
 add_action( 'admin_menu', 'tcp_settings_pages');
 
 function tcp_setup_settings_sections() {
-	add_settings_section( 'cpt_fields', '', '', 'tcp_cpt_fields'  );
+	add_settings_section( 'cpt_fields', '', '', 'tcp_cpt_fields' );
     add_settings_section( 'gtfs_fields', '', '', 'tcp_gtfs_fields' );
     add_settings_section( 'gtfs_file', '', '', 'tcp_gtfs_files' );
 }
@@ -48,10 +48,10 @@ function tcp_setup_fields() {
 			'section'	=> 'cpt_fields',
 			'type'		=> 'multiple_checkbox',
 			'options'	=> array(
-				'tcp_use_routes'	=> 'Routes',
-				'tcp_use_alerts'	=> 'Alerts',
+				'tcp_use_routes'	    => 'Routes',
+				'tcp_use_alerts'	    => 'Alerts',
 				'tcp_use_timetables'	=> 'Timetables',
-				'tcp_use_board'		=> 'Board Meetings',
+				'tcp_use_board'		    => 'Board Meetings',
 			),
 			'placeholder'	=> '',
 			'helper'		=> '',
@@ -103,19 +103,6 @@ function tcp_setup_fields() {
 			'helper'	=> '',
 			'supplemental' => 'For schedules that rarely change, it may be best to ignore the timetable end date.',
 			'default' => 'never',
-			'settings' => 'tcp_cpt_fields',
-			'classes' => '',
-		),
-		array(
-			'uid' 		=> 'tcp_alert_custom_display_affected',
-			'label' 	=> 'Advanced: Custom display affected routes',
-			'section'	=> 'tcp_alerts_options',
-			'type'		=> 'checkbox',
-			'options'	=> false,
-			'placeholder' => '',
-			'helper'	=> 'Check only if you hook into the "tcp_display_affected" filter in your theme.',
-			'supplemental' => '',
-			'default' => false,
 			'settings' => 'tcp_cpt_fields',
 			'classes' => '',
 		),
@@ -174,10 +161,46 @@ function tcp_setup_fields() {
             'default'		=> '',
             'settings'		=> 'tcp_gtfs_files',
             'classes'		=> 'regular-text',
-        ),
+		),
 	);
+
+	// Adding display routes 
+	if ( is_array( TCP_CUSTOM_TYPES ) &&  in_array( 'tcp_use_alerts', TCP_CUSTOM_TYPES ) ) {
+		$alerts_affected_routes_field = array(
+			'uid' 		=> 'tcp_alert_custom_display_affected',
+			'label' 	=> 'Advanced: Custom display affected routes',
+			'section'	=> 'tcp_alerts_options',
+			'type'		=> 'checkbox',
+			'options'	=> false,
+			'placeholder' => '',
+			'helper'	=> '<span style="color:#666666;"><em>Check only if you hook into the "tcp_display_affected" filter in your theme.</em></span>',
+			'supplemental' => '',
+			'default' => false,
+			'settings' => 'tcp_cpt_fields',
+			'classes' => '',
+		);
+		$fields[] = $alerts_affected_routes_field;
+	}
+
+	// Adding transit alerts field if transit alerts are active
+	if ( is_plugin_active( 'wp-transit-alerts/wp-transit-alerts.php' ) ) {
+		$transit_alerts_field = array(
+			'uid' 		=> 'tcp_alerts_transit_alerts',
+			'label' 	=> 'Use WP Transit Alerts',
+			'section'	=> 'tcp_alerts_options',
+			'type'		=> 'checkbox',
+			'options'	=> false,
+			'placeholder' => '',
+			'helper'	=> '<span style="color:#666666;"><em>Overrides Transit Custom Posts Alerts and must have WP Transit Alerts plugin installed with a saved feed ID to work.</em></span>',
+			'supplemental' => '',
+			'default' => false,
+			'settings' => 'tcp_cpt_fields',
+			'classes' => '',
+		);
+		$fields[] = $transit_alerts_field;
+	}
 	foreach ( $fields as $field ) {
-		add_settings_field( $field['uid'], $field['label'], 'tcp_field_callback', $field['settings'], $field['section'], $field);
+		add_settings_field( $field['uid'], $field['label'], 'tcp_field_callback', $field['settings'], $field['section'], $field );
 		register_setting( $field['settings'], $field['uid'] );
 	}
 }
@@ -185,11 +208,11 @@ add_action( 'admin_init', 'tcp_setup_fields' );
 
 function tcp_field_callback( $arguments ) {
     $value = get_option( $arguments['uid'] );
-    if( ! $value ) {
+    if ( ! $value ) {
        $value = $arguments['default'];
    }
 // Check which type of field we want
-switch( $arguments['type'] ){
+switch( $arguments['type'] ) {
             case 'text':
             case 'password':
             case 'number':
@@ -201,7 +224,7 @@ switch( $arguments['type'] ){
                 break;
             case 'select':
             case 'multiselect':
-                if( ! empty ( $arguments['options'] ) && is_array( $arguments['options'] ) ){
+                if ( ! empty ( $arguments['options'] ) && is_array( $arguments['options'] ) ){
                     $attributes = '';
                     $options_markup = '';
                     foreach( $arguments['options'] as $key => $label ){
@@ -220,7 +243,7 @@ switch( $arguments['type'] ){
 				if (! empty ($arguments['options']) && is_array( $arguments['options'] ) ) {
 					$options_markup = '';
 					$iterator = 0;
-					foreach( $arguments['options'] as $key => $label){
+					foreach( $arguments['options'] as $key => $label ) {
 						$iterator++;
 						$options_markup .= sprintf( '<label for="%1$s_%5$s"><input id="%1$s_%5$s" name="%1$s[%2$s]" type="checkbox" value="%2$s" %3$s> %4$s</label><br/>', $arguments['uid'], $key, in_array($key, $value) ? 'checked' : '', $label, $iterator);
 					}
@@ -243,13 +266,13 @@ switch( $arguments['type'] ){
                 break;
         }
 
-// If there is help text
-   if( $helper = $arguments['helper'] ){
+   // If there is help text
+   if ( $helper = $arguments['helper'] ) {
        printf( '<span class="helper"> %s</span>', $helper );
    }
 
-// If there is supplemental text
-   if( $supplemental = $arguments['supplemental'] ){
+   // If there is supplemental text
+   if ( $supplemental = $arguments['supplemental'] ) {
        printf( '<p class="description">%s</p>', $supplemental );
    }
 }
@@ -261,23 +284,22 @@ function tcp_custom_post_settings_content() {
 		<?php settings_errors(); ?>
 		<form method="post" action="options.php">
 			<?php
-			settings_fields( 'tcp_cpt_fields' );
-			do_settings_sections( 'tcp_cpt_fields' );
-			submit_button();
+				settings_fields( 'tcp_cpt_fields' );
+				do_settings_sections( 'tcp_cpt_fields' );
+				submit_button();
 			?>
 		</form>
 	</div>
 	<?php
 }
 
-function tcp_gtfs_settings_content() {
-	?>
+function tcp_gtfs_settings_content() { ?>
 	<div class="wrap">
 		<h1>GTFS Feed and Options</h1>
 		<?php settings_errors(); ?>
 		<div id="welcome-panel" class="welcome-panel">
 			<div class="welcome-panel-content">
-				<p>Your GTFS feed is used to create routes, update route fields,
+				<p> Your GTFS feed is used to create routes, update route fields,
 					and link routes and timetables. In order to automatically generate
 					timetables, please download GTFS-to-HTML.
 				<form method="post" action="options.php">
@@ -294,35 +316,36 @@ function tcp_gtfs_settings_content() {
 	<?php
 }
 
-if ( get_option('tcp_custom_types') ) {
-	$custom_types = get_option('tcp_custom_types');
-
-	if ( in_array('tcp_use_routes', $custom_types) ) {
+if ( TCP_CUSTOM_TYPES ) {
+	if ( in_array('tcp_use_routes', TCP_CUSTOM_TYPES ) ) {
 		add_action( 'admin_init', 'tcp_setup_route_options' );
 	}
-	if ( in_array('tcp_use_alerts', $custom_types) ) {
+
+	if ( in_array('tcp_use_alerts', TCP_CUSTOM_TYPES ) ) {
 		add_action( 'admin_init', 'tcp_setup_alert_options' );
-	}
-	if ( in_array('tcp_use_timetables', $custom_types) ) {
+	}		
+	
+	if ( in_array('tcp_use_timetables', TCP_CUSTOM_TYPES ) ) {
 		add_action( 'admin_init', 'tcp_setup_timetable_options' );
 	}
-	if ( in_array('tcp_use_board', $custom_types) ) {
+
+	if ( in_array('tcp_use_board', TCP_CUSTOM_TYPES ) ) {
 		add_action( 'admin_init', 'tcp_setup_board_options' );
 	}
 }
 
 function tcp_setup_route_options() {
-	add_settings_section( 'tcp_routes_options', 'Route Options', '', 'tcp_cpt_fields'  );
+	add_settings_section( 'tcp_routes_options', '<hr/><br/>Route Options', '', 'tcp_cpt_fields'  );
 }
 
 function tcp_setup_alert_options() {
-	add_settings_section( 'tcp_alerts_options', 'Alert Options', '', 'tcp_cpt_fields' );
+	add_settings_section( 'tcp_alerts_options', '<hr/><br/>Alert Options', '', 'tcp_cpt_fields' );
 }
 
 function tcp_setup_timetable_options() {
-	add_settings_section( 'tcp_timetable_options', 'Timetable Options', '', 'tcp_cpt_fields' );
+	add_settings_section( 'tcp_timetable_options', '<hr/><br/>Timetable Options', '', 'tcp_cpt_fields' );
 }
 
 function tcp_setup_board_options() {
-	add_settings_section( 'tcp_board_options', 'Board Meeting Options', '', 'tcp_cpt_fields' );
+	add_settings_section( 'tcp_board_options', '<hr/><br/>Board Meeting Options', '', 'tcp_cpt_fields' );
 }

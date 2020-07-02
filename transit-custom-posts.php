@@ -9,6 +9,9 @@
 * License: GPL2
 */
 
+// Define constants
+define( 'TCP_CUSTOM_TYPES', get_option('tcp_custom_types', false ) );
+
 // Admin settings page
 require_once('settings-page.php');
 
@@ -22,19 +25,17 @@ require_once( plugin_dir_path( __FILE__ ) . 'cpts/timetable.php');
 require_once( plugin_dir_path( __FILE__ ) . 'cpts/board-meeting.php');
 
 // Settings page custom post type options
-if ( get_option('tcp_custom_types') ) {
-	$custom_types = get_option('tcp_custom_types');
-
-	if ( in_array('tcp_use_routes', $custom_types) ) {
+if ( TCP_CUSTOM_TYPES ) {
+	if ( in_array( 'tcp_use_routes', TCP_CUSTOM_TYPES) ) {
 		$routes = TCP_Route::getInstance();
 	}
-	if ( in_array('tcp_use_alerts', $custom_types) ) {
+	if ( in_array( 'tcp_use_alerts', TCP_CUSTOM_TYPES ) ) {
 		$alerts = TCP_Alert::getInstance();
 	}
-	if ( in_array('tcp_use_timetables', $custom_types) ) {
+	if ( in_array( 'tcp_use_timetables', TCP_CUSTOM_TYPES ) ) {
 		$timetables = TCP_Timetable::getInstance();
 	}
-	if ( in_array('tcp_use_board', $custom_types) ) {
+	if ( in_array( 'tcp_use_board', TCP_CUSTOM_TYPES ) ) {
 		$board_meetings = TCP_BoardMeeting::getInstance();
 	}
 }
