@@ -44,8 +44,8 @@
 *     @type string "route_name" Deprecated. @see get_route_name()
 * }
 */
-function tcp_list_routes( $args = array() ) {
-	if ( ! post_type_exists( 'route') ) {
+function tcp_list_routes( $args = array() ) {	
+	if ( ! array_key_exists( 'route', $wp_post_types ) || ! post_type_exists('route') ) {
 		// Fail silently
 		return;
 	}
@@ -79,9 +79,8 @@ function tcp_list_routes( $args = array() ) {
 
 
 		if ( $args['show_alert'] ) {
-
 			// Get current date using timezone set in Wordpress
-      // Set default to PST due to majority of clients
+      		// Set default to PST due to majority of clients
 			$timestamp = time();
       		$zone_string = 'America/Los_Angeles';
       		if ( get_option('timezone_string')) {
@@ -90,19 +89,16 @@ function tcp_list_routes( $args = array() ) {
 			$dt = new DateTime("now", new DateTimeZone( $zone_string ));
 			$dt->setTimestamp($timestamp);
 
-	 
-
-      if ( $q->have_posts() ) {
-        if ($args['alert_markup'] === 'default') {
-          $alert_icon = file_get_contents( plugin_dir_path( __FILE__ ) . 'inc/icon-alert.php' );
-        } else {
-				  $alert_icon = $args['alert_markup'];
-        }
-			}
+      		if ( $q->have_posts() ) {
+        		if ( $args['alert_markup'] === 'default' ) {
+          			$alert_icon = file_get_contents( plugin_dir_path( __FILE__ ) . 'inc/icon-alert.php' );
+        		} else {
+					$alert_icon = $args['alert_markup'];
+        		}
+	   		}
 		}
 		// Add formatted route link to an array
 		$routes[] = '<a href="' . get_the_permalink($route->ID) . '" class="' . $route->post_name . '"' . $rcolor . '>' . get_route_name($route->ID) . $alert_icon . '</a>';
-
 	}
 	echo $args['before'] . join( $args['sep'], $routes ) . $args['after'];
 }
@@ -238,7 +234,7 @@ function get_route_circle( $post_id = NULL, $size = "medium" ) {
 *     @type string "after" Text or HTML displayed after route description.
 *         Default: '</div>'
 */
-function the_route_description($args = array()) {
+function the_route_description( $args = array() ) {
 	global $post;
 	if ( !post_type_exists( 'route' ) ) {
 		return;
@@ -287,14 +283,21 @@ function tcp_do_alerts( $args = array() ) {
 	}
 
 	$defaults = array(
-		'collapse'				=> true,
-		'single_route'			=> false,
-		'show_affected'			=> true,
-		'sep_affected'			=> ', ',
-		'number_posts'			=> -1,
-		'affected_text'			=> 'Affected Routes: ',
+		'collapse'		  => false,
+		'use_button'      => false,
+ 		'single_route'	  => false,
+		'show_affected'	  => true,
+		'sep_affected'	  => ', ',
+		'number_posts'	  => -1,
+		'link_text'       => 'Permalink',
+		'excerpt_only'    => false,
+		'affected_text'	  => 'Affected Routes: ',
+		'affected-routes' => true,
+		'route-circles'   => true,
 	);
 
+	$args['collapse'] = true;
+ 
 	global $post;
 
 	if ( $post->post_type == 'route' ) {
@@ -308,104 +311,189 @@ function tcp_do_alerts( $args = array() ) {
 	// Get current date using timezone set in Wordpress
 	$timestamp = time();
 	$zone_string = 'America/Los_Angeles';
-	if (get_option('timezone_string')) {
+	if ( get_option('timezone_string') ) {
 		$zone_string = get_option('timezone_string');
 	}
-	$dt = new DateTime("now", new DateTimeZone( $zone_string ));
-	$dt->setTimestamp($timestamp);
+	$dt = new DateTime( "now", new DateTimeZone( $zone_string ) );
+	$dt->setTimestamp( $timestamp );
 
-	// Get alerts where the end date is either not set or is in the future.
-	$query_args = array(
-		'post_type'			=> 'alert',
-		'posts_per_page'	=> $args['number_posts'],
-		'meta_query' => array(
-			'relation' => 'OR',
-			array(
-				'key'	  => 'end_date',
-				'compare' => 'NOT EXISTS',
-        		'value'   => '',
-			),
-			array(
-				'key'	  => 'end_date',
-				'value'   => $dt->format("Y-m-d"),
-				'compare' => '>=',
-				'type'	  => 'DATE',
-			),
-		),
-	);
+	// Set up alert template variables 
+	$collapsible   = '';
+	$alert_url     = '';
+	$alert_title   = '';
+	$alert_dates   = '';
+	$affected_text = '';
+	$panel_class   = '';
+	$alert_desc    = '';
+	$affected_text = '';
 
-	// Overwrite meta query for single route alerts
-	if ( $args['single_route'] ) {
-		$query_args['meta_query'] = array(
-			'relation'	=> 'AND',
-			array(
+	// Declare up alerts header
+	$alert_header  = '<div class="tcp_alerts">';
+	$alert_header .= '<h3 class="tcp_alert_header">' . file_get_contents( plugin_dir_path( __FILE__ ) . 'inc/icon-alert.php' ) . 'Alerts</h3>';
+	$alert_header .= '<div class="container">';
+	
+	// Declare alerts footer 
+	$alert_footer = '</div></div>';
+
+	if ( get_option( 'tcp_alerts_transit_alerts' ) ) {
+		
+		// Use transit alerts options instead of querying for alerts
+		if ( function_exists('transit_alerts_get_alerts') && defined('WPTA_FEEDS') ) {
+
+			if ( $defaults['single_route'] ) {
+				$args['route-id'] = $post->post_name;
+				$alerts = transit_alerts_get_alerts( $args );
+			} else {
+				$alerts  = transit_alerts_get_alerts( $args );
+			}	
+
+			if ( ! empty( $alerts ) ) {
+
+				echo $alert_header;
+
+				$alert_count = 1;
+
+				foreach( $alerts as $alert ) {
+
+					$collapsible   = $args['collapse'] ? 'collapse' : '' . 'panel-' . $alert_count;
+					$panel_class   = 'panel-' . $alert_count;
+					$alert_url     = $alert['url'];
+					$alert_title   = $alert['title'];
+					$alert_desc    = $alert['description'];
+					$alert_dates   = $alert_dates;
+					$affected_text = $args['affected_text'] . ' ' . implode( ',', $alert['affected-routes'] );
+					$link_text     = $args['link_text'] === 'title' ? $alert_title : $args['link_text'];
+
+					echo '<div class="tcp_panel">';
+					if ( $args['use_button'] ) {
+						// Panel uses unlinked button as header
+						echo sprintf('<div class="panel_heading"><h4><button class="btn-link" data-toggle="%s" data-target="%s" aria-expanded="false" aria-controls="collapse-%s">%s %s</h4></button></div>', $collapsible, '#'.$panel_class, $panel_class, $alert['route-circles'], $alert_title );
+					} else {
+						// Panel users standard link header
+						if ( ! empty( $alert_url ) ) {
+							echo sprintf('<div class="panel_heading"><h4><a href="%s" data-toggle="%s" data-target="%s" aria-expanded="false" aria-controls="collapse-%s">%s %s</h4></a></div>', $alert_url, $collapsible, '#'.$panel_class, $panel_class,  $alert['route-circles'], $alert_title );
+						} else {
+							echo sprintf('<div class="panel_heading"><h4 data-toggle="%s" data-target="%s" aria-expanded="false" aria-controls="collapse-%s">%s %s</h4></div>', $collapsible, '#'.$panel_class, $panel_class,  $alert['route-circles'], $alert_title );
+						}
+					}
+					if ( ! empty( $alert_url ) ) {
+						echo sprintf('<div class="panel_body %s" id="%s"><div class="panel_description"><div class="panel_subheading">%s<span class="tcp_affected_routes"> %s</span></div>%s</div><a href="%s">%s</a></div></div>', $collapsible, $panel_class, $alert_dates, $affected_text, $alert_desc, $alert_url, $link_text );
+					} else {
+						echo sprintf('<div class="panel_body %s" id="%s"><div class="panel_description"><div class="panel_subheading">%s<span class="tcp_affected_routes"> %s</span></div>%s</div></div></div>', $collapsible, $panel_class, $alert_dates, $affected_text, $alert_desc );
+					}	
+				}
+				echo '</div>';
+				$alert_count++;
+			}
+			
+			echo $alert_footer;
+		}
+	} else {
+		// Get alerts where the end date is either not set or is in the future.
+		$query_args = array(
+			'post_type'		  => 'alert',
+			'posts_per_page'  => $args['number_posts'],
+			'meta_query' => array(
 				'relation' => 'OR',
+					array(
+						'key'	  => 'end_date',
+						'compare' => 'NOT EXISTS',
+        				'value'   => '',
+					),
 				array(
-					'key'		=> 'end_date',
-					'compare'	=> 'NOT EXISTS',
-          'value'   => '',
-				),
-				array(
-					'key'		=> 'end_date',
-					'value' 	=> $dt->format("Y-m-d"),
-					'compare'	=> '>=',
-					'type'		=> 'DATE',
-				),
-			),
-			array(
-				'relation' => 'OR',
-				array(
-					'key'		=> 'affected_routes',
-					'value' 	=> 'all_routes',
-					'compare'	=> 'LIKE',
-				),
-				array(
-					'key'		=> 'affected_routes',
-					'value'		=> $post->post_name,
-					'compare'	=> 'LIKE',
+					'key'	  => 'end_date',
+					'value'   => $dt->format("Y-m-d"),
+					'compare' => '>=',
+					'type'	  => 'DATE',
 				),
 			),
 		);
-	}
-
-	$alert_query = new WP_Query( $query_args );
-
-	if ( $alert_query->have_posts() ) {
-		echo '<div class="tcp_alerts">';
-		echo '<h3 class="tcp_alert_header">' . file_get_contents( plugin_dir_path( __FILE__ ) . 'inc/icon-alert.php' ) . 'Alerts</h3>';
-		echo '<div class="container">';
-
-		while ( $alert_query->have_posts() ) {
-			$alert_query->the_post();
-
-			// Retrieve formatted date text for effective date(s)
-			$date_text = tcp_get_alert_dates( get_the_ID() );
-
-			$affected_routes = tcp_get_affected( get_the_ID(), $args['sep_affected'] );
-
-			$affected_text = '';
-
-			if ($affected_routes != '' && $args['show_affected']) {
-				$affected_text = $args['affected_text'] . $affected_routes;
-			}
-
-			echo '<div class="tcp_panel">';
-
-			printf('<div class="panel_heading %s" data-target="%s"><h4><a href="%s">%s</a></h4><div class="panel_subheading">%s<span class="tcp_affected_routes">%s</span></div></div>', $args['collapse'] ? 'collapse_toggle' : '', 'panel_' . get_the_ID(), get_permalink(), get_the_title(), $date_text, $affected_text);
-
-			// Create collapisble panel with the_content() of alert
-			if ( $args['collapse'] ) {
-				printf('<div class="panel_body" id="%s">%s</div>', 'panel_' . get_the_ID(), get_the_content() );
-			}
-			echo '</div>';
+		
+		// Overwrite meta query for single route alerts
+		if ( $args['single_route'] ) {
+			$query_args['meta_query'] = array(
+				'relation'	=> 'AND',
+				array(
+					'relation' => 'OR',
+						array(
+						'key'	  => 'end_date',
+						'compare' => 'NOT EXISTS',
+          				'value'   => '',
+					),
+					array(
+						'key'	  => 'end_date',
+						'value'   => $dt->format("Y-m-d"),
+						'compare' => '>=',
+						'type'	  => 'DATE',
+					),
+				),
+				array(
+					'relation' => 'OR',
+					array(
+						'key'	  => 'affected_routes',
+						'value'   => 'all_routes',
+						'compare' => 'LIKE',
+					),
+					array(
+						'key'	  => 'affected_routes',
+						'value'	  => $post->post_name,
+						'compare' => 'LIKE',
+					),
+				),
+			);
 		}
-		echo '</div></div>';
+		$alert_query = new WP_Query( $query_args );
 
-		wp_reset_postdata();
+		if ( $alert_query->have_posts() ) {
+		
+			// Begin alert header
+			echo $alert_header;
 
-		return $alert_query->post_count;
+			while ( $alert_query->have_posts() ) {
+				
+				$alert_query->the_post();
+
+				$collapsible   = $args['collapse'] ? 'collapse' : '' . 'panel-' . get_the_ID();
+				$panel_class   = 'panel-' . get_the_ID();
+				$alert_url     = get_permalink();
+				$alert_title   = get_the_title();
+				$alert_desc    = $args['excerpt_only'] ? get_the_excerpt() : get_the_content();
+				$alert_dates   = $date_text;
+				$affected_text = $args['affected_text'];
+				$link_text     = $args['link_text'] === 'title' ? $alert_title : $args['link_text'];
+ 
+				// Retrieve formatted date text for effective date(s)
+				$date_text       = tcp_get_alert_dates( get_the_ID() );
+				$affected_routes = tcp_get_affected( get_the_ID(), $args['sep_affected'] );
+				$affected_text   = '';
+ 
+				if ( $affected_routes != '' && $args['show_affected'] ) {
+					$affected_text = $args['affected_text'] . $affected_routes;
+				}
+				// Add alert panel 
+				echo '<div class="tcp_panel">';
+				if ( $args['use_button'] ) {
+					// Panel uses unlinked button as header
+					echo sprintf('<div class="panel_heading"><h4><button class="btn-link" data-toggle="%s" data-target="%s" aria-expanded="false" aria-controls="collapse-%s">%s</h4></button></div>', $collapsible, '#'.$panel_class, $panel_class, $alert_title );
+				} else {
+					// Panel users standard link header
+					echo sprintf('<div class="panel_heading"><h4><a href="%s" data-toggle="%s" data-target="%s" aria-expanded="false" aria-controls="collapse-%s">%s</h4></a></div>', $alert_url, $collapsible, '#'.$panel_class, $panel_class, $alert_title );
+				}
+				echo sprintf('<div class="panel_body %s" id="%s"><div class="panel_description"><div class="panel_subheading">%s<span class="tcp_affected_routes"> %s</span></div>%s</div><a href="%s">%s</a></div></div>', $collapsible, $panel_class, $alert_dates, $affected_text, $alert_desc, $alert_url, $link_text );
+				}
+				echo '</div>';
+
+			// Add alert footer
+			echo $alert_footer;
+
+			wp_reset_postdata();
+
+			return $alert_query->post_count;
+
+		}
+
+		return false;
 	}
-	return false;
 }
 
 /**
@@ -419,7 +507,7 @@ function tcp_do_alerts( $args = array() ) {
 */
 function tcp_get_alert_dates( $post_id = null ) {
 
-	if ( empty($post_id) ) {
+	if ( empty( $post_id ) ) {
 
 		// Setup postdata
 		global $post;
