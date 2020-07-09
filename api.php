@@ -295,8 +295,6 @@ function tcp_do_alerts( $args = array() ) {
 		'affected-routes' => true,
 		'route-circles'   => true,
 	);
-
-	$args['collapse'] = true;
  
 	global $post;
 
