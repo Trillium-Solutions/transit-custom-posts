@@ -285,15 +285,16 @@ function tcp_do_alerts( $args = array() ) {
 	$defaults = array(
 		'collapse'		  => false,
 		'use_button'      => false,
- 		'single_route'	  => false,
+		'single_route'	  => false,
 		'show_affected'	  => true,
 		'sep_affected'	  => ', ',
 		'number_posts'	  => -1,
-		'link_text'       => 'Permalink',
 		'excerpt_only'    => false,
-		'affected_text'	  => 'Affected Routes: ',
+		'feed-id'		  => '',
 		'affected-routes' => true,
 		'route-circles'   => true,
+		'link_text'       => 'Permalink',
+		'affected_text'	  => 'Affected Routes: '
 	);
 
 	global $post;
@@ -367,7 +368,7 @@ function tcp_do_alerts( $args = array() ) {
 					if ( ! empty( $alert['route-circles'] ) ) {
 						$alert_title = $alert['route-circles'] . ' ' . $alert_title;
 					} 
-					
+
 					include( plugin_dir_path( __FILE__ ) . 'inc/alert-panel.php' );
 					$alert_count++;
 				}
