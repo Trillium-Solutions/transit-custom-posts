@@ -295,7 +295,7 @@ function tcp_do_alerts( $args = array() ) {
 		'affected-routes' => true,
 		'route-circles'   => true,
 	);
- 
+
 	global $post;
 
 	if ( $post->post_type == 'route' ) {
@@ -315,24 +315,7 @@ function tcp_do_alerts( $args = array() ) {
 	$dt = new DateTime( "now", new DateTimeZone( $zone_string ) );
 	$dt->setTimestamp( $timestamp );
 
-	// Set up alert template variables 
-	$collapsible   = '';
-	$alert_url     = '';
-	$alert_title   = '';
-	$alert_dates   = '';
-	$affected_text = '';
-	$panel_class   = '';
-	$alert_desc    = '';
-	$affected_text = '';
-
-	// Declare up alerts header
-	$alert_header  = '<div class="tcp_alerts">';
-	$alert_header .= '<h3 class="tcp_alert_header">' . file_get_contents( plugin_dir_path( __FILE__ ) . 'inc/icon-alert.php' ) . 'Alerts</h3>';
-	$alert_header .= '<div class="container">';
-	
-	// Declare alerts footer 
-	$alert_footer = '</div></div>';
-
+	// TRANSIT ALERTS FORMATTING 
 	if ( get_option( 'tcp_alerts_transit_alerts' ) ) {
 		
 		// Use transit alerts options instead of querying for alerts
@@ -342,51 +325,57 @@ function tcp_do_alerts( $args = array() ) {
 				$args['route-id'] = $post->post_name;
 				$alerts = transit_alerts_get_alerts( $args );
 			} else {
-				$alerts  = transit_alerts_get_alerts( $args );
+				$alerts = transit_alerts_get_alerts( $args );
 			}	
 
 			if ( ! empty( $alerts ) ) {
 
-				echo $alert_header;
+				include( plugin_dir_path( __FILE__ ) . 'inc/alert-header.php' );
 
 				$alert_count = 1;
 
 				foreach( $alerts as $alert ) {
 
-					$collapsible   = $args['collapse'] ? 'collapse' : '' . 'panel-' . $alert_count;
 					$panel_class   = 'panel-' . $alert_count;
 					$alert_url     = $alert['url'];
 					$alert_title   = $alert['title'];
 					$alert_desc    = $alert['description'];
-					$alert_dates   = $alert_dates;
-					$affected_text = $args['affected_text'] . ' ' . implode( ',', $alert['affected-routes'] );
-					$link_text     = $args['link_text'] === 'title' ? $alert_title : $args['link_text'];
+					$alert_dates   = '';
+					$collapsible   = $defaults['collapse'];
+					$link_text     = $default['link_text'];
+					$affected_text = $defaults['affected_text'];
 
-					echo '<div class="tcp_panel">';
-					if ( $args['use_button'] ) {
-						// Panel uses unlinked button as header
-						echo sprintf('<div class="panel_heading"><h4><button class="btn-link" data-toggle="%s" data-target="%s" aria-expanded="false" aria-controls="collapse-%s">%s %s</h4></button></div>', $collapsible, '#'.$panel_class, $panel_class, $alert['route-circles'], $alert_title );
-					} else {
-						// Panel users standard link header
-						if ( ! empty( $alert_url ) ) {
-							echo sprintf('<div class="panel_heading"><h4><a href="%s" data-toggle="%s" data-target="%s" aria-expanded="false" aria-controls="collapse-%s">%s %s</h4></a></div>', $alert_url, $collapsible, '#'.$panel_class, $panel_class,  $alert['route-circles'], $alert_title );
-						} else {
-							echo sprintf('<div class="panel_heading"><h4 data-toggle="%s" data-target="%s" aria-expanded="false" aria-controls="collapse-%s">%s %s</h4></div>', $collapsible, '#'.$panel_class, $panel_class,  $alert['route-circles'], $alert_title );
-						}
+					// Check for and set button 
+					$alert_button = array_key_exists( 'use_button', $args ) ? $args ['use_button'] : '';
+
+					// Check for and set collapsible class
+					if ( array_key_exists( 'collapse', $args ) ) {
+						$collapsible = $args['collapse'] ? 'collapse' : '' . 'panel-' . $alert_count;
+					} 
+
+					// Check for and set alert title 
+					if ( array_key_exists( 'link_text', $args ) ) {
+						$link_text  = $args['link_text'] === 'title' ? $alert_title : $args['link_text'];
 					}
-					if ( ! empty( $alert_url ) ) {
-						echo sprintf('<div class="panel_body %s" id="%s"><div class="panel_description"><div class="panel_subheading">%s<span class="tcp_affected_routes"> %s</span></div>%s</div><a href="%s">%s</a></div></div>', $collapsible, $panel_class, $alert_dates, $affected_text, $alert_desc, $alert_url, $link_text );
-					} else {
-						echo sprintf('<div class="panel_body %s" id="%s"><div class="panel_description"><div class="panel_subheading">%s<span class="tcp_affected_routes"> %s</span></div>%s</div></div></div>', $collapsible, $panel_class, $alert_dates, $affected_text, $alert_desc );
-					}	
-				}
-				echo '</div>';
-				$alert_count++;
-			}
+
+					// Check for and set affected text 
+					if ( array_key_existS( 'affected_text', $args ) ) {
+						$affected_text = $args['affected_text'] . ' ' . implode( ',', $alert['affected-routes'] );
+					} 
 			
-			echo $alert_footer;
+					// Set route circles.
+					if ( ! empty( $alert['route-circles'] ) ) {
+						$alert_title = $alert['route-circles'] . ' ' . $alert_title;
+					} 
+					
+					include( plugin_dir_path( __FILE__ ) . 'inc/alert-panel.php' );
+					$alert_count++;
+				}
+			}
+			include( plugin_dir_path( __FILE__ ) . 'inc/alert-footer.php' );
 		}
 	} else {
+		// CPT ALERTS FORMATTING 
 		// Get alerts where the end date is either not set or is in the future.
 		$query_args = array(
 			'post_type'		  => 'alert',
@@ -445,51 +434,67 @@ function tcp_do_alerts( $args = array() ) {
 		if ( $alert_query->have_posts() ) {
 		
 			// Begin alert header
-			echo $alert_header;
+			include( plugin_dir_path( __FILE__ ) . 'inc/alert-header.php' );
 
 			while ( $alert_query->have_posts() ) {
 				
 				$alert_query->the_post();
 
-				$collapsible   = $args['collapse'] ? 'collapse' : '' . 'panel-' . get_the_ID();
-				$panel_class   = 'panel-' . get_the_ID();
-				$alert_url     = get_permalink();
-				$alert_title   = get_the_title();
-				$alert_desc    = $args['excerpt_only'] ? get_the_excerpt() : get_the_content();
-				$alert_dates   = $date_text;
-				$affected_text = $args['affected_text'];
-				$link_text     = $args['link_text'] === 'title' ? $alert_title : $args['link_text'];
- 
+				$panel_class         = 'panel-' . get_the_ID();
+				$alert_url           = get_permalink();
+				$alert_title         = get_the_title();
+				$alert_desc          = get_the_content();
+				$alert_dates         = $date_text;
+				$collapsible         = $defaults['collapse'];
+				$affected_text       = $defaults['affected_text'];
+				$link_text           = $alert_title;
+				$alert_route_circles = '';
+
+				// Check for and set button 
+				$alert_button = array_key_exists( 'use_button', $args ) ? $args ['use_button'] : '';
+
+				// Check for and set excerpt option 
+				if ( array_key_exists( 'excerpt_only', $args ) ) {
+					$alert_desc = $args['excerpt_only'] ? get_the_excerpt() : get_the_content();
+				}
+
+				// Check for and set collapsible class
+				if ( array_key_exists( 'collapse', $args ) ) {
+					$collapsible = $args['collapse'] ? 'collapse' : '' . 'panel-' . get_the_ID();
+				} 
+
+				// Check for and set alert title 
+				if ( array_key_exists( 'link_text', $args ) ) {
+					$link_text  = $args['link_text'] === 'title' ? $alert_title : $args['link_text'];
+				} 
+
+				// Check for and set affected text 
+				if ( array_key_exists( 'affected_text', $args ) && ! empty( $alert['affected-routes'] ) ) {
+					$affected_text = $affected_text . ' ' . implode( ',', $alert['affected-routes'] );
+				}
+
 				// Retrieve formatted date text for effective date(s)
 				$date_text       = tcp_get_alert_dates( get_the_ID() );
 				$affected_routes = tcp_get_affected( get_the_ID(), $args['sep_affected'] );
 				$affected_text   = '';
  
 				if ( $affected_routes != '' && $args['show_affected'] ) {
+					$affected_routes = str_replace( '_', ' ', $affected_routes );
+					$affected_routes = str_replace( '-', ' ', $affected_routes );
+					$affected_routes = ucwords( $affected_routes );
 					$affected_text = $args['affected_text'] . $affected_routes;
 				}
-				// Add alert panel 
-				echo '<div class="tcp_panel">';
-				if ( $args['use_button'] ) {
-					// Panel uses unlinked button as header
-					echo sprintf('<div class="panel_heading"><h4><button class="btn-link" data-toggle="%s" data-target="%s" aria-expanded="false" aria-controls="collapse-%s">%s</h4></button></div>', $collapsible, '#'.$panel_class, $panel_class, $alert_title );
-				} else {
-					// Panel users standard link header
-					echo sprintf('<div class="panel_heading"><h4><a href="%s" data-toggle="%s" data-target="%s" aria-expanded="false" aria-controls="collapse-%s">%s</h4></a></div>', $alert_url, $collapsible, '#'.$panel_class, $panel_class, $alert_title );
-				}
-				echo sprintf('<div class="panel_body %s" id="%s"><div class="panel_description"><div class="panel_subheading">%s<span class="tcp_affected_routes"> %s</span></div>%s</div><a href="%s">%s</a></div></div>', $collapsible, $panel_class, $alert_dates, $affected_text, $alert_desc, $alert_url, $link_text );
-				}
-				echo '</div>';
+				// Add alert panel
+				include( plugin_dir_path( __FILE__ ) . 'inc/alert-panel.php' );
+			}
 
 			// Add alert footer
-			echo $alert_footer;
+			include( plugin_dir_path( __FILE__ ) . 'inc/alert-footer.php' );
 
 			wp_reset_postdata();
 
 			return $alert_query->post_count;
-
 		}
-
 		return false;
 	}
 }
