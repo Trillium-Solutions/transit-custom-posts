@@ -77,10 +77,9 @@ This file should be a CSV with the following columns at minimum:
 * `saturday` : binary value that indicates whether this timetable shows service for Saturdays. Valid values are `0` and `1`.
 * `sunday` : binary value that indicates whether this timetable shows service for Sundays. Valid values are `0` and `1`.
 
-### Manually uploading files
+## Uploading Feeds and Timetables
 
-If you would like to automatically generate timetable posts but you are not able to export `timetables.txt` with your feed or you would like to use HTML timetables generated with [GTFS-to-HTML](https://github.com/BlinkTagInc/gtfs-to-html), you can use the following process:
+If you would like to automatically generate timetable posts but you are not able to export `timetables.txt` with your feed or you would like to use HTML timetables generated with [GTFS-to-HTML](https://github.com/BlinkTagInc/gtfs-to-html), you can use the options in GTFS Settings for manually uploading these files.
 
-1. Create `timetables.txt` and add it to your feed. Use a zip utility to compress the feed with timetables.txt included.
-3. (Optional) Use GTFS-to-HTML to generate timetable HTML (using the same `timetables.txt`).
-4. Run GTFS Update, select the option to `Upload feed manually` and upload your timetables as well.
+* If the public feed specified in **GTFS Feed Url** does not contain `timetables.txt`, you can instead use the **Upload feed manually** option to upload a zip that contains `timetables.txt` and the GTFS you would like to use.
+* If you have timetable HTML files, they must be uploaded via the **Upload Timetables** field. Timetable HTML files should be zipped together and not nested in multiple directories for best results. Previously created timetables will only be overwritten if a new timetable HTML file is uploaded; therefore, it is possible but not required to just upload the timetables you would like to add or update.
