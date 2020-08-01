@@ -9,6 +9,9 @@
 * License: GPL2
 */
 
+// Define plugin constants 
+
+
 // Admin settings page
 require_once('settings-page.php');
 

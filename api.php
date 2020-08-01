@@ -228,7 +228,7 @@ function the_route_meta() {
 */
 function get_route_circle( $post_id = NULL, $size = "medium" ) {
 
-	if ( !post_type_exists( 'route' ) ) {
+	if ( ! post_type_exists( 'route' ) ) {
 
 		// Fail silently if routes don't exist.
 		return;
@@ -482,24 +482,49 @@ function tcp_get_alert_dates( $post_id = null ) {
 * @param array $args Not implemented.
 */
 function the_timetables( $args = array() ) {
-	$timetables = get_timetables();
+	$timetables  = get_timetables();
+	$days        = array();
+	$directions  = array();
+	$timestables = array();
 
 	if ( $timetables->have_posts() ) {
 		while ( $timetables->have_posts() ) {
 			$timetables->the_post();
 
 			// Get timetable metadata
-			$dir = get_post_meta( get_the_ID(), 'direction_label', true);
-			$days = get_post_meta( get_the_ID(), 'days_of_week', true);
+			$table_dir  = get_post_meta( get_the_ID(), 'direction_label', true) ;
+			$table_days = get_post_meta( get_the_ID(), 'days_of_week', true );
 
 			// Create a timetable div with data attributes for optional JS manipulation
-			printf('<div class="timetable-holder" data-dir="%s" data-days="%s">', $dir, $days);
+			if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
+				
+				// Pushing items into directions and days to array
+				// to use in legend nav buttons.
+				$days[]        = $table_days;
+				$directions[]  = $table_dir;	
+				$table_content = get_the_content();
+				$table_content = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $table_content);
+				$table_content = preg_replace('#<link(.*?)>(.*?)</link>#is', '', $table_content);
 
-			// Should be HTML or an image
-			the_content();
+				$timestables[] = array(
+					'day' => $table_days,
+					'direction' => $table_dir,
+					'table' => $table_content
+				);		
 
-			echo '</div>';
+			} else {
+				printf('<div class="timetable-holder" data-dir="%s" data-days="%s">', $table_dir, $table_days);
+					// Should be HTML or an image
+					the_content();
+				echo '</div>';
+			}			
 		}
+
+		if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
+			$days = array_unique( $days );
+			$directions = array_unique( $directions );
+			include( plugin_dir_path( __FILE__ ) . '/inc/templates/timetables-legend.php' );
+		}		
 		wp_reset_postdata();
 	}
 }
