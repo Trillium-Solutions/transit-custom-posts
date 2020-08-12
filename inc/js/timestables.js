@@ -6,13 +6,9 @@
  */ 
 
 jQuery( document ).ready(function() {
-   
     var button_groups = jQuery('.button-group button');
-			
 		jQuery.each( button_groups, function() {
-				
 			jQuery(this).on('click', function() {
-
 				// Get selected button and button type.
 				var buttonClass = jQuery(this).attr('id');
 				var buttonType  = jQuery(this).parent().parent().attr('id');
@@ -28,7 +24,8 @@ jQuery( document ).ready(function() {
 				// Remove show class from timestables and re-add it to 
 				// the selectedTimestables.
 				jQuery( '.timestable' ).removeClass('show');
-				jQuery( selectedTimestables ).toggleClass('show');
-			});
+                jQuery( selectedTimestables ).toggleClass('show');
+            });
+            jQuery('#days .button-group button').trigger('click');
         });
-    });             
+});             
