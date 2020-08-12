@@ -41,3 +41,10 @@ if ( get_option('tcp_custom_types') ) {
 		$board_meetings = TCP_BoardMeeting::getInstance();
 	}
 }
+
+// Enqueue jQuery and custom script
+if ( ! wp_script_is( jQuery ) ) {
+	wp_enqueue_script('jQuery');
+	wp_enqueue_script('tcp-timestable-scripts', plugins_url('/inc/js/timestables.js', __FILE__), array('jquery'),'1.0', true );
+}
+
