@@ -44,6 +44,7 @@ function tcp_load_custom_scripts() {
 	if ( ! wp_script_is( 'jquery', 'enqueued' ) ) {
 		wp_enqueue_script( 'jquery' );
 	}		
-	wp_enqueue_script('tcp-timestable-scripts', plugins_url('/inc/js/timestables.js', __FILE__), array('jquery'),'1.0', true );
+	wp_enqueue_script('tcp-timetable-scripts', plugins_url('/inc/js/timetables.js', __FILE__), array('jquery'),'1.0', true );
+	wp_enqueue_style('tcp-timetable-styles', plugins_url('/inc/css/timetables.css', __FILE__), '', rand() );
 }
 add_action( 'wp_enqueue_scripts', 'tcp_load_custom_scripts' );

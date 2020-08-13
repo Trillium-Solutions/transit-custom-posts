@@ -507,9 +507,9 @@ function the_timetables( $args = array() ) {
 				$table_content = preg_replace('#<link(.*?)>(.*?)</link>#is', '', $table_content);
 
 				$timestables[] = array(
-					'day' => $table_days,
+					'day'       => $table_days,
 					'direction' => $table_dir,
-					'table' => $table_content
+					'table'     => $table_content
 				);		
 
 			} else {
@@ -522,7 +522,9 @@ function the_timetables( $args = array() ) {
 
 		if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
 			$days = array_unique( $days );
+			$days = array_reverse( $days );
 			$directions = array_unique( $directions );
+			$directions = array_reverse( $directions );
 			include( plugin_dir_path( __FILE__ ) . '/inc/templates/timetables-legend.php' );
 		}		
 		wp_reset_postdata();
