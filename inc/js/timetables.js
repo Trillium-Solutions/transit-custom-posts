@@ -19,8 +19,15 @@ jQuery( document ).ready(function() {
 				// Get timetable nav selections via data attributes.
 				var days                = jQuery('#timetable-nav').attr('data-days');
 				var direction           = jQuery('#timetable-nav').attr('data-direction');
-				var selectedTimestables = '.' + days + '.' + direction;
+				var selectedTimesTables = '';
 
+				if ( days ) {
+					selectedTimestables = '.' + days;
+				}
+				console.log(direction);
+				if ( direction.length > 1 ) {
+					selectedTimestables += '.' + direction;
+				}
 				// Remove show class from timestables and re-add it to 
 				// the selectedTimestables.
 				jQuery( '.timestable' ).removeClass('show');

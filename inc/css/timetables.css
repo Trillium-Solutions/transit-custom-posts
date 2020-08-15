@@ -3,6 +3,10 @@
     margin: 0 auto;
 }
 
+.timetable-panel {
+    display: none;
+}
+
 .sr-only {
     border: 0 !important;
 	clip: rect(1px, 1px, 1px, 1px) !important;
@@ -48,12 +52,12 @@
     text-transform: uppercase;
 } 
 
-.timestable {
+.timetable {
     margin: 2em 0 4em 0;
     text-align: left;
 }
 
-.timestable thead {
+.timetable thead {
     background: #dedede;
     margin-bottom: 20px;
 }

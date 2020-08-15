@@ -492,7 +492,7 @@ function the_timetables( $args = array() ) {
 			$timetables->the_post();
 
 			// Get timetable metadata
-			$table_dir  = get_post_meta( get_the_ID(), 'direction_label', true) ;
+			$table_dir  = get_post_meta( get_the_ID(), 'direction_label', true );
 			$table_days = get_post_meta( get_the_ID(), 'days_of_week', true );
 
 			// Create a timetable div with data attributes for optional JS manipulation
@@ -503,8 +503,6 @@ function the_timetables( $args = array() ) {
 				$days[]        = $table_days;
 				$directions[]  = $table_dir;	
 				$table_content = get_the_content();
-				$table_content = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $table_content);
-				$table_content = preg_replace('#<link(.*?)>(.*?)</link>#is', '', $table_content);
 
 				$timestables[] = array(
 					'day'       => $table_days,
@@ -521,10 +519,12 @@ function the_timetables( $args = array() ) {
 		}
 
 		if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
-			$days = array_unique( $days );
-			$days = array_reverse( $days );
+			$days = array_unique( $days ); // Remove duplicates 
+			$days = array_reverse( $days ); // Place in proper order
+			$days = array_filter( $days );  // Remove empties or false
 			$directions = array_unique( $directions );
 			$directions = array_reverse( $directions );
+			$directions = array_filter( $directions );
 			include( plugin_dir_path( __FILE__ ) . '/inc/templates/timetables-legend.php' );
 		}		
 		wp_reset_postdata();
