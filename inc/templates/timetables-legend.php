@@ -1,6 +1,6 @@
 
 
-<div id="timetable-nav" role="navigation" aria-label="Timetable Multiselect Tablist"  aria-activedescendant="<?php echo strtolower( $days[0] ) . ' ' . strtolower( $directions[0] ); ?>" data-days="<?php echo strtolower( $days[0] ); ?>" data-direction="<?php echo strtolower( $directions[0] ); ?>">  
+<div id="timetable-nav" role="navigation" aria-label="Timetable Multiselect Tablist"  aria-activedescendant="<?php echo strtolower( $days[0] ) . ' ' . strtolower( $directions[0] ); ?>">  
     <?php if ( ! empty( $days ) && ( count( $days ) > 1 || ! empty( $directions ) ) ) { ?>
         <div id="days">
             <h3>Days:</h3>
@@ -42,7 +42,7 @@
         array_push( $timetables_by_day_dir[ $timetable_key ], $table['table'] );
     }
     foreach( $timetables_by_day_dir as $key => $value ) {
-        echo '<div  id="' . str_replace( ' ', '-', $key ) . '" class="timetable-panel">';
+        echo '<div  id="' . $key  . '" class="timetable-panel">';
         foreach ( $value as $timetable ) {
             echo $timetable;
         }
