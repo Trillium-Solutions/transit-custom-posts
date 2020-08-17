@@ -45,7 +45,7 @@
     foreach( $timetables_by_day_dir as $key => $value ) {
         $aria_label = str_replace( '-', ' ', $key );
         $aria_label = trim( str_replace( 'tab', ' ', $aria_label ) );
-        echo '<div  role="tabpanel"  id="' . $key  . '" class="timetable-panel" aria-labelledby="' . $aria_label . '" aria-expanded="false" >';
+        echo '<div  role="tabpanel"  id="' . $key  . '" class="timetable-panel" aria-label="' . $aria_label . '" aria-expanded="false" tabindex="-1">';
         foreach ( $value as $timetable ) {
             echo $timetable;
         }

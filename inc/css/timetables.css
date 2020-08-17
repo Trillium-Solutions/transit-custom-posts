@@ -3,10 +3,6 @@
     margin: 0 auto;
 }
 
-.timetable-panel {
-    display: none;
-}
-
 .sr-only {
     border: 0 !important;
 	clip: rect(1px, 1px, 1px, 1px) !important;
@@ -36,8 +32,8 @@
 #timetable-nav .button-group button, 
 #timetable-nav .button-group button:hover, 
 #timetable-nav .button-group button:focus  {
-    outline: 0;
-    border-radius: 0;
+    margin-right: 6px;
+    outline: 1;
 }
 
 #timetable-nav #days, 
@@ -87,4 +83,11 @@
     padding: .7em .5em 1em 1.5em;
     font-style: italic;
     font-size: small;
+}
+.timetable-panel {
+    display: none;
+}
+
+.timetable-panel[aria-expanded="true"] {
+    display: block;
 }
