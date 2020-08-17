@@ -13,19 +13,18 @@ jQuery( document ).ready(function() {
 				var allTabs         = jQuery('#timetable-nav button');
 				var currentTabIndex = allTabs.index( jQuery(this) );
 
-				// Home button 
+				// Home button - focus on first tab
 				if ( 36 === e.which ) {
 					allTabs[0].focus();
 				}	
 				
-				// End Button 
+				// End Button - focus on last tab
 				if ( 35 === e.which ) {
 					allTabs[ allTabs.length -1 ].focus();
 				}	
 
-				// Right Arrow Tab Navigation 
+				// Right Arrow Tab Navigation - focus on next tab
 				if ( 39 === e.which ) {
-					// Set focus on next tab.
 					if ( allTabs.length -1 != currentTabIndex ) {
 						allTabs[currentTabIndex + 1 ].focus();
 					} 
@@ -34,9 +33,8 @@ jQuery( document ).ready(function() {
 					}
 				}
 
-				// Left Arrow Tab Navigation
+				// Left Arrow Tab Navigation - focus on previous tab
 				if ( 37 === e.which ) {
-					// Set focus on previous tab.
 					if ( 0 != currentTabIndex ) {
 						allTabs[currentTabIndex -1 ].focus();
 					}
@@ -48,12 +46,10 @@ jQuery( document ).ready(function() {
 				// Click or enter change selection
 				if ( 13 === e.which || 'click' === e.type ) {
 
-					// find the container of selected item 
-					// mark the aria false for those items... 
+					// Update aria selected attribute for tab.
 					var selectedContainer = jQuery(this).parent().attr('id');
 					jQuery('#' + selectedContainer + ' button' ).attr('aria-selected', 'false');
 			   	
-					// Set selected tab aria-selected.
 					jQuery(this).attr('aria-selected', 'true' );
 
 					// Update the active descendant.
@@ -76,9 +72,11 @@ jQuery( document ).ready(function() {
 
 					// Expand the selected panel by using currentActiveDescendant as panel ID
 					jQuery('.timetable-panel').attr('aria-expanded', 'false');
-					jQuery('.timetable-panel').attr('tabindex', -1);
+					jQuery('.timetable-panel').attr('tabindex', -1 );
 					jQuery('#' + currentActiveDescendant ).attr('aria-expanded', 'true');
-					jQuery('#' + currentActiveDescendant ).attr('tabindex', 0);
+					jQuery('#' + currentActiveDescendant ).attr('tabindex', 0 );
+					jQuery('#' + currentActiveDescendant ).focus();
+					
 				}		
 			});
             jQuery('#days button').first().trigger('click');

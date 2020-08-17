@@ -482,18 +482,30 @@ function tcp_get_alert_dates( $post_id = null ) {
 * @param array $args Not implemented.
 */
 function the_timetables( $args = array() ) {
-	$timetables  = get_timetables();
-	$days        = array();
-	$directions  = array();
-	$timestables = array();
+	$timetables    = get_timetables();
+	$days          = array();
+	$directions    = array();
+	$timestables   = array();
+	$na_day_button = false;
+	$na_dir_button = false;
 
 	if ( $timetables->have_posts() ) {
+		
 		while ( $timetables->have_posts() ) {
+			
 			$timetables->the_post();
 
 			// Get timetable metadata
 			$table_dir  = get_post_meta( get_the_ID(), 'direction_label', true );
-			$table_days = get_post_meta( get_the_ID(), 'days_of_week', true );
+			$table_days	= get_post_meta( get_the_ID(), 'days_of_week', true );
+
+			// Check for days with no direction or directions with no days 
+			if ( ! $na_dir_button && ! empty ( $table_days ) && empty( $table_dir ) ) { 
+				$na_dir_button = true;
+			}
+			if ( ! $na_day_button && ! empty ( $table_dir ) && empty( $table_days ) ) { 
+				$na_day_button = true;
+			}				
 
 			// Create a timetable div with data attributes for optional JS manipulation
 			if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
@@ -519,12 +531,18 @@ function the_timetables( $args = array() ) {
 		}
 
 		if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
-			$days = array_unique( $days ); // Remove duplicates 
+			$days = array_unique( $days );  // Remove duplicates 
 			$days = array_reverse( $days ); // Place in proper order
 			$days = array_filter( $days );  // Remove empties or false
+			if ( $na_day_button ) {
+				array_push( $days, 'no-day');
+			}
 			$directions = array_unique( $directions );
 			$directions = array_reverse( $directions );
 			$directions = array_filter( $directions );
+			if ( $na_dir_button ) {
+				array_push( $directions, 'no-direction');
+			}
 			include( plugin_dir_path( __FILE__ ) . '/inc/templates/timetables-legend.php' );
 		}		
 		wp_reset_postdata();
