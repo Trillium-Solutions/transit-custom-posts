@@ -26,7 +26,7 @@
                                 $day_selected = "";
                             }
                         }
-                        echo '<input role="tab" id="tab-' .  strtolower( $day ) . '" type="radio" name="days" value="' . strtolower( $day ) .'"  aria-controls="' . strtolower( $day ) . '" ' . $day_selected . '"/>';
+                        echo '<input role="tab" id="tab-' .  strtolower( $day ) . '" type="radio" name="days" value="' . strtolower( str_replace(', ', '', $day ) ) .'"  aria-controls="' . strtolower( str_replace( ', ', '', $day ) ) . '" ' . $day_selected . '"/>';
                         echo '<label for="tab-' .  strtolower( $day ) . '">' . $day_text . '</label>';
                         $day_count++;   
                     } 
@@ -49,7 +49,7 @@
                                 $direction_selected = "";
                             }
                         }
-                        echo '<input role="tab" id="tab-' .  strtolower( $direction ) . '" type="radio" name="directions" value="' . strtolower( $direction ) .'"  aria-controls="' . strtolower( $direction ) . ' "' . $direction_selected . '"/>';
+                        echo '<input role="tab" id="tab-' .  strtolower( $direction ) . '" type="radio" name="directions" value="' . strtolower( str_replace( ', ', '', $direction ) ) .'"  aria-controls="' . strtolower( str_replace(', ', '', $direction ) ) . ' "' . $direction_selected . '"/>';
                         echo '<label for="tab-' .  strtolower( $direction ) . '">' . $direction_text . '</label>';
                         $direction_count++;
                     } 
@@ -81,7 +81,7 @@
         foreach( $timetables_by_day_dir as $key => $value ) {
             $aria_label = str_replace( '-', ' ', $key );
             $aria_label = trim( str_replace( 'tab', ' ', $aria_label ) );
-            echo '<div role="tabpanel"  id="' . $key  . '" class="timetable-panel" aria-label="' . $aria_label . '" aria-expanded="false" tabindex="-1">';
+            echo '<div role="tabpanel"  id="' . str_replace(', ','', $key )  . '" class="timetable-panel" aria-label="' . $aria_label . '" aria-expanded="false" tabindex="-1">';
             foreach ( $value as $timetable ) {
                 echo $timetable;
             }
