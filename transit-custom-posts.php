@@ -38,13 +38,3 @@ if ( get_option('tcp_custom_types') ) {
 		$board_meetings = TCP_BoardMeeting::getInstance();
 	}
 }
-
-// Enqueue jQuery and custom scripts
-function tcp_load_custom_scripts() {
-	if ( ! wp_script_is( 'jquery', 'enqueued' ) ) {
-		wp_enqueue_script( 'jquery' );
-	}		
-	wp_enqueue_script('tcp-timetable-scripts', plugins_url('/inc/js/timetables.js', __FILE__), array('jquery'),'1.0', true );
-	wp_enqueue_style('tcp-timetable-styles', plugins_url('/inc/css/timetables.css', __FILE__), '', rand() );
-}
-add_action( 'wp_enqueue_scripts', 'tcp_load_custom_scripts' );

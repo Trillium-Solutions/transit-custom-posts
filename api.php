@@ -509,6 +509,15 @@ function the_timetables( $args = array() ) {
 
 			// Create a timetable div with data attributes for optional JS manipulation
 			if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
+
+				// Enqueue required jQuery and custom timetable scripts and css
+				add_action( 'wp_footer', function() {
+					if ( ! wp_script_is( 'jquery', 'enqueued' ) ) {
+						wp_enqueue_script( 'jquery' );
+					}		
+					wp_enqueue_script('tcp-timetable-scripts', plugins_url('/inc/js/timetables.js', __FILE__), array('jquery'),'1.0', true );
+					wp_enqueue_style('tcp-timetable-styles', plugins_url('/inc/css/timetables.css', __FILE__), '', rand() );
+				});
 				
 				// Pushing items into directions and days to array
 				// to use in legend nav buttons.
@@ -523,6 +532,7 @@ function the_timetables( $args = array() ) {
 				);		
 
 			} else {
+				// Print tables without timetable legend.
 				printf('<div class="timetable-holder" data-dir="%s" data-days="%s">', $table_dir, $table_days);
 					// Should be HTML or an image
 					the_content();
