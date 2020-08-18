@@ -10,48 +10,51 @@
     if ( count( $days ) > 1 || count( $directions ) > 1 ) { ?>
         <div id="timetable-nav" role="tablist" aria-multiselectable="true" aria-label="Timetable Options"  aria-activedescendant="<?php echo $default_tab; ?>" tabindex="0">  
         <?php if ( ! empty( $days ) && ( count( $days ) > 1 || ! empty( $directions ) ) ) { ?>
-            <div role="group" id="days" class="button-group" aria-labelledby="days-title">
-                <h3 id="days-title">Days:</h3>
+            <fieldset role="radiogroup" id="days" aria-labelledby="days-title">
+                <legend id="days-title">Days:</legend>
                 <?php 
                     $day_count = 0;
                     foreach( $days as $day ) {
-                        $day_selected = $day_count > 0 ? "false" : "true";
+                        $day_selected = $day_count > 0 ? "" : 'checked="checked"';
                         $day_text     = $day;
+
                         if ( $na_day_button ) {
                             if ( 'no-day' === $day ) { 
-                                $day_selected = "true";
+                                $day_selected = 'checked="checked"';
                                 $day_text     = 'N/A';
                             } else {
-                                $day_selected = "false";
+                                $day_selected = "";
                             }
                         }
-                        echo '<button role="tab" aria-selected="' . $day_selected .'"  aria-label="' .  strtolower( $day ) . '" aria-controls="' . strtolower( $day ) . '">' . $day_text . '</button>';
+                        echo '<input role="tab" id="tab-' .  strtolower( $day ) . '" type="radio" name="days" value="' . strtolower( $day ) .'"  aria-controls="' . strtolower( $day ) . '" ' . $day_selected . '"/>';
+                        echo '<label for="tab-' .  strtolower( $day ) . '">' . $day_text . '</label>';
                         $day_count++;   
                     } 
                 ?>
-            </div>    
+            </fieldset>    
         <?php } ?>    
         <?php if ( ! empty( $directions ) ) { ?>
-            <div role="group" id="direction" class="button-group" aria-labelledby="direction-title">
-                <h3 id="direction-title">Direction:</h3>
+            <fieldset role="radiogroup" id="direction" aria-labelledby="direction-title">
+                <legend id="direction-title">Directions:</legend>
                 <?php 
                     $direction_count = 0;
                     foreach( $directions as $direction ) {
-                        $direction_selected = $direction_count > 0 ? "false" : "true";
+                        $direction_selected = $direction_count > 0 ? "" : 'checked="checked"';
                         $direction_text     = $direction;
                         if ( $na_dir_button ) {
                             if ( 'no-direction' === $direction ) { 
-                                $direction_selected = "true";
+                                $direction_selected = 'checked="checked"';
                                 $direction_text     = 'N/A';
                             } else {
-                                $direction_selected = "false";
+                                $direction_selected = "";
                             }
                         }
-                        echo '<button role="tab" aria-selected="' . $direction_selected .'" aria-label="' . strtolower( $direction ) . '" aria-controls="' . strtolower( $direction ) . '">' . $direction_text . '</button>';
+                        echo '<input role="tab" id="tab-' .  strtolower( $direction ) . '" type="radio" name="directions" value="' . strtolower( $direction ) .'"  aria-controls="' . strtolower( $direction ) . ' "' . $direction_selected . '"/>';
+                        echo '<label for="tab-' .  strtolower( $direction ) . '">' . $direction_text . '</label>';
                         $direction_count++;
                     } 
                 ?>
-	        </div>
+	        </fieldset>
         <?php } ?> 
     </div>	
     <?php if ( ! empty( $timestables ) ) {

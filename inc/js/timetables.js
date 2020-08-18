@@ -49,7 +49,7 @@ jQuery( document ).ready(function() {
 					// Update aria selected attribute for tab.
 					var selectedContainer = jQuery(this).parent().attr('id');
 					jQuery('#' + selectedContainer + ' button' ).attr('aria-selected', 'false');
-			   	
+				   
 					jQuery(this).attr('aria-selected', 'true' );
 
 					// Update the active descendant.
@@ -67,7 +67,6 @@ jQuery( document ).ready(function() {
 						currentActiveDescendant = directionSelection;
 					}
 					currentActiveDescendant += '-tab';
-					console.log( currentActiveDescendant );
 					jQuery('#timetable-nav').attr('aria-activedescendant', currentActiveDescendant );
 
 					// Expand the selected panel by using currentActiveDescendant as panel ID
@@ -75,8 +74,7 @@ jQuery( document ).ready(function() {
 					jQuery('.timetable-panel').attr('tabindex', -1 );
 					jQuery('#' + currentActiveDescendant ).attr('aria-expanded', 'true');
 					jQuery('#' + currentActiveDescendant ).attr('tabindex', 0 );
-					jQuery('#' + currentActiveDescendant ).focus();
-					
+					//jQuery('#' + currentActiveDescendant ).focus();
 				}		
 			});
             jQuery('#days button').first().trigger('click');

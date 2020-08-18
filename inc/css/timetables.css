@@ -1,29 +1,43 @@
 #timetables {
     float: left;
-    margin: 0 auto;
+    margin: 1em auto;
 }
 
 #timetable-nav {
-    display: -webkit-box; 
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex; 
-    display: flex;
-    flex-direction: row;
-    -ms-flex-direction: wrap;
-    flex-wrap: wrap;
-    -ms-flex-wrap: wrap;
+    overflow: auto;
 }
 
-#timetable-nav .button-group button, 
-#timetable-nav .button-group button:hover, 
-#timetable-nav .button-group button:focus  {
-    margin-right: 6px;
-    outline: 1;
+#timetable-nav input {
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+}
+
+#timetable-nav label {
+    display: inline-block;
+    background-color: #000;
+    color: #fff;
+    cursor: pointer;
+    font-size: 25px;
+    border-bottom: 1px solid #f5f5f5;
+    user-select: none;
+}
+
+#timetable-nav input[aria-selected="true"] + label, 
+#timetable-nav input:checked + label {
+    background: blue;
+    color: #fff;
 }
 
 #timetable-nav #days, 
 #timetable-nav #direction {
+    float: left;
+    border: 0;
     margin-right: 10px;
 }
 
