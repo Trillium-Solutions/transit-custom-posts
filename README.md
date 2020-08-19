@@ -15,7 +15,7 @@ Afterward, you can configure the plugin from the WP Admin screen in the Transit 
 
 ## Hooks and Filters 
 
-Transit Custom Posts has several hooks and filters which you can implement within a theme for customization when updating routes and timtables with new GTFS data. These include: 
+The Transit Custom Posts plugin offers several hooks and filters for easily extending and customizing core plugin functions. These include: 
 
 - Route Title - add_filter('tcp_filter_route_title', function( $html ){}, 10, 1);
 - Route Name - add_filter('tcp_route_name', function( $format ){}, 10, 1);
