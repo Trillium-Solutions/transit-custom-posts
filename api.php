@@ -112,6 +112,7 @@ function tcp_list_routes( $args = array() ) {
 *
 */
 function the_route_title() {
+	
 	global $post;
 	if ( !post_type_exists( 'route' ) || $post->post_type != 'route' ) {
 
@@ -132,7 +133,11 @@ function the_route_title() {
 
 	$html = '<h1 class="page-title route-title" ' . $style .'>' . $title . '</h1>';
 
-	echo $html;
+	if ( has_filter( 'tcp_filter_route_title' ) ) {
+		echo apply_filters( 'tcp_filter_route_title', $html );
+	} else {
+		echo $html;
+	}
 }
 
 /**
@@ -213,10 +218,18 @@ function get_route_circle( $post_id = NULL, $size = "medium" ) {
 	$text_color = get_post_meta( $post_id, 'route_text_color', true );
 	$text = get_post_meta( $post_id, 'route_short_name', true);
 
+	// Adding custom hook for legacy systems.
 	$html = sprintf('<span class="route-circle route-circle-%1$s" style="background-color: #%2$s; color: #fff">%4$s</span>', $size, $route_color, $text_color, $text);
+
+	if ( has_filter('get_route_circle') ) {
+		$html = apply_filters('get_route_circle', $post_id );
+	}
 
 	return $html;
 }
+
+
+
 
 /**
 * Outputs route description from post meta.

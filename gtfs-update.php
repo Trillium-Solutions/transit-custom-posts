@@ -99,6 +99,7 @@ function the_gtfs_update_form() {
 add_action( 'admin_action_tcp_gtfs_update','tcp_gtfs_update' );
 
 function tcp_gtfs_update() {
+
     // Ensure request came from correct screen
     if ( !wp_verify_nonce( $_POST['gtfsupdate_noncename'], 'gtfs-update' )) {
 		tcp_status_redirect('100');
@@ -122,7 +123,11 @@ function tcp_gtfs_update() {
 		tcp_status_redirect('104');
     }
 
+	// Change routes path.
 	$routes_txt = $feed_path . 'routes.txt';
+	if ( has_filter( 'tcp_filter_route_txt_path' ) ) {
+		$routes_txt = apply_filters('tcp_filter_route_txt_path', $routes_txt );
+	} 
 
 	if ( !file_exists( $routes_txt) ) {
        tcp_status_redirect('104');
@@ -135,7 +140,14 @@ function tcp_gtfs_update() {
 		tcp_status_redirect('200');
 	}
 
+	// Run additional route functions.
+	do_action( 'tcp_gtfs_update_routes', $routes_txt );
+	
+	// Change timetables path.
 	$timetables_txt = $feed_path . 'timetables.txt';
+	if ( has_filter( 'tcp_filter_timetables_txt_path' ) ) {
+		$timetables_txt = apply_filters('tcp_filter_timetables_txt_path', $timetables_txt );
+	} 
 
 	if ( !file_exists( $timetables_txt ) ) {
 		tcp_status_redirect('201');
@@ -143,17 +155,25 @@ function tcp_gtfs_update() {
 	if ( !($res = tcp_update_timetables($timetables_txt)) ) {
 		tcp_status_redirect('201');
 	}
+
+	// Run additional timetable functions.
+	do_action( 'tcp_gtfs_update_timetables', $timetables_txt );	
+
 	// We have passed the gauntlet of potential errors. Return success.
 	tcp_status_redirect('200');
 }
 
 function tcp_download_feed() {
+
 	if ( !get_option('tcp_gtfs_url') && !($_POST['alternate_feed'] == 'true') ) {
 		return null;
 	}
 
+	// Use feed dir filter where applicable.
 	$feed_dir = plugin_dir_path( __FILE__ ) . 'transit-data/';
-
+	if ( has_filter('tcp_gtfs_download_feed_dir') ) {
+		$feed_dir = apply_filters( 'tcp_gtfs_download_feed_dir', $feed_dir );
+	}
 
 	// Erase all old files; will delete any custom uploaded files as well
 	array_map('unlink', glob( $feed_dir . '*.txt' ) );
@@ -201,6 +221,7 @@ function tcp_download_feed() {
 }
 
 function tcp_update_routes( $route_file ) {
+
     $gtfs_data = array_map('str_getcsv', file($route_file));
     $header = array_shift($gtfs_data);
     array_walk($gtfs_data, '_combine_array', $header);
@@ -254,19 +275,29 @@ function tcp_update_routes( $route_file ) {
 			// Insert the post into the database
 			$post_to_update_id = wp_insert_post( $my_post );
 		}
+		
         // Update route meta fields from GTFS data
         foreach ( $route as $key=>$value ) {
             if ( $key != "" ) {
-                update_post_meta($post_to_update_id, $key, $value);
+				update_post_meta($post_to_update_id, $key, $value);
             }
-        }
+		}
+		
+		// Add additional custom functions to run after inserting/updating route
+		do_action('after_tcp_route_update', $post_to_update_id );
 	}
+
 	return true;
 }
 
 function tcp_route_url( $route_name ) {
 	$default_name = str_replace("-", " ", str_replace(" - ", " ", $route_name));
-	return trim(str_replace(" ", "-", strtolower($default_name)));
+	if ( has_filter('tcp_filter_route_url') ) {
+		$default_name = trim(str_replace(" ", "-", strtolower($default_name)));
+		return apply_filters('tcp_filter_route_url', $default_name );
+	} else {
+		return trim(str_replace(" ", "-", strtolower($default_name)));
+	}
 }
 
 function tcp_update_timetables( $timetable_file ) {
@@ -358,7 +389,10 @@ function tcp_update_timetables( $timetable_file ) {
             if ( $key != "" ) {
                 update_post_meta($post_to_update_id, $key, $value);
             }
-        }
+		}
+		
+		// Add additional custom functions to run after inserting/updating timetable
+		do_action('after_tcp_timetable_update', $post_to_update_id );
 	}
 	return true;
 }
@@ -456,7 +490,11 @@ function tcp_timetable_days( $timetable ) {
 			$days_of_week .= $timetable_days[$idx];
 		}
 	}
-	return $days_of_week;
+	if ( has_filter('tcp_timetable_filter_days_of_week') ) {
+		return apply_filters('tcp_timetable_filter_days_of_week', $days_of_week );
+	} else {
+		return $days_of_week;
+	}
 }
 
 // Array combine solution from dejiakala@gmail.com
