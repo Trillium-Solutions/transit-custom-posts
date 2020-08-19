@@ -14,6 +14,7 @@
 
 #timetable-nav {
     overflow: auto;
+    outline: 0;
 }
 
 #timetable-nav input {
