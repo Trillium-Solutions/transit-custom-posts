@@ -64,6 +64,7 @@
 .timetable {
     margin: 2em 0 4em 0;
     text-align: left;
+    overflow-x: auto;
 }
 
 .timetable thead {
