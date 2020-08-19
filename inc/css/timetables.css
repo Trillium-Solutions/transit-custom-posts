@@ -1,0 +1,111 @@
+.sr-only {
+    border: 0 !important;
+	clip: rect(1px, 1px, 1px, 1px) !important;
+	-webkit-clip-path: inset(50%) !important;
+	clip-path: inset(50%) !important;
+	height: 1px !important;
+	margin: -1px !important;
+	overflow: hidden !important;
+	padding: 0 !important;
+	position: absolute !important;
+	width: 1px !important;
+	white-space: nowrap !important;
+}
+
+#timetable-nav {
+    overflow: auto;
+    outline: 0;
+}
+
+#timetable-nav input {
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+}
+
+#timetable-nav label {
+    display: inline-block;
+    padding: 4px 8px;
+    color: #4e5256;
+    background: #ececec;
+    font-size: 1rem;
+    text-transform: none;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid #d6d6d6;
+    border-width: thin;
+}
+
+#timetable-nav input[aria-selected="true"] + label, 
+#timetable-nav input:checked + label {
+    background: #d6d6d6;
+}
+
+#timetable-nav fieldset {
+    float: left;
+    border: 0;
+    padding: 0;
+    margin: 7px 15px 0px 0;
+}
+
+#timetable-nav legend {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 7px;
+    text-transform: uppercase;
+} 
+
+.timetable {
+    margin: 2em 0 4em 0;
+    text-align: left;
+    overflow-x: auto;
+}
+
+.timetable thead {
+    background: #dedede;
+    margin-bottom: 20px;
+}
+
+.timetable th.stop-header,
+.timetable th.run-header {
+    font-size: small;
+    text-transform: uppercase;
+}
+
+.timetable tbody {
+    margin-top: 15px;
+}
+
+.timetable th, .timetable td {
+    padding: .7em;
+}
+
+.timetable tr:nth-of-type(even) {
+    background: #efefef;
+}
+
+.timetable-bottom {
+    border-top: 1px solid #ededed;
+    background: transparent;
+    padding: .7em .5em 1em 1.5em;
+    font-style: italic;
+    font-size: small;
+}
+.timetable-panel {
+   display: none;
+   height: 0;
+   max-height: 0;
+}
+
+.timetable-panel[aria-expanded="true"] {
+    display: block;
+    height: auto;
+    max-height: 10000px;
+    transition: max-height .3s ease-in-out;
+}

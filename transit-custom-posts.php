@@ -3,7 +3,7 @@
 * Plugin Name: Transit Custom Posts
 * Plugin URI: https://trilliumtransit.github.io/transit-custom-posts/
 * Description: Creates route, alert, timetable, and other custom post types used for transit sites. Programmatically updates data from a GTFS feed.
-* Version: 0.9.3
+* Version: 0.9.4
 * Author: NomeQ
 * Author URI: https://trilliumtransit.com/
 * License: GPL2
