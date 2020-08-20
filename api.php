@@ -374,8 +374,10 @@ function tcp_do_alerts( $args = array() ) {
 					include( plugin_dir_path( __FILE__ ) . 'inc/alert-panel.php' );
 					$alert_count++;
 				}
+				
+				include( plugin_dir_path( __FILE__ ) . 'inc/alert-footer.php' );
 			}
-			include( plugin_dir_path( __FILE__ ) . 'inc/alert-footer.php' );
+			
 		}
 	} else {
 		// CPT ALERTS FORMATTING 
