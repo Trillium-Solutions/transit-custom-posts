@@ -322,7 +322,10 @@ function tcp_do_alerts( $args = array() ) {
 		// Use transit alerts options instead of querying for alerts
 		if ( function_exists('transit_alerts_get_alerts') && defined('WPTA_FEEDS') ) {
 
-			if ( $defaults['single_route'] ) {
+			if ( array_key_exists( 'route-id', $args ) ) {
+				$alerts = transit_alerts_get_alerts( $args );
+			}
+			else if ( $defaults['single_route'] ) {
 				$args['route-id'] = $post->post_name;
 				$alerts = transit_alerts_get_alerts( $args );
 			} else {
@@ -361,14 +364,16 @@ function tcp_do_alerts( $args = array() ) {
 
 					// Check for and set affected text 
 					if ( array_key_exists( 'affected_text', $args ) ) {
-						if ( ! empty( $args['affected_text'] && $args['affected-routes'] ) ) {
-							$affected_text = $args['affected_text'] . ' ' . implode( ',', $alert['affected-routes'] );
+						if ( $alert['affected-routes'] ) {
+							$affected_text = $affected_text . ' ' . implode( ',', $alert['affected-routes'] );
+						} else {
+							$affected_text = '';
 						}
 					} 
 			
 					// Set route circles.
 					if ( ! empty( $alert['route-circles'] ) ) {
-						$alert_title = $alert['route-circles'] . ' ' . $alert_title;
+						$alert_title = '<div class="route-circle-list">' . $alert['route-circles'] . '</div>' . $alert_title;
 					} 
 
 					include( plugin_dir_path( __FILE__ ) . 'inc/alert-panel.php' );
