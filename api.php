@@ -112,7 +112,6 @@ function tcp_list_routes( $args = array() ) {
 *
 */
 function the_route_title() {
-	
 	global $post;
 	if ( !post_type_exists( 'route' ) || $post->post_type != 'route' ) {
 
@@ -133,11 +132,7 @@ function the_route_title() {
 
 	$html = '<h1 class="page-title route-title" ' . $style .'>' . $title . '</h1>';
 
-	if ( has_filter( 'tcp_filter_route_title' ) ) {
-		echo apply_filters( 'tcp_filter_route_title', $html );
-	} else {
-		echo $html;
-	}
+	echo $html;
 }
 
 /**
@@ -201,7 +196,7 @@ function the_route_meta() {
 */
 function get_route_circle( $post_id = NULL, $size = "medium" ) {
 
-	if ( ! post_type_exists( 'route' ) ) {
+	if ( !post_type_exists( 'route' ) ) {
 
 		// Fail silently if routes don't exist.
 		return;
@@ -218,18 +213,10 @@ function get_route_circle( $post_id = NULL, $size = "medium" ) {
 	$text_color = get_post_meta( $post_id, 'route_text_color', true );
 	$text = get_post_meta( $post_id, 'route_short_name', true);
 
-	// Adding custom hook for legacy systems.
 	$html = sprintf('<span class="route-circle route-circle-%1$s" style="background-color: #%2$s; color: #fff">%4$s</span>', $size, $route_color, $text_color, $text);
-
-	if ( has_filter('get_route_circle') ) {
-		$html = apply_filters('get_route_circle', $post_id );
-	}
 
 	return $html;
 }
-
-
-
 
 /**
 * Outputs route description from post meta.
@@ -373,8 +360,10 @@ function tcp_do_alerts( $args = array() ) {
 					}
 
 					// Check for and set affected text 
-					if ( array_key_existS( 'affected_text', $args ) ) {
-						$affected_text = $args['affected_text'] . ' ' . implode( ',', $alert['affected-routes'] );
+					if ( array_key_exists( 'affected_text', $args ) ) {
+						if ( ! empty( $args['affected_text'] && $args['affected-routes'] ) ) {
+							$affected_text = $args['affected_text'] . ' ' . implode( ',', $alert['affected-routes'] );
+						}
 					} 
 			
 					// Set route circles.
@@ -560,79 +549,24 @@ function tcp_get_alert_dates( $post_id = null ) {
 * @param array $args Not implemented.
 */
 function the_timetables( $args = array() ) {
-	$timetables    = get_timetables();
-	$days          = array();
-	$directions    = array();
-	$timestables   = array();
-	$na_day_button = false;
-	$na_dir_button = false;
+	$timetables = get_timetables();
 
 	if ( $timetables->have_posts() ) {
-		
 		while ( $timetables->have_posts() ) {
-			
 			$timetables->the_post();
 
 			// Get timetable metadata
-			$table_dir  = get_post_meta( get_the_ID(), 'direction_label', true );
-			$table_days	= get_post_meta( get_the_ID(), 'days_of_week', true );
-
-			// Check for days with no direction or directions with no days 
-			if ( ! $na_dir_button && ! empty ( $table_days ) && empty( $table_dir ) ) { 
-				$na_dir_button = true;
-			}
-			if ( ! $na_day_button && ! empty ( $table_dir ) && empty( $table_days ) ) { 
-				$na_day_button = true;
-			}				
+			$dir = get_post_meta( get_the_ID(), 'direction_label', true);
+			$days = get_post_meta( get_the_ID(), 'days_of_week', true);
 
 			// Create a timetable div with data attributes for optional JS manipulation
-			if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
+			printf('<div class="timetable-holder" data-dir="%s" data-days="%s">', $dir, $days);
 
-				// Enqueue required jQuery and custom timetable scripts and css
-				add_action( 'wp_footer', function() {
-					if ( ! wp_script_is( 'jquery', 'enqueued' ) ) {
-						wp_enqueue_script( 'jquery' );
-					}		
-					wp_enqueue_script('tcp-timetable-scripts', plugins_url('/inc/js/timetables.js', __FILE__), array('jquery'),'1.0', true );
-					wp_enqueue_style('tcp-timetable-styles', plugins_url('/inc/css/timetables.css', __FILE__), '', rand() );
-				});
-				
-				// Pushing items into directions and days to array
-				// to use in legend nav buttons.
-				$days[]        = $table_days;
-				$directions[]  = $table_dir;	
-				$table_content = get_the_content();
+			// Should be HTML or an image
+			the_content();
 
-				$timestables[] = array(
-					'day'       => $table_days,
-					'direction' => $table_dir,
-					'table'     => $table_content
-				);		
-
-			} else {
-				// Print tables without timetable legend.
-				printf('<div class="timetable-holder" data-dir="%s" data-days="%s">', $table_dir, $table_days);
-					// Should be HTML or an image
-					the_content();
-				echo '</div>';
-			}			
+			echo '</div>';
 		}
-
-		if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
-			$days = array_unique( $days );  // Remove duplicates 
-			$days = array_reverse( $days ); // Place in proper order
-			$days = array_filter( $days );  // Remove empties or false
-			if ( $na_day_button ) {
-				array_push( $days, 'no-day');
-			}
-			$directions = array_unique( $directions );
-			$directions = array_reverse( $directions );
-			$directions = array_filter( $directions );
-			if ( $na_dir_button ) {
-				array_push( $directions, 'no-direction');
-			}
-			include( plugin_dir_path( __FILE__ ) . '/inc/templates/timetables-legend.php' );
-		}		
 		wp_reset_postdata();
 	}
 }
