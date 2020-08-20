@@ -13,7 +13,9 @@ If you download a compatible theme such as [Transit Base Template](https://githu
 
 Afterward, you can configure the plugin from the WP Admin screen in the Transit Custom Posts submenus. More documentation is available on [the Github site for this project](https://trilliumtransit.github.io/transit-custom-posts/).
 
-## Hooks and Filters 
+## Devloper Notes ## 
+
+### Hooks and Filters ### 
 
 The Transit Custom Posts plugin offers several hooks and filters for easily extending and customizing core plugin functions. These include: 
 
@@ -32,6 +34,17 @@ The Transit Custom Posts plugin offers several hooks and filters for easily exte
 - After route update - add_action( 'after_tcp_route_update’, function( $post_to_update_id ){}, 10, 1);
 - After timetable update - add_action( 'after_tcp_timetable_update’, function( $post_to_update_id ){}, 10, 1);
 
+### Use with WP Transit Alerts Plugin ###
+
+You can use Transit Custom Posts with the WP Transit Alerts Plugin by checking the override Transit Custom Posts alerts option in the Transit Custom Posts settings. A few additional alerts api options are provided to help make the transition easier. These additional alerts arguments or options include:
+
+ - alerts-title: Default 'Current Alerts '
+ - alerts-id: This is the id for the alerts container
+ - custom-classes: This is an array of preset keys to help customize a single alert. They include options for: 
+    - alert-container - Allows addition of custom class for the alert container
+    - alert-title - Allows addition of a custom class for the alert title
+    - alert-desc - Allows addition of custom class for the alert description
+    - alert-dates - Allows addition of custom class for the alert dates or meta
 
 ## How to Contribute
 
