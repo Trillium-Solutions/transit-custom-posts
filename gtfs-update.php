@@ -345,6 +345,9 @@ function tcp_update_timetables( $timetable_file ) {
 		// Find out if content exists in timetables folder
 		// TODO replace with more robust, easy to use utility
 		$timetable_dir = plugin_dir_path( __FILE__ ) . 'transit-data/timetables/';
+		if ( has_filter( 'timetable_directory') ) {
+			$timetable_dir = apply_filters( 'timetable_directory', $timetable_dir );
+		}
 		$content = '';
 		if ( file_exists( $timetable_dir ) ) {
 			// Locate by timetable ID, hypothetically there should never be more than 1
@@ -409,6 +412,9 @@ function tcp_timetable_name( $timetable ) {
 
 function tcp_upload_timetables() {
 	$timetable_dir = plugin_dir_path( __FILE__ ) . 'transit-data/timetables/';
+	if ( has_filter( 'timetable_directory') ) {
+		$timetable_dir = apply_filters( 'timetable_directory', $timetable_dir );
+	}
 
 	if ( !file_exists( $timetable_dir ) ) {
 		mkdir( $timetable_dir, 0777, true );

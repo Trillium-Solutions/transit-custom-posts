@@ -28,8 +28,11 @@ The Transit Custom Posts plugin offers several hooks and filters for easily exte
 - Routes text file path - add_filter('tcp_filter_route_txt_path', function( $routes_txt ){}, 10, 1);
 - Timetable text file path - add_filter('tcp_filter_timetables_txt_path', function( $timetables_txt ){}, 10, 1);
 - GTFS download feed directory - add_filter('tcp_gtfs_download_feed_dir', function( $feed_dir ){}, 10, 1);
+* Above filter overrides where GTFS update data is being pulled from when applicable.
 - GTFS update route pages - add_action( 'tcp_gtfs_update_routes’, function( $routes_txt ){}, 10, 1);
 - GTFS update timetable pages - add_action( 'tcp_gtfs_update_timetables’, function( $timetables_txt ){}, 10, 1);
+- GTFS Timetable directory - add_filter( 'tcp_filter_timetable_directory', function( $timetable_dir ), {}, 10, 1);
+* Above filter overrides what directory to pull timetable info ( like HTML timetables ) from.
 
 - After route update - add_action( 'after_tcp_route_update’, function( $post_to_update_id ){}, 10, 1);
 - After timetable update - add_action( 'after_tcp_timetable_update’, function( $post_to_update_id ){}, 10, 1);
