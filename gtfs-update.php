@@ -170,7 +170,7 @@ function tcp_download_feed() {
 	}
 
 	// Erase all old files; will delete any custom uploaded files as well
-	array_map('unlink', glob( $feed_dir . '*.txt' ) );
+	array_map( 'unlink', glob( $feed_dir . '*.txt' ) );
 
 	if ( ! file_exists( $feed_dir ) ) {
 		mkdir( $feed_dir, 0777, true );
@@ -272,7 +272,7 @@ function tcp_update_routes( $route_file ) {
 		}
 		
         // Update route meta fields from GTFS data
-        foreach ( $route as $key=>$value ) {
+        foreach ( $route as $key => $value ) {
             if ( $key != "" ) {
 				update_post_meta( $post_to_update_id, $key, $value );
             }
@@ -308,7 +308,7 @@ function tcp_update_timetables( $timetable_file ) {
 		return null;
 	}
 
-    $gtfs_data = array_map( 'str_getcsv', file($timetable_file ) );
+    $gtfs_data = array_map( 'str_getcsv', file( $timetable_file ) );
     $header    = array_shift( $gtfs_data );
     array_walk( $gtfs_data, '_combine_array', $header );
 	$timetable_ids = array_column( $gtfs_data, 'timetable_id' );
@@ -327,7 +327,7 @@ function tcp_update_timetables( $timetable_file ) {
 	}
 	wp_reset_postdata();
 
-	foreach( $gtfs_data as $ind=>$timetable ) {
+	foreach( $gtfs_data as $ind => $timetable ) {
 		// Figure out days of week for timetable
 		$days_of_week = tcp_timetable_days( $timetable );
 		unset(
@@ -339,7 +339,6 @@ function tcp_update_timetables( $timetable_file ) {
 		$tag_name                  = str_replace( " ", "_", strtolower( $timetable_name ) );
 
 		// Find out if content exists in timetables folder
-		// TODO replace with more robust, easy to use utility
 		$timetable_dir = plugin_dir_path( __FILE__ ) . 'transit-data/timetables/';
 		if ( has_filter( 'timetable_directory') ) {
 			$timetable_dir = apply_filters( 'timetable_directory', $timetable_dir );
@@ -347,9 +346,16 @@ function tcp_update_timetables( $timetable_file ) {
 		$content = '';
 		if ( file_exists( $timetable_dir ) ) {
 			// Locate by timetable ID, hypothetically there should never be more than 1
-			foreach( glob( $timetable_dir . $timetable['timetable_id'] . "_*.html") as $timetable_file ) {
-				$content = file_get_contents( $timetable_file, true );
-			}
+			foreach ( new RecursiveIteratorIterator( new RecursiveDirectoryIterator($timetable_dir ) ) as $filename ) {
+				$file_info = pathinfo( $filename );
+				if ( 'html' === $file_info['extension'] ) {
+					$file_timetable_id = explode( '_', $file_info['basename'] )[0];
+					if ( $file_timetable_id === $timetable['timetable_id'] ) {	
+						$file = $file_info['dirname'] . '/' . $file_info['basename'];
+						$content = file_get_contents( $file, true );
+					}		
+				}		
+			} 
 		}
 
 		// Check if the timetable post already exists. If not, create new timetable
@@ -378,13 +384,13 @@ function tcp_update_timetables( $timetable_file ) {
 			  'post_status'  	=> 'publish',
 			  'post_type'      	=> 'timetable',
 			  'post_content'	=> $content,
-			  'post_author'   	=> 1
+			  'post_author'   	=> 1,
 			);
 			// Insert the post into the database
 			$post_to_update_id = wp_insert_post( $my_post );
 		}
         // Update route meta fields from GTFS data
-        foreach ( $timetable as $key=>$value ) {
+        foreach ( $timetable as $key => $value ) {
             if ( $key != "" ) {
                 update_post_meta( $post_to_update_id, $key, $value );
             }
@@ -460,7 +466,6 @@ function tcp_get_status_message( $code ) {
 	}
 }
 
-// TODO create a more robust day function
 function tcp_timetable_days( $timetable ) {
 	$days_of_week = '';
 	$days = array('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday');
@@ -486,10 +491,10 @@ function tcp_timetable_days( $timetable ) {
 		} else {
 			$idx = 0;
 			while ( $idx < count( $timetable_days ) ) {
-				$days_of_week .= $timetable_days[ $idx ]  . ', ';
+				$days_of_week .= $timetable_days[ $idx ] . ', ';
 				$idx++;
 			}
-			$days_of_week .= $timetable_days[ $idx ] ;
+			$days_of_week .= $timetable_days[ $idx ];
 		}
 	}
 	if ( has_filter('tcp_timetable_filter_days_of_week') ) {
