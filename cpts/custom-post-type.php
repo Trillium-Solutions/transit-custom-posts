@@ -46,12 +46,13 @@ class TCP_CustomPostType {
             'parent_item_colon' => '',
             'menu_name'         => $plural,
         ), $this->labels);
-        
+
         $args = array_merge(array(
             'label'             => $plural,
             'labels'            => $labels,
             'public'            => true,
-            'supports'          => array( 'title', 'editor' ),
+            'supports'          => array_key_exists( 'supports', $this->args ) ? $this->args['supports'] :
+             array( 'title', 'editor' ),
             '_builtin'          => false,
 			
         ), $this->args);
