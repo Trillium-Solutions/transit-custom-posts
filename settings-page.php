@@ -48,10 +48,10 @@ function tcp_setup_fields() {
 			'section'	=> 'cpt_fields',
 			'type'		=> 'multiple_checkbox',
 			'options'	=> array(
-				'tcp_use_routes'	    => 'Routes',
-				'tcp_use_alerts'	    => 'Alerts',
-				'tcp_use_timetables'	=> 'Timetables',
-				'tcp_use_board'		    => 'Board Meetings',
+				'tcp_use_routes'	 => 'Routes',
+				'tcp_use_alerts'	 => 'Alerts',
+				'tcp_use_timetables' => 'Timetables',
+				'tcp_use_board'		 => 'Board Meetings',
 			),
 			'placeholder'	=> '',
 			'helper'		=> '',
@@ -74,17 +74,6 @@ function tcp_setup_fields() {
 			'classes' => 'regular-text',
 		),
 		array(
-			'uid' 		=> 'tcp_route_editor',
-			'label' 	=> 'Disable Route Post Editor',
-			'section'	=> 'tcp_routes_options',
-			'type'		=> 'checkbox',
-			'options'	=> false,
-			'placeholder' => '',
-			'helper'	=> '',
-			'supplemental' => 'Check to disable the WordPress editor for all route posts.',
-			'settings' => 'tcp_cpt_fields',
-		),
-		array(
 			'uid' 		=> 'tcp_route_sortorder',
 			'label' 	=> 'Sort Order',
 			'section'	=> 'tcp_routes_options',
@@ -92,7 +81,7 @@ function tcp_setup_fields() {
 			'options'	=> array(
 				'route_sort_order' => 'Route Sort Order',
 				'route_short_name' => 'Short Name',
-				'route_long_name' => 'Long Name',
+				'route_long_name'  => 'Long Name',
 			),
 			'placeholder' => '',
 			'helper'	=> '',
@@ -100,6 +89,17 @@ function tcp_setup_fields() {
 			'default' => 'sort_order',
 			'settings' => 'tcp_cpt_fields',
 			'classes' => '',
+		),
+		array(
+			'uid' 		=> 'tcp_route_editor',
+			'label' 	=> 'Disable Route Post Editor',
+			'section'	=> 'tcp_routes_options',
+			'type'		=> 'checkbox',
+			'options'	=> false,
+			'placeholder' => '',
+			'helper'	=> '<span style="color:#666666;"><em>Check to disable the WordPress editor for all route posts.</em></span>',
+			'supplemental' => '',
+			'settings' => 'tcp_cpt_fields',
 		),
 		array(
 			'uid' 		=> 'tcp_timetable_expire',
@@ -116,6 +116,17 @@ function tcp_setup_fields() {
 			'default' => 'never',
 			'settings' => 'tcp_cpt_fields',
 			'classes' => '',
+		),
+		array(
+			'uid' 		=> 'tcp_timetable_editor',
+			'label' 	=> 'Disable Timetable Post Editor',
+			'section'	=> 'tcp_timetable_options',
+			'type'		=> 'checkbox',
+			'options'	=> false,
+			'placeholder' => '',
+			'helper'	=> '<span style="color:#666666;"><em>Check to disable the WordPress editor for all timetable posts.</em></span>',
+			'supplemental' => '',
+			'settings' => 'tcp_cpt_fields',
 		),
 		array(
 			'uid'		=> 'tcp_board_fields',
@@ -176,7 +187,7 @@ function tcp_setup_fields() {
 	);
 
 	// Adding display routes 
-	if ( is_array( TCP_CUSTOM_TYPES ) &&  in_array( 'tcp_use_alerts', TCP_CUSTOM_TYPES ) ) {
+	if ( is_array( TCP_CUSTOM_TYPES ) && in_array( 'tcp_use_alerts', TCP_CUSTOM_TYPES ) ) {
 		$alerts_affected_routes_field = array(
 			'uid' 		=> 'tcp_alert_custom_display_affected',
 			'label' 	=> 'Advanced: Custom display affected routes',
@@ -191,6 +202,19 @@ function tcp_setup_fields() {
 			'classes' => '',
 		);
 		$fields[] = $alerts_affected_routes_field;
+
+		$alerts_display_editor_field = array(
+			'uid' 		=> 'tcp_alerts_editor',
+			'label' 	=> 'Disable Alert Post Editor',
+			'section'	=> 'tcp_alerts_options',
+			'type'		=> 'checkbox',
+			'options'	=> false,
+			'placeholder' => '',
+			'helper'	=> '<span style="color:#666666;"><em>Check to disable the WordPress editor for all alert posts.</em></span>',
+			'supplemental' => '',
+			'settings' => 'tcp_cpt_fields',
+		);
+		$fields[] = $alerts_display_editor_field;
 	}
 
 	// Adding transit alerts field if transit alerts are active
@@ -328,35 +352,33 @@ function tcp_gtfs_settings_content() { ?>
 }
 
 if ( TCP_CUSTOM_TYPES ) {
+
 	if ( in_array('tcp_use_routes', TCP_CUSTOM_TYPES ) ) {
 		add_action( 'admin_init', 'tcp_setup_route_options' );
 	}
-
 	if ( in_array('tcp_use_alerts', TCP_CUSTOM_TYPES ) ) {
 		add_action( 'admin_init', 'tcp_setup_alert_options' );
-	}		
-	
+	}
 	if ( in_array('tcp_use_timetables', TCP_CUSTOM_TYPES ) ) {
 		add_action( 'admin_init', 'tcp_setup_timetable_options' );
 	}
-
 	if ( in_array('tcp_use_board', TCP_CUSTOM_TYPES ) ) {
 		add_action( 'admin_init', 'tcp_setup_board_options' );
 	}
 }
 
 function tcp_setup_route_options() {
-	add_settings_section( 'tcp_routes_options', '<hr/><br/>Route Options', '', 'tcp_cpt_fields'  );
+	add_settings_section( 'tcp_routes_options', '<hr/>Route Options', '', 'tcp_cpt_fields'  );
 }
 
 function tcp_setup_alert_options() {
-	add_settings_section( 'tcp_alerts_options', '<hr/><br/>Alert Options', '', 'tcp_cpt_fields' );
+	add_settings_section( 'tcp_alerts_options', '<hr/>Alert Options', '', 'tcp_cpt_fields' );
 }
 
 function tcp_setup_timetable_options() {
-	add_settings_section( 'tcp_timetable_options', '<hr/><br/>Timetable Options', '', 'tcp_cpt_fields' );
+	add_settings_section( 'tcp_timetable_options', '<hr/>Timetable Options', '', 'tcp_cpt_fields' );
 }
 
 function tcp_setup_board_options() {
-	add_settings_section( 'tcp_board_options', '<hr/><br/>Board Meeting Options', '', 'tcp_cpt_fields' );
+	add_settings_section( 'tcp_board_options', '<hr/>Board Meeting Options', '', 'tcp_cpt_fields' );
 }

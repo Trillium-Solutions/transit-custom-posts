@@ -10,6 +10,7 @@ class TCP_Timetable extends TCP_CustomPostType {
 		parent::__construct('Timetable', array(
 				'menu_icon' => 'dashicons-clock',
 				'rewrite'	=> array( 'slug' => 'timetables' ),
+				'supports'    => get_option('tcp_timetable_editor' ) ? array( 'title' ) : array('title', 'editor')
 		));
 		$this->add_meta_box('Timetable Fields', array(
 			'Timetable ID'		=> array(),

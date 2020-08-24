@@ -11,6 +11,7 @@ class TCP_Alert extends TCP_CustomPostType {
 				'menu_icon'   => 'dashicons-warning',
 				'rewrite'	  => array( 'slug' => 'alerts' ),
 				'has_archive' => true,
+				'supports'    => get_option('tcp_alerts_editor' ) ? array( 'title' ) : array('title', 'editor')
 		));
 		$this->add_meta_box('Affected Routes', array(
 			'Affected Routes' => array(
@@ -42,7 +43,6 @@ class TCP_Alert extends TCP_CustomPostType {
 	public function custom_metabox( $post, $data ) {
 		// If 'route' custom posts not active, create default metaboxes
 		$custom_types = TCP_CUSTOM_TYPES;
-
 		if ( ! in_array('tcp_use_routes', $custom_types) || $data['id'] != 'affected_routes' ) {
 			parent::custom_metabox( $post, $data );
 		} else {
