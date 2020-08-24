@@ -74,6 +74,17 @@ function tcp_setup_fields() {
 			'classes' => 'regular-text',
 		),
 		array(
+			'uid' 		=> 'tcp_route_editor',
+			'label' 	=> 'Disable Route Post Editor',
+			'section'	=> 'tcp_routes_options',
+			'type'		=> 'checkbox',
+			'options'	=> false,
+			'placeholder' => '',
+			'helper'	=> '',
+			'supplemental' => 'Check to disable the WordPress editor for all route posts.',
+			'settings' => 'tcp_cpt_fields',
+		),
+		array(
 			'uid' 		=> 'tcp_route_sortorder',
 			'label' 	=> 'Sort Order',
 			'section'	=> 'tcp_routes_options',
