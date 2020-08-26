@@ -10,25 +10,25 @@ function tcp_settings_pages() {
     $menu_title = 'Transit Custom Posts';
     $capability = 'manage_options';
     $menu_slug  = 'tcp_settings_page';
-    $callback = 'tcp_custom_post_settings_content';
-    $icon = 'dashicons-location';
-    $position = 85;
+    $callback   = 'tcp_custom_post_settings_content';
+    $icon       = 'dashicons-location';
+    $position   = 85;
     add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $callback, $icon, $position );
 
     $parent_slug = 'tcp_settings_page';
-    $page_title = 'Custom Post Types';
-    $menu_title = 'Custom Post Types';
-    $capability = 'manage_options';
-    $menu_slug = 'tcp_settings_page';
-    $callback = 'tcp_custom_post_settings_content';
+    $page_title  = 'Custom Post Types';
+    $menu_title  = 'Custom Post Types';
+    $capability  = 'manage_options';
+    $menu_slug   = 'tcp_settings_page';
+    $callback    = 'tcp_custom_post_settings_content';
     add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback );
 
     $parent_slug = 'tcp_settings_page';
-    $page_title = 'GTFS Settings';
-    $menu_title = 'GTFS Settings';
-    $capability = 'manage_options';
-    $menu_slug = 'tcp_gtfs_settings';
-    $callback = 'tcp_gtfs_settings_content';
+    $page_title  = 'GTFS Settings';
+    $menu_title  = 'GTFS Settings';
+    $capability  = 'manage_options';
+    $menu_slug   = 'tcp_gtfs_settings';
+    $callback    = 'tcp_gtfs_settings_content';
     add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback );
 }
 add_action( 'admin_menu', 'tcp_settings_pages');
@@ -66,13 +66,25 @@ function tcp_setup_fields() {
 			'section'	=> 'tcp_routes_options',
 			'type'		=> 'text',
 			'options'	=> false,
-			'placeholder' => '',
-			'helper'	=> '',
+			'placeholder'  => '',
+			'helper'	   => '',
 			'supplemental' => 'How to display route names on this site. Available keywords include %short_name%, %long_name%, and %route_circle%. This format can be overwritten by individual routes within their edit screens.',
-			'default' => '%short_name%: %long_name%',
+			'default'  => '%short_name%: %long_name%',
 			'settings' => 'tcp_cpt_fields',
-			'classes' => 'regular-text',
+			'classes'  => 'regular-text',
 		),
+		array(
+			'uid' 		=> 'tcp_route_circle_custom_name',
+			'label' 	=> 'Route Circle Custom Route Name',
+			'section'	=> 'tcp_routes_options',
+			'type'		=> 'text',
+			'options'	=> false,
+			'placeholder'  => '',
+			'helper'	   => '',
+			'supplemental' => 'Custom route name to display when a route short name is not available for a route circle.',
+			'settings' => 'tcp_cpt_fields',
+			'classes'  => 'regular-text',
+	),
 		array(
 			'uid' 		=> 'tcp_route_sortorder',
 			'label' 	=> 'Sort Order',
@@ -83,23 +95,23 @@ function tcp_setup_fields() {
 				'route_short_name' => 'Short Name',
 				'route_long_name'  => 'Long Name',
 			),
-			'placeholder' => '',
-			'helper'	=> '',
+			'placeholder'  => '',
+			'helper'	   => '',
 			'supplemental' => '',
-			'default' => 'sort_order',
-			'settings' => 'tcp_cpt_fields',
-			'classes' => '',
+			'default'      => 'sort_order',
+			'settings'     => 'tcp_cpt_fields',
+			'classes'      => '',
 		),
 		array(
-			'uid' 		=> 'tcp_route_editor',
-			'label' 	=> 'Disable Route Post Editor',
-			'section'	=> 'tcp_routes_options',
-			'type'		=> 'checkbox',
-			'options'	=> false,
-			'placeholder' => '',
-			'helper'	=> '<span style="color:#666666;"><em>Check to disable the WordPress editor for all route posts.</em></span>',
+			'uid' 		   => 'tcp_route_editor',
+			'label' 	   => 'Disable Route Post Editor',
+			'section'	   => 'tcp_routes_options',
+			'type'		   => 'checkbox',
+			'options' 	   => false,
+			'placeholder'  => '',
+			'helper'	   => '<span style="color:#666666;"><em>Check to disable the WordPress editor for all route posts.</em></span>',
 			'supplemental' => '',
-			'settings' => 'tcp_cpt_fields',
+			'settings'     => 'tcp_cpt_fields',
 		),
 		array(
 			'uid' 		=> 'tcp_timetable_expire',
@@ -108,25 +120,25 @@ function tcp_setup_fields() {
 			'type'		=> 'select',
 			'options'	=> array(
 				'immediate' => 'Remove immediately on expiration date',
-				'never' => 'Show expired timetables if current unavailable',
+				'never'     => 'Show expired timetables if current unavailable',
 			),
-			'placeholder' => '',
-			'helper'	=> '',
+			'placeholder'  => '',
+			'helper'	   => '',
 			'supplemental' => 'For schedules that rarely change, it may be best to ignore the timetable end date.',
-			'default' => 'never',
-			'settings' => 'tcp_cpt_fields',
-			'classes' => '',
+			'default'      => 'never',
+			'settings'     => 'tcp_cpt_fields',
+			'classes'      => '',
 		),
 		array(
-			'uid' 		=> 'tcp_timetable_editor',
-			'label' 	=> 'Disable Timetable Post Editor',
-			'section'	=> 'tcp_timetable_options',
-			'type'		=> 'checkbox',
-			'options'	=> false,
-			'placeholder' => '',
-			'helper'	=> '<span style="color:#666666;"><em>Check to disable the WordPress editor for all timetable posts.</em></span>',
+			'uid' 		   => 'tcp_timetable_editor',
+			'label'  	   => 'Disable Timetable Post Editor',
+			'section'	   => 'tcp_timetable_options',
+			'type'		   => 'checkbox',
+			'options'	   => false,
+			'placeholder'  => '',
+			'helper'	   => '<span style="color:#666666;"><em>Check to disable the WordPress editor for all timetable posts.</em></span>',
 			'supplemental' => '',
-			'settings' => 'tcp_cpt_fields',
+			'settings'     => 'tcp_cpt_fields',
 		),
 		array(
 			'uid'		=> 'tcp_board_fields',
@@ -146,17 +158,17 @@ function tcp_setup_fields() {
 			'classes'		=> '',
 		),
 		array(
-			'uid' 		=> 'tcp_board_posts_per_page',
-			'label' 	=> 'Board meetings page shows at most',
-			'section'	=> 'tcp_board_options',
-			'type'		=> 'number',
-			'options'	=> false,
-			'placeholder' => '',
-			'helper'	=> 'meetings per page',
+			'uid' 		   => 'tcp_board_posts_per_page',
+			'label' 	   => 'Board meetings page shows at most',
+			'section'	   => 'tcp_board_options',
+			'type'		   => 'number',
+			'options'	   => false,
+			'placeholder'  => '',
+			'helper'	   => 'meetings per page',
 			'supplemental' => '',
-			'default' => 20,
-			'settings' => 'tcp_cpt_fields',
-			'classes' => 'small-text',
+			'default'      => 20,
+			'settings'     => 'tcp_cpt_fields',
+			'classes'      => 'small-text',
 		),
 		array(
 			'uid'			=> 'tcp_gtfs_url',
@@ -189,30 +201,30 @@ function tcp_setup_fields() {
 	// Adding display routes 
 	if ( is_array( TCP_CUSTOM_TYPES ) && in_array( 'tcp_use_alerts', TCP_CUSTOM_TYPES ) ) {
 		$alerts_affected_routes_field = array(
-			'uid' 		=> 'tcp_alert_custom_display_affected',
-			'label' 	=> 'Advanced: Custom display affected routes',
-			'section'	=> 'tcp_alerts_options',
-			'type'		=> 'checkbox',
-			'options'	=> false,
-			'placeholder' => '',
-			'helper'	=> '<span style="color:#666666;"><em>Check only if you hook into the "tcp_display_affected" filter in your theme.</em></span>',
+			'uid' 		   => 'tcp_alert_custom_display_affected',
+			'label' 	   => 'Advanced: Custom display affected routes',
+			'section'	   => 'tcp_alerts_options',
+			'type'		   => 'checkbox',
+			'options'	   => false,
+			'placeholder'  => '',
+			'helper'	   => '<span style="color:#666666;"><em>Check only if you hook into the "tcp_display_affected" filter in your theme.</em></span>',
 			'supplemental' => '',
-			'default' => false,
-			'settings' => 'tcp_cpt_fields',
-			'classes' => '',
+			'default'      => false,
+			'settings'     => 'tcp_cpt_fields',
+			'classes'      => '',
 		);
 		$fields[] = $alerts_affected_routes_field;
 
 		$alerts_display_editor_field = array(
-			'uid' 		=> 'tcp_alerts_editor',
-			'label' 	=> 'Disable Alert Post Editor',
-			'section'	=> 'tcp_alerts_options',
-			'type'		=> 'checkbox',
-			'options'	=> false,
-			'placeholder' => '',
-			'helper'	=> '<span style="color:#666666;"><em>Check to disable the WordPress editor for all alert posts.</em></span>',
+			'uid' 		   => 'tcp_alerts_editor',
+			'label' 	   => 'Disable Alert Post Editor',
+			'section'	   => 'tcp_alerts_options',
+			'type'		   => 'checkbox',
+			'options'	   => false,
+			'placeholder'  => '',
+			'helper'	   => '<span style="color:#666666;"><em>Check to disable the WordPress editor for all alert posts.</em></span>',
 			'supplemental' => '',
-			'settings' => 'tcp_cpt_fields',
+			'settings'     => 'tcp_cpt_fields',
 		);
 		$fields[] = $alerts_display_editor_field;
 	}
@@ -220,17 +232,17 @@ function tcp_setup_fields() {
 	// Adding transit alerts field if transit alerts are active
 	if ( is_plugin_active( 'wp-transit-alerts/wp-transit-alerts.php' ) ) {
 		$transit_alerts_field = array(
-			'uid' 		=> 'tcp_alerts_transit_alerts',
-			'label' 	=> 'Use WP Transit Alerts',
-			'section'	=> 'tcp_alerts_options',
-			'type'		=> 'checkbox',
-			'options'	=> false,
-			'placeholder' => '',
-			'helper'	=> '<span style="color:#666666;"><em>Overrides Transit Custom Posts Alerts and must have WP Transit Alerts plugin installed with a saved feed ID to work.</em></span>',
+			'uid' 		   => 'tcp_alerts_transit_alerts',
+			'label' 	   => 'Use WP Transit Alerts',
+			'section'	   => 'tcp_alerts_options',
+			'type'		   => 'checkbox',
+			'options'	   => false,
+			'placeholder'  => '',
+			'helper'	   => '<span style="color:#666666;"><em>Overrides Transit Custom Posts Alerts and must have WP Transit Alerts plugin installed with a saved feed ID to work.</em></span>',
 			'supplemental' => '',
-			'default' => false,
-			'settings' => 'tcp_cpt_fields',
-			'classes' => '',
+			'default'      => false,
+			'settings'     => 'tcp_cpt_fields',
+			'classes'      => '',
 		);
 		$fields[] = $transit_alerts_field;
 	}

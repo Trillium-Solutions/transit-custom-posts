@@ -210,9 +210,13 @@ function get_route_circle( $post_id = NULL, $size = "medium" ) {
 
 	// Get route metadata
 	$route_color = get_post_meta( $post_id, 'route_color', true );
-	$text_color = get_post_meta( $post_id, 'route_text_color', true );
-	$text = get_post_meta( $post_id, 'route_short_name', true);
+	$text_color  = get_post_meta( $post_id, 'route_text_color', true );
+	$text        = get_post_meta( $post_id, 'route_short_name', true );
 
+	if ( empty( $text ) ) {
+		$text = get_option( 'tcp_route_circle_custom_name', '' );
+	}
+ 
 	$html = sprintf('<span class="route-circle route-circle-%1$s" style="background-color: #%2$s; color: #fff">%4$s</span>', $size, $route_color, $text_color, $text);
 
 	return $html;
