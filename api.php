@@ -520,7 +520,7 @@ function tcp_do_alerts( $args = array() ) {
 				}
 
 				// Retrieve formatted date text for effective date(s)
-				$date_text       = tcp_get_alert_dates( get_the_ID() );
+				$alert_dates     = tcp_get_alert_dates( get_the_ID() );
 				$affected_routes = tcp_get_affected( get_the_ID(), $args['sep_affected'] );
 				$affected_text   = '';
  
@@ -557,7 +557,6 @@ function tcp_do_alerts( $args = array() ) {
 function tcp_get_alert_dates( $post_id = null ) {
 
 	if ( empty( $post_id ) ) {
-
 		// Setup postdata
 		global $post;
 		$post_id = $post->ID;
@@ -571,16 +570,14 @@ function tcp_get_alert_dates( $post_id = null ) {
 
 	// Logic for printing the date if start, end, or both are present
 	$date_text = '';
-	if ( ! empty($effective_date) ) {
-		$date_text = 'Effective: ' . $effective_date;
-
+	if ( ! empty( $effective_date ) ) {
+		$date_text = 'Starting ' . $effective_date;
 		if ( ! empty($end_date) ) {
-			$date_text .= ' - ' . $end_date;
+			$date_text = 'Effective ' . $effective_date . ' - ' . $end_date;
 		}
 	} elseif ( !empty($end_date) ) {
-		$date_text = 'Expires: ' . $end_date;
+		$date_text = 'Effective until: ' . $end_date;
 	}
-
 	return $date_text;
 }
 
