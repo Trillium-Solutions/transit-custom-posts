@@ -112,9 +112,10 @@ function tcp_list_routes( $args = array() ) {
 *
 */
 function the_route_title() {
+	
 	global $post;
-	if ( !post_type_exists( 'route' ) || $post->post_type != 'route' ) {
 
+	if ( ! post_type_exists( 'route' ) || $post->post_type != 'route' ) {
 		// Fail silently
 		return;
 	}
@@ -132,7 +133,14 @@ function the_route_title() {
 
 	$html = '<h1 class="page-title route-title" ' . $style .'>' . $title . '</h1>';
 
-	echo $html;
+	if ( has_filter( 'tcp_filter_route_title' ) ) {
+
+		echo apply_filters( 'tcp_filter_route_title', $html );
+
+	} else {
+
+		echo $html;
+	}
 }
 
 /**
@@ -196,8 +204,7 @@ function the_route_meta() {
 */
 function get_route_circle( $post_id = NULL, $size = "medium" ) {
 
-	if ( !post_type_exists( 'route' ) ) {
-
+	if ( ! post_type_exists( 'route' ) ) {
 		// Fail silently if routes don't exist.
 		return;
 	}
@@ -218,6 +225,11 @@ function get_route_circle( $post_id = NULL, $size = "medium" ) {
 	}
  
 	$html = sprintf('<span class="route-circle route-circle-%1$s" style="background-color: #%2$s; color: #fff">%4$s</span>', $size, $route_color, $text_color, $text);
+
+	if ( has_filter('get_route_circle') ) {
+
+		$html = apply_filters('get_route_circle', $post_id );
+	}
 
 	return $html;
 }
@@ -434,11 +446,11 @@ function tcp_do_alerts( $args = array() ) {
 						'compare' => 'NOT EXISTS',
         				'value'   => '',
 					),
-				array(
-					'key'	  => 'end_date',
-					'value'   => $dt->format("Y-m-d"),
-					'compare' => '>=',
-					'type'	  => 'DATE',
+					array(
+						'key'	  => 'end_date',
+						'value'   => $dt->format("Y-m-d"),
+						'compare' => '>=',
+						'type'	  => 'DATE',
 				),
 			),
 		);
