@@ -227,7 +227,6 @@ function get_route_circle( $post_id = NULL, $size = "medium" ) {
 	$html = sprintf('<span class="route-circle route-circle-%1$s" style="background-color: #%2$s; color: #fff">%4$s</span>', $size, $route_color, $text_color, $text);
 
 	if ( has_filter('get_route_circle') ) {
-
 		$html = apply_filters('get_route_circle', $post_id );
 	}
 
@@ -507,7 +506,7 @@ function tcp_do_alerts( $args = array() ) {
 				$collapsible         = $defaults['collapse'];
 				$affected_text       = $defaults['affected_text'];
 				$link_text           = $alert_title;
- 
+			
 				// Check for and set button 
 				$alert_button = array_key_exists( 'use_button', $args ) ? $args ['use_button'] : '';
 
@@ -526,22 +525,34 @@ function tcp_do_alerts( $args = array() ) {
 					$link_text  = $args['link_text'] === 'title' ? $alert_title : $args['link_text'];
 				} 
 
+
 				// Check for and set affected text 
-				if ( array_key_exists( 'affected_text', $args ) && ! empty( $alert['affected-routes'] ) ) {
-					$affected_text = $affected_text . ' ' . implode( ',', $alert['affected-routes'] );
+			
+				if ( $args['show_affected'] ) {
+					$affected_routes = tcp_get_affected( get_the_ID(), $args['sep_affected'] );
+					$affected_text   = $args['affected_text'] . ' ' . $affected_routes;
+				} else { 
+					$affected_text = '';
 				}
 
 				// Retrieve formatted date text for effective date(s)
 				$alert_dates     = tcp_get_alert_dates( get_the_ID() );
-				$affected_routes = tcp_get_affected( get_the_ID(), $args['sep_affected'] );
-				$affected_text   = '';
- 
-				if ( $affected_routes != '' && $args['show_affected'] ) {
-					$affected_routes = str_replace( '_', ' ', $affected_routes );
-					$affected_routes = str_replace( '-', ' ', $affected_routes );
-					$affected_routes = ucwords( $affected_routes );
-					$affected_text   = $args['affected_text'] . $affected_routes;
+
+				// Add route circles to alert title if applicable
+				if (  $args['route-circles'] ) {
+					$route_circles = '<div class="route-circles">';
+					$the_affected  = get_post_meta( get_the_ID(), 'affected_routes', true );
+					foreach ( $the_affected as $key => $value ) {
+						$affected_route_post = get_posts( array( 
+							'post_type' => 'route',
+							'name' => $key ) 
+						);
+						$route_circles .= get_route_circle( $affected_route_post[0]->ID );	
+					}
+					$route_circles .= '</div>';
+					$alert_title    = $route_circles . $alert_title;
 				}
+
 				// Add alert panel
 				include( plugin_dir_path( __FILE__ ) . 'inc/templates/alerts/alert-panel.php' );
 			}

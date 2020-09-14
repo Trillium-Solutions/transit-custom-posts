@@ -31,12 +31,15 @@
         echo '<div class="panel_description ' . esc_attr( $alert_desc_class )  . '">' . $alert_desc .'</div>';
 
         // Alert Start/End dates 
-        if( ! empty( $alert_dates ) || ! empty( $affected_text ) ) {
-            echo '<div class="panel_subheading ' . ' ' . esc_attr( $alert_dates_class ) . '">' . $alert_dates;
-            if ( ! empty( $affected_routes ) ) {
-                echo '<span class="tcp_affected_routes"> ' . $affected_text . '</span>';
-            }
+        if ( ! empty( $alert_dates ) ) {
+            echo '<div class="panel_subheading ' . ' ' . esc_attr( $alert_dates_class ) . '">';
+            echo  $alert_dates;
             echo '</div>';
+        }
+
+        // Alert affected routes
+        if ( ! empty( $affected_text ) ) {
+            echo '<span class="tcp_affected_routes"> ' . $affected_text . '</span>';
         }
 
         // Alert Permalink/URL
