@@ -120,24 +120,25 @@ function the_route_title() {
 		return;
 	}
 
-	$title = get_route_name( $post->ID );
-
-	$style = '';
-
-	// Use route color as background if route circle not in use
-	if ( strpos(get_option('tcp_route_display'), '%route_circle%') === false ) {
-		$color = '#' . get_post_meta( $post->ID, 'route_color', true );
-		$text = '#' . get_post_meta( $post->ID, 'route_text_color', true );
-		$style = 'style="background:' . $color . '; color:' . $text . ';"';
-	}
-
-	$html = '<h1 class="page-title route-title" ' . $style .'>' . $title . '</h1>';
-
+	// Use TCP filter if applicable
 	if ( has_filter( 'tcp_filter_route_title' ) ) {
 
-		echo apply_filters( 'tcp_filter_route_title', $html );
+		echo apply_filters( 'tcp_filter_route_title', $post->ID );
 
 	} else {
+
+		$title = get_route_name( $post->ID );
+
+		$style = '';
+
+		// Use route color as background if route circle not in use
+		if ( strpos(get_option('tcp_route_display'), '%route_circle%') === false ) {
+			$color = '#' . get_post_meta( $post->ID, 'route_color', true );
+			$text = '#' . get_post_meta( $post->ID, 'route_text_color', true );
+			$style = 'style="background:' . $color . '; color:' . $text . ';"';
+		}
+
+		$html = '<h1 class="page-title route-title" ' . $style .'>' . $title . '</h1>';
 
 		echo $html;
 	}
@@ -527,7 +528,6 @@ function tcp_do_alerts( $args = array() ) {
 
 
 				// Check for and set affected text 
-			
 				if ( $args['show_affected'] ) {
 					$affected_routes = tcp_get_affected( get_the_ID(), $args['sep_affected'] );
 					$affected_text   = $args['affected_text'] . ' ' . $affected_routes;
