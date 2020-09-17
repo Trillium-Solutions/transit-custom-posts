@@ -672,8 +672,8 @@ function the_timetables( $args = array() ) {
 
 		if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
 			$days = array_unique( $days );  // Remove duplicates 
-			$days = array_reverse( $days ); // Place in proper order
-			$days = array_filter( $days );  // Remove empties or false
+			$days = ! in_array( 'Weekday', $days ) ? array_reverse( $days ) : $days;
+			$days = array_filter( $days ); // Removing empty strings
 			if ( $na_day_button ) {
 				array_push( $days, 'no-day');
 			}
