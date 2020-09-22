@@ -414,8 +414,8 @@ function tcp_timetable_name( $timetable ) {
 
 function tcp_upload_timetables() {
 	$timetable_dir = plugin_dir_path( __FILE__ ) . 'transit-data/timetables/';
-	if ( has_filter( 'timetable_directory') ) {
-		$timetable_dir = apply_filters( 'timetable_directory', $timetable_dir );
+	if ( has_filter( 'tcp_filter_timetable_directory') ) {
+		$timetable_dir = apply_filters( 'tcp_filter_timetable_directory', $timetable_dir );
 	}
 
 	if ( ! file_exists( $timetable_dir ) ) {
