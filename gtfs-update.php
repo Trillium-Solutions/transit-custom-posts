@@ -279,7 +279,7 @@ function tcp_update_routes( $route_file ) {
 		}
 		
 		// Add additional custom functions to run after inserting/updating route
-		do_action('after_tcp_route_update', $post_to_update_id );
+		do_action('after_tcp_route_update', $post_to_update_id, $route );
 	}
 
 	return true;
@@ -397,7 +397,7 @@ function tcp_update_timetables( $timetable_file ) {
 		}
 		
 		// Add additional custom functions to run after inserting/updating timetable
-		do_action('after_tcp_timetable_update', $post_to_update_id );
+		do_action('after_tcp_timetable_update', $post_to_update_id, $timetable );
 	}
 	return true;
 }
