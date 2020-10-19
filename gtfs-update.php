@@ -230,7 +230,7 @@ function tcp_update_routes( $route_file ) {
 		'meta_compare'	=> 'NOT IN',
 	);
 	$expired_routes = get_posts( $args );
-	foreach( $expired_routes as &$to_delete ) {
+	foreach( $expired_routes as $to_delete ) {
 		wp_delete_post( $to_delete->ID, true );
 	}
 	wp_reset_postdata();
@@ -322,7 +322,7 @@ function tcp_update_timetables( $timetable_file ) {
 		'meta_compare'  => 'NOT IN',
 	);
 	$expired_timetables = get_posts( $args );
-	foreach( $expired_timetables as &$to_delete ) {
+	foreach( $expired_timetables as $to_delete ) {
 		wp_delete_post( $to_delete->ID, true );
 	}
 	wp_reset_postdata();
