@@ -1,8 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0] - 2020-10-19
+- Added ability to toggle the WordPress Editor for timetable and route custom post types
+- Added option to override alerts custom post type with transit alerts if the WP Transit Alerts plugin is installed 
+- Added additional filters and actions to GTFS update for better integration of legacy sites with Transit Custom Posts 
+- New timetable template with optional legend
+
 ## [0.9.4] - 2020-08-19
-- Added Timestable Legend option to the_timetables() api function
+- Added timestable legend option to the_timetables() api function
 
 ## [0.9.3] - 2019-10-16
 - Allowing folders inside GTFS feed zip
