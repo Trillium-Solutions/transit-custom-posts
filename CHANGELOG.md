@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2.0.1] - 2020-10-26
 - Added option to not import empty timetables when running gtfs update
+- Changed alerts to pull only the alerts whose end date is greater than or equal to current timezone in WordPress
 
 ## [2.0] - 2020-10-19
 - Added ability to toggle the WordPress Editor for timetable and route custom post types
