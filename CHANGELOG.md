@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.1] - 2020-10-26
+- Added option to not import empty timetables when running gtfs update
+
 ## [2.0] - 2020-10-19
 - Added ability to toggle the WordPress Editor for timetable and route custom post types
 - Added option to override alerts custom post type with transit alerts if the WP Transit Alerts plugin is installed 
