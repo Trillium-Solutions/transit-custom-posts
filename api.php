@@ -324,16 +324,6 @@ function tcp_do_alerts( $args = array() ) {
 
 	// Overwrite defaults with supplied $args
 	$args = wp_parse_args( $args, $defaults );
-
-	// Get current date using timezone set in Wordpress
-	$timestamp = time();
-	$zone_string = 'America/Los_Angeles';
-	if ( get_option('timezone_string') ) {
-		$zone_string = get_option('timezone_string');
-	}
-	$dt = new DateTime( "now", new DateTimeZone( $zone_string ) );
-	$dt->setTimestamp( $timestamp );
-
 	// TRANSIT ALERTS FORMATTING 
 	if ( get_option( 'tcp_alerts_transit_alerts' ) ) {
 		
@@ -448,7 +438,7 @@ function tcp_do_alerts( $args = array() ) {
 					),
 					array(
 						'key'	  => 'end_date',
-						'value'   => $dt->format("Y-m-d"),
+						'value'   => current_time('Y-m-d'),
 						'compare' => '>=',
 						'type'	  => 'DATE',
 				),
@@ -468,7 +458,7 @@ function tcp_do_alerts( $args = array() ) {
 					),
 					array(
 						'key'	  => 'end_date',
-						'value'   => $dt->format("Y-m-d"),
+						'value'   => current_time('Y-m-d'),
 						'compare' => '>=',
 						'type'	  => 'DATE',
 					),
