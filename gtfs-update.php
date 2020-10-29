@@ -63,7 +63,7 @@ function the_gtfs_update_form() {
 							<p>
 								<label>
 									<input name="remove_empty_tables" type="checkbox" value="true" id="empty-tables">
-									Don't import empty timetables
+									Skip and delete empty or missing timetables
 								</label>
 							</p>
 							<p>
@@ -85,7 +85,7 @@ function the_gtfs_update_form() {
 		</p>
 	</form>
 	<?php
-		if ( isset( $_GET['submit_status'] ) ) { 
+		if ( isset( $_GET['submit_status'] ) ) {
 			$status_code = $_GET['submit_status'];
 			$error_msg   = intval($status_code) < 200 ? 'Submission Error: ' : '';
 			$error_class = intval($status_code) < 200 ? 'error' : 'updated';
@@ -126,7 +126,7 @@ function tcp_gtfs_update() {
 	$routes_txt = $feed_path . 'routes.txt';
 	if ( has_filter( 'tcp_filter_route_txt_path' ) ) {
 		$routes_txt = apply_filters('tcp_filter_route_txt_path', $routes_txt );
-	} 
+	}
 
 	if ( ! file_exists( $routes_txt) ) {
        tcp_status_redirect('104');
@@ -142,12 +142,12 @@ function tcp_gtfs_update() {
 
 	// Run additional route functions.
 	do_action( 'tcp_gtfs_update_routes', $routes_txt );
-	
+
 	// Change timetables path.
 	$timetables_txt = $feed_path . 'timetables.txt';
 	if ( has_filter( 'tcp_filter_timetables_txt_path' ) ) {
 		$timetables_txt = apply_filters('tcp_filter_timetables_txt_path', $timetables_txt );
-	} 
+	}
 
 	if ( ! file_exists( $timetables_txt ) ) {
 		tcp_status_redirect('201');
@@ -157,7 +157,7 @@ function tcp_gtfs_update() {
 	}
 
 	// Run additional timetable functions.
-	do_action( 'tcp_gtfs_update_timetables', $timetables_txt );	
+	do_action( 'tcp_gtfs_update_timetables', $timetables_txt );
 
 	// We have passed the gauntlet of potential errors. Return success.
 	tcp_status_redirect('200');
@@ -276,14 +276,14 @@ function tcp_update_routes( $route_file ) {
 			// Insert the post into the database
 			$post_to_update_id = wp_insert_post( $my_post );
 		}
-		
+
         // Update route meta fields from GTFS data
         foreach ( $route as $key => $value ) {
             if ( $key != "" ) {
 				update_post_meta( $post_to_update_id, $key, $value );
             }
 		}
-		
+
 		// Add additional custom functions to run after inserting/updating route
 		do_action('after_tcp_route_update', $post_to_update_id, $route );
 	}
@@ -341,8 +341,8 @@ function tcp_update_timetables( $timetable_file ) {
 			$timetable['thursday'], $timetable['friday'], $timetable['saturday'], $timetable['sunday']
 		);
 		$timetable['days_of_week'] = $days_of_week;
-		$timetable_name            = tcp_timetable_name( $timetable );
-		$tag_name                  = str_replace( " ", "_", strtolower( $timetable_name ) );
+		$timetable['timetable_name']            = tcp_timetable_name( $timetable );
+		$timetable['tag_name']                  = str_replace( " ", "_", strtolower( $timetable_name ) );
 
 		// Find out if content exists in timetables folder
 		$timetable_dir = plugin_dir_path( __FILE__ ) . 'transit-data/timetables/';
@@ -356,93 +356,99 @@ function tcp_update_timetables( $timetable_file ) {
 				$file_info = pathinfo( $filename );
 				if ( 'html' === $file_info['extension'] ) {
 					$file_timetable_id = explode( '_', $file_info['basename'] )[0];
-					if ( $file_timetable_id === $timetable['timetable_id'] ) {	
+					if ( $file_timetable_id === $timetable['timetable_id'] ) {
 						$file = $file_info['dirname'] . '/' . $file_info['basename'];
 						$content = file_get_contents( $file, true );
-					}		
-				}		
-			} 
-		}
-
-		// Checking for empty tables
-		libxml_use_internal_errors(true);
-		$doc = new DOMDocument();
-		$doc->loadHTML( $content );
-		$table_body = $doc->getElementsByTagName('tbody');
-
-		// Checking conditions for updating table
-		$update_table = false;
-
-		if ( $_POST['remove_empty_tables'] && 1 < strlen( $table_body[0]->nodeValue ) ) {
-			$update_table = true;
-		}
-		if ( ! $_POST['remove_empty_tables'] ) {
-			$update_table = true;
-		}
-	
-		// Updating table
-		if ( $update_table ) {
-
-			// Check if the timetable post already exists. If not, create new timetable
-			$post_to_update_id = null;
-			$args = array(
-				'post_type'		=> 'timetable',
-				'numberposts'	=> 1,
-				'post_status'	=> 'publish',
-				'meta_key'		=> 'timetable_id',
-				'meta_value'	=> $timetable['timetable_id'],
-			);
-			$timetable_exists = get_posts( $args );
-			if ( $timetable_exists ) {
-				$post_to_update_id = $timetable_exists[0]->ID;
-				$updated = array(
-					'ID'			=> $post_to_update_id,
-					'post_title'	=> $timetable_name,
-					'post_name'		=> $tag_name,
-					'post_content'	=> $content,
-				);
-				wp_update_post( $updated );
-			} else {
-				$my_post = array(
-			  		'post_title'    	=> $timetable_name,
-			  		'post_name' 		=> $tag_name,
-			  		'post_status'  	=> 'publish',
-			  		'post_type'      	=> 'timetable',
-			  		'post_content'	=> $content,
-			  		'post_author'   	=> 1,
-				);
-				// Insert the post into the database
-				$post_to_update_id = wp_insert_post( $my_post );
-			}
-        	// Update route meta fields from GTFS data
-        	foreach ( $timetable as $key => $value ) {
-            	if ( $key != "" ) {
-                	update_post_meta( $post_to_update_id, $key, $value );
-            	}
-			}
-		
-			// Add additional custom functions to run after inserting/updating timetable
-			do_action('after_tcp_timetable_update', $post_to_update_id, $timetable );
-
-			} else {
-			// Removing timetable if it is empty and user chose
-			// not to import empty timetables
-			if ( $_POST['remove_empty_tables'] ) {
-				$args = array(
-					'post_type'		=> 'timetable',
-					'numberposts'	=> 1,
-					'post_status'	=> 'publish',
-					'meta_key'		=> 'timetable_id',
-					'meta_value'	=> $timetable['timetable_id'],
-				);
-				$timetable_exists = get_posts( $args );
-				if ( $timetable_exists ) {
-					wp_delete_post( $timetable_exists[0]->ID, true );
+					}
 				}
 			}
 		}
-	}	
+		$timetable['content'] = $content;
+
+		// Case 1: we aren't checking for empty tables
+		// - if content does not exist at this point, just update the post meta and go on our way
+		// - if content does exist, update the post
+
+		// Case 2: we are checking for empty tables
+		// -- if content is empty or table is empty, delete the post
+		// -- if content exists and is a table, update or create the post and its meta
+
+		if ( ! $_POST['remove_empty_tables'] ) {
+			tcp_create_or_update_timetable( $timetable );
+		} else {
+			if (($timetable['content'] != '') && tcp_table_exists( $timetable['content'])) {
+				tcp_create_or_update_timetable( $timetable );
+			} else {
+				tcp_remove_timetable( $timetable );
+			}
+		}
+	}
 	return true;
+}
+
+function tcp_table_exists( $content ) {
+	libxml_use_internal_errors(true);
+	$doc = new DOMDocument();
+	$doc->loadHTML( $content );
+	$table_body = $doc->getElementsByTagName('tbody');
+	return (1 < strlen( $table_body[0]->nodeValue));
+}
+
+function tcp_create_or_update_timetable( $timetable ) {
+	$post_to_update_id = null;
+	$args = array(
+		'post_type'		=> 'timetable',
+		'numberposts'	=> 1,
+		'post_status'	=> 'publish',
+		'meta_key'		=> 'timetable_id',
+		'meta_value'	=> $timetable['timetable_id'],
+	);
+	$timetable_exists = get_posts( $args );
+	if ( $timetable_exists ) {
+		$post_to_update_id = $timetable_exists[0]->ID;
+		$updated = array(
+			'ID'			=> $post_to_update_id,
+			'post_title'	=> $timetable['timetable_name'],
+			'post_name'		=> $timetable['tag_name'],
+		);
+		if ( $timetable['content'] != '' ) {
+			$updated['post_content'] = $timetable['content'];
+		}
+		wp_update_post( $updated );
+	} else {
+		$my_post = array(
+			'post_title'		=> $timetable['timetable_name'],
+			'post_name'			=> $timetable['tag_name'],
+			'post_status'		=> 'publish',
+			'post_type'			=> 'timetable',
+			'post_content'		=> $timetable['content'],
+			'post_author'		=> 1,
+		);
+		// Insert the post into the database
+		$post_to_update_id = wp_insert_post( $my_post );
+	}
+	// Update route meta fields from GTFS data
+	foreach ( $timetable as $key => $value ) {
+		if ( $key != "" ) {
+			update_post_meta( $post_to_update_id, $key, $value );
+		}
+	}
+	// Add additional custom functions to run after inserting/updating timetable
+	do_action('after_tcp_timetable_update', $post_to_update_id, $timetable );
+}
+
+function tcp_remove_timetable( $timetable ) {
+	$args = array(
+		'post_type'		=> 'timetable',
+		'numberposts'	=> 1,
+		'post_status'	=> 'publish',
+		'meta_key'		=> 'timetable_id',
+		'meta_value'	=> $timetable['timetable_id'],
+	);
+	$timetable_exists = get_posts( $args );
+	if ( $timetable_exists ) {
+		wp_delete_post( $timetable_exists[0]->ID, true );
+	}
 }
 
 function tcp_timetable_name( $timetable ) {
