@@ -63,7 +63,7 @@ function the_gtfs_update_form() {
 							<p>
 								<label>
 									<input name="remove_empty_tables" type="checkbox" value="true" id="empty-tables">
-									Don't import empty timetables
+									Skip and delete empty or missing timetables
 								</label>
 							</p>
 							<p>
