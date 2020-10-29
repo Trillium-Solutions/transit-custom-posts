@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [2.0.2] - 2020-10-29
+- Adjusted GTFS update, so that it does not update existing timetable content with empty content
+
 ## [2.0.1] - 2020-10-26
 - Added option to not import empty timetables when running gtfs update
 - Changed alerts to pull only the alerts whose end date is greater than or equal to current timezone in WordPress
