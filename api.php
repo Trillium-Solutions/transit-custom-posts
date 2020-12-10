@@ -44,8 +44,8 @@
 *     @type string "route_name" Deprecated. @see get_route_name()
 * }
 */
-function tcp_list_routes( $args = array() ) {	
-	if ( ! array_key_exists( 'route', $wp_post_types ) || ! post_type_exists('route') ) {
+function tcp_list_routes( $args = array() ) {
+	if ( ! post_type_exists('route') ) {
 		// Fail silently
 		return;
 	}
@@ -112,7 +112,7 @@ function tcp_list_routes( $args = array() ) {
 *
 */
 function the_route_title() {
-	
+
 	global $post;
 
 	if ( ! post_type_exists( 'route' ) || $post->post_type != 'route' ) {
@@ -224,7 +224,7 @@ function get_route_circle( $post_id = NULL, $size = "medium" ) {
 	if ( empty( $text ) ) {
 		$text = get_option( 'tcp_route_circle_custom_name', '' );
 	}
- 
+
 	$html = sprintf('<span class="route-circle route-circle-%1$s" style="background-color: #%2$s; color: #fff">%4$s</span>', $size, $route_color, $text_color, $text);
 
 	if ( has_filter('get_route_circle') ) {
@@ -312,7 +312,7 @@ function tcp_do_alerts( $args = array() ) {
 		'link_text'           => 'Permalink',
 		'affected_text'	      => 'Affected Routes: ',
 		'alerts-title'        => 'Current Alerts',
-		'alerts-id'           => 'tcp-alerts', 
+		'alerts-id'           => 'tcp-alerts',
 	);
 
 	global $post;
@@ -324,9 +324,9 @@ function tcp_do_alerts( $args = array() ) {
 
 	// Overwrite defaults with supplied $args
 	$args = wp_parse_args( $args, $defaults );
-	// TRANSIT ALERTS FORMATTING 
+	// TRANSIT ALERTS FORMATTING
 	if ( get_option( 'tcp_alerts_transit_alerts' ) ) {
-		
+
 		// Use transit alerts options instead of querying for alerts
 		if ( function_exists('transit_alerts_get_alerts') && defined('WPTA_FEEDS') ) {
 
@@ -338,7 +338,7 @@ function tcp_do_alerts( $args = array() ) {
 				$alerts = transit_alerts_get_alerts( $args );
 			} else {
 				$alerts = transit_alerts_get_alerts( $args );
-			}	
+			}
 
 			if ( ! empty( $alerts ) ) {
 
@@ -352,7 +352,7 @@ function tcp_do_alerts( $args = array() ) {
 
 				// Set up alert custom classes if applicable
 				$alert_container_class = '';
-				$alert_title_class = ''; 
+				$alert_title_class = '';
 				$alert_desc_class = '';
 				$alert_dates_class = '';
 
@@ -360,7 +360,7 @@ function tcp_do_alerts( $args = array() ) {
 					if (  array_key_exists('alert-container', $args['custom-classes'] ) ) {
 						$alert_container_class = $args['custom-classes']['alert-container'];
 					}
-				} 
+				}
 				if ( array_key_exists( 'custom-classes', $args ) ) {
 					if (  array_key_exists('alert-container', $args['custom-classes'] ) ) {
 						$alert_container_class = $args['custom-classes']['alert-container'];
@@ -374,7 +374,7 @@ function tcp_do_alerts( $args = array() ) {
 					if (  array_key_exists('alert-dates', $args['custom-classes'] ) ) {
 						$alert_dates_class = $args['custom-classes']['alert-dates'];
 					}
-				} 
+				}
 
 				foreach( $alerts as $alert ) {
 
@@ -386,45 +386,45 @@ function tcp_do_alerts( $args = array() ) {
 					$collapsible   = $defaults['collapse'];
 					$link_text     = $default['link_text'];
 					$affected_text = $defaults['affected_text'];
-				
 
-					// Check for and set button 
+
+					// Check for and set button
 					$alert_button = array_key_exists( 'use_button', $args ) ? $args ['use_button'] : '';
 
 					// Check for and set collapsible class
 					if ( array_key_exists( 'collapse', $args ) ) {
 						$collapsible = $args['collapse'] === 'true' ? 'collapse' : '' . 'panel-' . $alert_count;
-					} 
+					}
 
-					// Check for and set alert title 
+					// Check for and set alert title
 					if ( array_key_exists( 'link_text', $args ) ) {
 						$link_text  = $args['link_text'] === 'title' ? $alert_title : $args['link_text'];
 					}
 
-					// Check for and set affected text 
+					// Check for and set affected text
 					if ( array_key_exists( 'affected_text', $args ) ) {
 						if ( $alert['affected-routes'] ) {
 							$affected_text = $affected_text . ' ' . implode( ',', $alert['affected-routes'] );
 						} else {
 							$affected_text = '';
 						}
-					} 
-			
+					}
+
 					// Set route circles.
 					if ( ! empty( $alert['route-circles'] ) ) {
 						$alert_title =  '<div class="route-circle-list">' . $alert['route-circles'] . '</div>' . $alert_title;
-					} 
+					}
 
 					include( plugin_dir_path( __FILE__ ) . 'inc/templates/alerts/alert-panel.php' );
 					$alert_count++;
 				}
-				
+
 				include( plugin_dir_path( __FILE__ ) . 'inc/templates/alerts/alert-footer.php' );
 			}
-			
+
 		}
 	} else {
-		// CPT ALERTS FORMATTING 
+		// CPT ALERTS FORMATTING
 		// Get alerts where the end date is either not set or is in the future.
 		$query_args = array(
 			'post_type'		  => 'alert',
@@ -444,7 +444,7 @@ function tcp_do_alerts( $args = array() ) {
 				),
 			),
 		);
-		
+
 		// Overwrite meta query for single route alerts
 		if ( $args['single_route'] ) {
 			$query_args['meta_query'] = array(
@@ -481,12 +481,12 @@ function tcp_do_alerts( $args = array() ) {
 		$alert_query = new WP_Query( $query_args );
 
 		if ( $alert_query->have_posts() ) {
-		
+
 			// Begin alert header
 			include( plugin_dir_path( __FILE__ ) . 'inc/templates/alerts/alert-header.php' );
 
 			while ( $alert_query->have_posts() ) {
-				
+
 				$alert_query->the_post();
 
 				$panel_class         = 'panel-' . get_the_ID();
@@ -497,11 +497,11 @@ function tcp_do_alerts( $args = array() ) {
 				$collapsible         = $defaults['collapse'];
 				$affected_text       = $defaults['affected_text'];
 				$link_text           = $alert_title;
-			
-				// Check for and set button 
+
+				// Check for and set button
 				$alert_button = array_key_exists( 'use_button', $args ) ? $args ['use_button'] : '';
 
-				// Check for and set excerpt option 
+				// Check for and set excerpt option
 				if ( array_key_exists( 'excerpt_only', $args ) ) {
 					$alert_desc = $args['excerpt_only'] ? get_the_excerpt() : get_the_content();
 				}
@@ -509,19 +509,19 @@ function tcp_do_alerts( $args = array() ) {
 				// Check for and set collapsible class
 				if ( array_key_exists( 'collapse', $args ) ) {
 					$collapsible = $args['collapse'] ? 'collapse' : '' . 'panel-' . get_the_ID();
-				} 
+				}
 
-				// Check for and set alert title 
+				// Check for and set alert title
 				if ( array_key_exists( 'link_text', $args ) ) {
 					$link_text  = $args['link_text'] === 'title' ? $alert_title : $args['link_text'];
-				} 
+				}
 
 
-				// Check for and set affected text 
+				// Check for and set affected text
 				if ( $args['show_affected'] ) {
 					$affected_routes = tcp_get_affected( get_the_ID(), $args['sep_affected'] );
 					$affected_text   = $args['affected_text'] . ' ' . $affected_routes;
-				} else { 
+				} else {
 					$affected_text = '';
 				}
 
@@ -533,11 +533,11 @@ function tcp_do_alerts( $args = array() ) {
 					$route_circles = '<div class="route-circles">';
 					$the_affected  = get_post_meta( get_the_ID(), 'affected_routes', true );
 					foreach ( $the_affected as $key => $value ) {
-						$affected_route_post = get_posts( array( 
+						$affected_route_post = get_posts( array(
 							'post_type' => 'route',
-							'name' => $key ) 
+							'name' => $key )
 						);
-						$route_circles .= get_route_circle( $affected_route_post[0]->ID );	
+						$route_circles .= get_route_circle( $affected_route_post[0]->ID );
 					}
 					$route_circles .= '</div>';
 					$alert_title    = $route_circles . $alert_title;
@@ -610,22 +610,22 @@ function the_timetables( $args = array() ) {
 	$na_dir_button = false;
 
 	if ( $timetables->have_posts() ) {
-		
+
 		while ( $timetables->have_posts() ) {
-			
+
 			$timetables->the_post();
 
 			// Get timetable metadata
 			$table_dir  = get_post_meta( get_the_ID(), 'direction_label', true );
 			$table_days	= get_post_meta( get_the_ID(), 'days_of_week', true );
 
-			// Check for days with no direction or directions with no days 
-			if ( ! $na_dir_button && ! empty ( $table_days ) && empty( $table_dir ) ) { 
+			// Check for days with no direction or directions with no days
+			if ( ! $na_dir_button && ! empty ( $table_days ) && empty( $table_dir ) ) {
 				$na_dir_button = true;
 			}
-			if ( ! $na_day_button && ! empty ( $table_dir ) && empty( $table_days ) ) { 
+			if ( ! $na_day_button && ! empty ( $table_dir ) && empty( $table_days ) ) {
 				$na_day_button = true;
-			}				
+			}
 
 			// Create a timetable div with data attributes for optional JS manipulation
 			if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
@@ -634,22 +634,22 @@ function the_timetables( $args = array() ) {
 				add_action( 'wp_footer', function() {
 					if ( ! wp_script_is( 'jquery', 'enqueued' ) ) {
 						wp_enqueue_script( 'jquery' );
-					}		
+					}
 					wp_enqueue_script('tcp-timetable-scripts', plugins_url('/inc/js/timetables.js', __FILE__), array('jquery'),'1.0', true );
 					wp_enqueue_style('tcp-timetable-styles', plugins_url('/inc/css/timetables.css', __FILE__), '', rand() );
 				});
-				
+
 				// Pushing items into directions and days to array
 				// to use in legend nav buttons.
 				$days[]        = $table_days;
-				$directions[]  = $table_dir;	
+				$directions[]  = $table_dir;
 				$table_content = get_the_content();
 
 				$timestables[] = array(
 					'day'       => $table_days,
 					'direction' => $table_dir,
 					'table'     => $table_content
-				);		
+				);
 
 			} else {
 				// Print tables without timetable legend.
@@ -657,11 +657,11 @@ function the_timetables( $args = array() ) {
 					// Should be HTML or an image
 					the_content();
 				echo '</div>';
-			}			
+			}
 		}
 
 		if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
-			$days = array_unique( $days );  // Remove duplicates 
+			$days = array_unique( $days );  // Remove duplicates
 			$days = ! in_array( 'Weekday', $days ) ? array_reverse( $days ) : $days;
 			$days = array_filter( $days ); // Removing empty strings
 			if ( $na_day_button ) {
@@ -674,7 +674,7 @@ function the_timetables( $args = array() ) {
 				array_push( $directions, 'no-direction');
 			}
 			include( plugin_dir_path( __FILE__ ) . '/inc/templates/timetables/timetables-legend.php' );
-		}		
+		}
 		wp_reset_postdata();
 	}
 }
