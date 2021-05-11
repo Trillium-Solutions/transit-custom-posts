@@ -13,7 +13,7 @@ If you download a compatible theme such as [Transit Base Template](https://githu
 
 Afterward, you can configure the plugin from the WP Admin screen in the Transit Custom Posts submenus. More documentation is available on [the Github site for this project](https://trillium-solutions.github.io/transit-custom-posts/).
 
-## Devloper Notes ## 
+## Developer Notes ## 
 
 ### Hooks and Filters ### 
 
