@@ -25,7 +25,8 @@ class TCP_Route extends TCP_CustomPostType {
 			'Route Color'		=> array(),
 			'Route Text Color'	=> array(),
 			'Route Sort Order'	=> array(),
-			'Agency ID'			=> array(),	
+			'Agency ID'			=> array(),
+			'Route Cooltest'	=> array(),	
 		));
 	}
 	
