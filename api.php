@@ -635,8 +635,6 @@ function the_timetables( $args = array() ) {
 					if ( ! wp_script_is( 'jquery', 'enqueued' ) ) {
 						wp_enqueue_script( 'jquery' );
 					}
-					wp_enqueue_script('tcp-timetable-scripts', plugins_url('/inc/js/timetables.js', __FILE__), array('jquery'),'1.0', true );
-					wp_enqueue_style('tcp-timetable-styles', plugins_url('/inc/css/timetables.css', __FILE__), '', rand() );
 				});
 
 				// Pushing items into directions and days to array

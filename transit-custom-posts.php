@@ -23,6 +23,9 @@ require_once( plugin_dir_path( __FILE__ ) . 'cpts/alert.php');
 require_once( plugin_dir_path( __FILE__ ) . 'cpts/route.php');
 require_once( plugin_dir_path( __FILE__ ) . 'cpts/timetable.php');
 require_once( plugin_dir_path( __FILE__ ) . 'cpts/board-meeting.php');
+require_once( plugin_dir_path( __FILE__ ) . 'cpts/puppy.php');
+require_once( plugin_dir_path( __FILE__ ) . 'cpts/cat.php');
+
 
 // Settings page custom post type options
 if ( TCP_CUSTOM_TYPES ) {
@@ -38,4 +41,10 @@ if ( TCP_CUSTOM_TYPES ) {
 	if ( in_array('tcp_use_board', TCP_CUSTOM_TYPES ) ) {
 		$board_meetings = TCP_BoardMeeting::getInstance();
 	}
+	if ( in_array('tcp_use_cats', TCP_CUSTOM_TYPES ) ) {
+		$cats = TCP_Cat::getInstance();
+	}
+	//if ( in_array('tcp_use_puppies', TCP_CUSTOM_TYPES ) ) {
+	//	$puppies = TCP_Puppies::getInstance();
+//	}
 }

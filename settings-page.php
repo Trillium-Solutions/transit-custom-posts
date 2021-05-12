@@ -52,6 +52,9 @@ function tcp_setup_fields() {
 				'tcp_use_alerts'	 => 'Alerts',
 				'tcp_use_timetables' => 'Timetables',
 				'tcp_use_board'		 => 'Board Meetings',
+				'tcp_use_puppies'		 => 'Puppies',
+				'tcp_use_cats'	 => 'Cats',
+
 			),
 			'placeholder'	=> '',
 			'helper'		=> '',
@@ -377,6 +380,12 @@ if ( TCP_CUSTOM_TYPES ) {
 	if ( in_array('tcp_use_board', TCP_CUSTOM_TYPES ) ) {
 		add_action( 'admin_init', 'tcp_setup_board_options' );
 	}
+	if ( in_array('tcp_use_puppy', TCP_CUSTOM_TYPES ) ) {
+		add_action( 'admin_init', 'tcp_setup_puppy_options' );
+	}
+	if ( in_array('tcp_use_cat', TCP_CUSTOM_TYPES ) ) {
+		add_action( 'admin_init', 'tcp_setup_cat_options' );
+	}
 }
 
 function tcp_setup_route_options() {
@@ -393,4 +402,12 @@ function tcp_setup_timetable_options() {
 
 function tcp_setup_board_options() {
 	add_settings_section( 'tcp_board_options', '<hr/>Board Meeting Options', '', 'tcp_cpt_fields' );
+}
+
+function tcp_setup_puppy_options() {
+	add_settings_section( 'tcp_puppy_options', '<hr/>Puppy Options', '', 'tcp_cpt_fields' );
+}
+
+function tcp_setup_cat_options() {
+	add_settings_section( 'tcp_cat_options', '<hr/>Cat Options', '', 'tcp_cpt_fields' );
 }
