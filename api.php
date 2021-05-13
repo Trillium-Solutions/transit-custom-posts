@@ -656,6 +656,15 @@ function the_timetables( $args = array() ) {
 					the_content();
 				echo '</div>';
 			}
+			
+						// Chance Test - Accordion array
+						// Create a div with data attributes
+						if ( array_key_exists( 'accordiontest', $args ) && $args['accordiontest'] ) {
+							echo '<h2 class="test4">Yes Accordion Array</h2>';
+						} else {
+							echo '<h2 class="test4">No Accordion Array</h2>';
+						}
+
 		}
 
 		if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
