@@ -627,6 +627,15 @@ function the_timetables( $args = array() ) {
 				$na_day_button = true;
 			}
 
+						// TCP-Test-4 - Accordion array
+						// The following is displays conditionally for the attribute 'accordion'
+						if ( array_key_exists( 'accordion', $args ) && $args['accordion'] ) {
+							echo '<h2 class="has-text-success">Yes, the accordion attribute is enabled</h2>';
+						} else {
+							echo '<h2 class="has-text-danger">No, the accordion attribute is NOT enabled</h2>';
+						}
+
+
 			// Create a timetable div with data attributes for optional JS manipulation
 			if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
 
@@ -656,14 +665,6 @@ function the_timetables( $args = array() ) {
 					the_content();
 				echo '</div>';
 			}
-			
-						// Chance Test - Accordion array
-						// Create a div with data attributes
-						if ( array_key_exists( 'accordiontest', $args ) && $args['accordiontest'] ) {
-							echo '<h2 class="test4">Yes Accordion Array</h2>';
-						} else {
-							echo '<h2 class="test4">No Accordion Array</h2>';
-						}
 
 		}
 
