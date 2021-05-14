@@ -609,7 +609,10 @@ function the_timetables( $args = array() ) {
 	$na_day_button = false;
 	$na_dir_button = false;
 
-	if ( $timetables->have_posts() ) {
+	if ( $timetables->have_posts() ) { 
+		
+		// increment operator
+		$count_the_loops = 1; 
 
 		while ( $timetables->have_posts() ) {
 
@@ -626,6 +629,72 @@ function the_timetables( $args = array() ) {
 			if ( ! $na_day_button && ! empty ( $table_dir ) && empty( $table_days ) ) {
 				$na_day_button = true;
 			}
+
+
+
+
+						// TCP-Test-4 - Accordion array
+						// The following is displays conditionally for the attribute 'accordion'
+						if ( array_key_exists( 'accordion', $args ) && $args['accordion'] ) {
+							echo '<h2 class="has-text-success">Yes, the accordion attribute is enabled</h2>';
+
+
+
+
+							// Echo the loop increments by number
+							// This counts up as it loops
+							// echo 'Loop Count:', $count_the_loops++;
+
+
+
+							// This needs to count up for each loop
+							echo '<h2 class="title is-primary" data-toggle="collapse" data-target="#collapse-example-';
+							echo $count_the_loops;
+							echo '"aria-expanded="false" aria-controls="ways-to-pay">Clicky for ticky - Put the route titl and styles here</h2>';
+
+							printf('<div class="timetable-holder noattributes nolegend collapse" id="collapse-example-');
+							echo $count_the_loops++;
+							printf('"aria-expanded="false" data-dir="%s" data-days="%s"><div class="box">', $table_dir, $table_days);
+							// Should be HTML or an image
+							the_content();
+							echo '</div>
+							</div>';
+
+
+
+
+
+						} else { //If no accordion attribute
+							// echo '<h2 class="has-text-danger">No, the accordion attribute is NOT enabled</h2>';
+						}
+
+
+
+
+
+
+
+
+
+						// This is the default timetables! This diplays if tere are no attributes specified
+						// The following is displays conditionally for no attributes
+						// Add all new attributes to this list after they are established
+						if ( // If no attributes
+							!array_key_exists( 'accordion', $args ) && !$args['accordion'] &&
+							!array_key_exists( 'legend', $args ) && !$args['legend']
+						 ) {
+
+							echo '<h2 class="has-text-success">No attributes</h2>';
+
+							// Print tables without attributes like the timetable legend.
+							printf('<div class="timetable-holder noattributes nolegend" data-dir="%s" data-days="%s">', $table_dir, $table_days);
+							// Should be HTML or an image
+							the_content();
+							echo '</div>';
+
+						} else {
+							echo '<h2 class="has-text-danger">Yes, there are attributes</h2>';
+						}
 
 			// Create a timetable div with data attributes for optional JS manipulation
 			if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
@@ -651,12 +720,6 @@ function the_timetables( $args = array() ) {
 					'table'     => $table_content
 				);
 
-			} else {
-				// Print tables without timetable legend.
-				printf('<div class="timetable-holder" data-dir="%s" data-days="%s">', $table_dir, $table_days);
-					// Should be HTML or an image
-					the_content();
-				echo '</div>';
 			}
 		}
 
