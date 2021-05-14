@@ -1,5 +1,11 @@
 
 <?php 
+
+		// increment operator
+		$count_the_days = 1; // This counts up as it loops with $count_the_days++;
+        $count_the_directions = 1; // This counts up as it loops with $count_the_directions++;
+
+
     // Setting default tab.
     $default_tab = strtolower( $days[0] ) . '-' . strtolower( $directions[0] ) . '-tab';
     if ( $na_dir_button ) {
@@ -27,7 +33,7 @@
                             }
                         }
                         echo '<input role="tab" id="tab-' .  strtolower( $day ) . '" type="radio" name="days" value="' . strtolower( str_replace(', ', '', $day ) ) .'"  aria-controls="' . strtolower( str_replace( ', ', '', $day ) ) . '" ' . $day_selected . '"/>';
-                        echo '<label for="tab-' .  strtolower( $day ) . '">' . $day_text . '</label>';
+                        echo '<label for="tab-' .  strtolower( $day )  . '" class="day-' . $count_the_days++ . '">' . $day_text . '</label>';
                         $day_count++;   
                     } 
                 ?>
@@ -50,7 +56,7 @@
                             }
                         }
                         echo '<input role="tab" id="tab-' .  strtolower( $direction ) . '" type="radio" name="directions" value="' . strtolower( str_replace( ', ', '', $direction ) ) .'"  aria-controls="' . strtolower( str_replace(', ', '', $direction ) ) . ' "' . $direction_selected . '"/>';
-                        echo '<label for="tab-' .  strtolower( $direction ) . '">' . $direction_text . '</label>';
+                        echo '<label for="tab-' .  strtolower( $direction ) . '" class="direction-' . $count_the_directions++ . '">' . $direction_text . '</label>';
                         $direction_count++;
                     } 
                 ?>
