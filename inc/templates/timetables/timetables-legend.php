@@ -4,6 +4,7 @@
 		// increment operator
 		$count_the_days = 1; // This counts up as it loops with $count_the_days++;
         $count_the_directions = 1; // This counts up as it loops with $count_the_directions++;
+        $count_the_timetable_panels = 1; // This counts up as it loops with $count_the_timetable_panels++;
 
 
     // Setting default tab.
@@ -33,7 +34,7 @@
                             }
                         }
                         echo '<input role="tab" id="tab-' .  strtolower( $day ) . '" type="radio" name="days" value="' . strtolower( str_replace(', ', '', $day ) ) .'"  aria-controls="' . strtolower( str_replace( ', ', '', $day ) ) . '" ' . $day_selected . '"/>';
-                        echo '<label for="tab-' .  strtolower( $day )  . '" class="day-' . $count_the_days++ . '">' . $day_text . '</label>';
+                        echo '<label for="tab-' .  strtolower( $day )  . '" day="' .  strtolower( $day )  . '" class="day-' . $count_the_days++ . '">' . $day_text . '</label>';
                         $day_count++;   
                     } 
                 ?>
@@ -56,7 +57,7 @@
                             }
                         }
                         echo '<input role="tab" id="tab-' .  strtolower( $direction ) . '" type="radio" name="directions" value="' . strtolower( str_replace( ', ', '', $direction ) ) .'"  aria-controls="' . strtolower( str_replace(', ', '', $direction ) ) . ' "' . $direction_selected . '"/>';
-                        echo '<label for="tab-' .  strtolower( $direction ) . '" class="direction-' . $count_the_directions++ . '">' . $direction_text . '</label>';
+                        echo '<label for="tab-' .  strtolower( $direction ) . '" direction="' .  strtolower( $direction )  . '" class="direction-' . $count_the_directions++ . '">' . $direction_text . '</label>';
                         $direction_count++;
                     } 
                 ?>
@@ -83,11 +84,12 @@
                 $timetables_by_day_dir[ $timetable_key ] = array();
             }
             array_push( $timetables_by_day_dir[ $timetable_key ], $table['table'] );
+
         }
-        foreach( $timetables_by_day_dir as $key => $value ) {
+        foreach( $timetables_by_day_dir as $key => $value ) { // // These are the individual timetables
             $aria_label = str_replace( '-', ' ', $key );
             $aria_label = trim( str_replace( 'tab', ' ', $aria_label ) );
-            echo '<div role="tabpanel"  id="' . str_replace(', ','', $key )  . '" class="timetable-panel" aria-label="' . $aria_label . '" aria-expanded="false" tabindex="-1">';
+            echo '<div role="tabpanel"  id="' . str_replace(', ','', $key )  . '" class="timetable-panel ' . 'timetable-panel-' . $count_the_timetable_panels++ . '" aria-label="' . $aria_label . '" aria-expanded="false" tabindex="-1" day="' .  explode(' ',trim($aria_label))[0]  . '" direction="' .  explode(' ',trim($aria_label))[1]  . '">';
             foreach ( $value as $timetable ) {
                 echo $timetable;
             }
