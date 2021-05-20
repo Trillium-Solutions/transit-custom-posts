@@ -1,0 +1,67 @@
+{
+    "key": "group_5e30bse27ce9a",
+    "title": "Route Controls",
+    "fields": [
+        {
+            "key": "field_5e60305b87f8e",
+            "label": "Schedule (PDF)",
+            "name": "schedule_pdf",
+            "type": "file",
+            "instructions": "Upload schedules and timetables for route",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "url",
+            "library": "all",
+            "min_size": "",
+            "max_size": "",
+            "mime_types": ""
+        },
+        {
+            "key": "field_60a5b910e35f4",
+            "label": "Reverse Directions in Legend",
+            "name": "reverse_directions_in_legend",
+            "type": "radio",
+            "instructions": "For timetable legends",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "No": "No",
+                "Yes": "Yes"
+            },
+            "allow_null": 0,
+            "other_choice": 0,
+            "default_value": "No",
+            "layout": "horizontal",
+            "return_format": "value",
+            "save_other_choice": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "route"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "acf_after_title",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "modified": 1621473610
+}

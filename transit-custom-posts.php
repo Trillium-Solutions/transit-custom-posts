@@ -39,3 +39,10 @@ if ( TCP_CUSTOM_TYPES ) {
 		$board_meetings = TCP_BoardMeeting::getInstance();
 	}
 }
+
+// ACF JSON
+// Register a secondary directory to load ACF JSON
+add_filter( 'acf/settings/load_json', function ( $paths ) {
+	$paths[] = plugin_dir_path( __FILE__ ) . 'acf-json';
+	return $paths;
+} );
