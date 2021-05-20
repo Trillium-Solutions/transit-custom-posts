@@ -726,6 +726,8 @@ function the_timetables( $args = array() ) {
 	// These are functions for timetables with a legend
 	if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
 		$reverse_order_of_directions_in_legend = reverse_order_of_directions_in_legend(); 
+		$reverse_selected_direction_on_page_load = reverse_selected_direction_on_page_load(); 
+
 	}
 	
 }
@@ -925,10 +927,10 @@ function tcp_route_name_from_tag( $route_tag ) {
 <script> // Reverse order of directions in legend
 	function reverse_order_of_directions_in_legend() {
 		// This script finds the directions container, selects button 1, and moves it to the end of the directions container 
-		let directionsButtons = document.getElementById("direction"); // Get Directions container
+		let directionsButtons = document.getElementById("direction"); // Get directions container in legend
 		let firstButton = directionsButtons.getElementsByClassName("direction-1")[0]; // Get 1st direction button
 		let secondButton = directionsButtons.getElementsByClassName("direction-2")[0]; // Get 2nd direction button
-		firstButton.style.backgroundColor = "pink"; // FOR TESTING
+		// firstButton.style.backgroundColor = "pink"; // FOR TESTING
 		direction.appendChild(firstButton); // Moves Button 1 to the end of the inside of the directions container
 	}
 </script>
@@ -946,3 +948,38 @@ function reverse_order_of_directions_in_legend() {
 	<?php }
 
 }
+
+?>
+
+
+
+
+
+
+
+<script> // TODO - Extend this to 3 options: unset, button 1, or button 2
+	function reverse_selected_direction_on_page_load() {
+	// Switch the checked direction for outbound routes by clicking on the second direction
+	// This script finds the directions container and clicks the second button 
+	var directionsButtons = document.getElementById("direction"); // Get Directions container
+	var secondButton = directionsButtons.getElementsByClassName("direction-2")[0]; // Get 2nd direction button
+	secondButton.click(); // Click the 2nd direction button
+	// secondButton.style.backgroundColor = "purple"; // FOR TESTING
+	}
+</script>
+
+<?php
+
+function reverse_selected_direction_on_page_load() {
+	// Reverse selected direction on page load
+	if( get_field('reverse_selected_direction_on_page_load') == 'Yes' ) {
+		// echo 'YES, "Reverse selected direction on page load" is enabled';  // FOR TESTING ?>
+		<script>
+			// alert("Hello! I am an alert box!!"); // FOR TESTING
+			reverse_selected_direction_on_page_load(); 
+		</script>
+	<?php }
+
+}
+
+?>
