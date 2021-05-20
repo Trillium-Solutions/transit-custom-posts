@@ -1,5 +1,5 @@
 {
-    "key": "group_5e30bse27ce9a",
+    "key": "group_5e30qse22ce9a",
     "title": "Route Controls",
     "fields": [
         {
@@ -23,8 +23,32 @@
         },
         {
             "key": "field_60a5b910e35f4",
-            "label": "Reverse Directions in Legend",
-            "name": "reverse_directions_in_legend",
+            "label": "Reverse order of directions in legend",
+            "name": "reverse_order_of_directions_in_legend",
+            "type": "radio",
+            "instructions": "For timetable legends",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "No": "No",
+                "Yes": "Yes"
+            },
+            "allow_null": 0,
+            "other_choice": 0,
+            "default_value": "No",
+            "layout": "horizontal",
+            "return_format": "value",
+            "save_other_choice": 0
+        },
+        {
+            "key": "field_60a6b7001420a",
+            "label": "Reverse selected direction on page load",
+            "name": "reverse_selected_direction_on_page_load",
             "type": "radio",
             "instructions": "For timetable legends",
             "required": 0,
@@ -63,5 +87,5 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1621473610
+    "modified": 1621538584
 }

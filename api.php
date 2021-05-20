@@ -701,6 +701,7 @@ function the_timetables( $args = array() ) {
 				);
 
 			}
+			
 		}
 
 		if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
@@ -720,6 +721,13 @@ function the_timetables( $args = array() ) {
 		}
 		wp_reset_postdata();
 	}
+
+	// This is down here to wait for everything else to load
+	// These are functions for timetables with a legend
+	if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
+		$reverse_order_of_directions_in_legend = reverse_order_of_directions_in_legend(); 
+	}
+	
 }
 
 /**
@@ -907,4 +915,34 @@ function tcp_route_name_from_tag( $route_tag ) {
 		return $route_tag;
 	}
 	return get_route_name( $r_post->ID );
+}
+
+//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
+
+?>
+
+<script> // Reverse order of directions in legend
+	function reverse_order_of_directions_in_legend() {
+		// This script finds the directions container, selects button 1, and moves it to the end of the directions container 
+		let directionsButtons = document.getElementById("direction"); // Get Directions container
+		let firstButton = directionsButtons.getElementsByClassName("direction-1")[0]; // Get 1st direction button
+		let secondButton = directionsButtons.getElementsByClassName("direction-2")[0]; // Get 2nd direction button
+		firstButton.style.backgroundColor = "pink"; // FOR TESTING
+		direction.appendChild(firstButton); // Moves Button 1 to the end of the inside of the directions container
+	}
+</script>
+
+<?php
+
+function reverse_order_of_directions_in_legend() {
+	// Reverse order of directions in legend
+	if( get_field('reverse_order_of_directions_in_legend') == 'Yes' ) {
+		// echo 'YES, "Reverse order of directions in legend" is enabled';  // FOR TESTING ?>
+		<script>
+			// alert("Hello! I am an alert box!!"); // FOR TESTING
+			reverse_order_of_directions_in_legend(); 
+		</script>
+	<?php }
+
 }

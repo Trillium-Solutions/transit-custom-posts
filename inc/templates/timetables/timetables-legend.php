@@ -100,4 +100,5 @@
     foreach( $timestables as $table ) {
         echo $table['table'];
     }    
-} ?>
+} 
+
