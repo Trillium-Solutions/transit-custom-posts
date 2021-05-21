@@ -928,10 +928,13 @@ function tcp_route_name_from_tag( $route_tag ) {
 	function reverse_order_of_directions_in_legend() {
 		// This script finds the directions container, selects button 1, and moves it to the end of the directions container 
 		let directionsButtons = document.getElementById("direction"); // Get directions container in legend
+		let firstButtonInput = directionsButtons.getElementsByClassName("direction-input-1")[0]; // Get 1st direction button
 		let firstButton = directionsButtons.getElementsByClassName("direction-1")[0]; // Get 1st direction button
 		let secondButton = directionsButtons.getElementsByClassName("direction-2")[0]; // Get 2nd direction button
 		// firstButton.style.backgroundColor = "pink"; // FOR TESTING
+		direction.appendChild(firstButtonInput); // Moves Button 1 input to the end of the inside of the directions container
 		direction.appendChild(firstButton); // Moves Button 1 to the end of the inside of the directions container
+
 	}
 </script>
 
@@ -950,10 +953,6 @@ function reverse_order_of_directions_in_legend() {
 }
 
 ?>
-
-
-
-
 
 
 

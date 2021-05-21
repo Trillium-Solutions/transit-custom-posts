@@ -56,7 +56,7 @@
                                 $direction_selected = "";
                             }
                         }
-                        echo '<input role="tab" id="tab-' .  strtolower( $direction ) . '" type="radio" name="directions" value="' . strtolower( str_replace( ', ', '', $direction ) ) .'"  aria-controls="' . strtolower( str_replace(', ', '', $direction ) ) . ' "' . $direction_selected . '"/>';
+                        echo '<input role="tab" id="tab-' .  strtolower( $direction ) . '" type="radio" name="directions" value="' . strtolower( str_replace( ', ', '', $direction ) ) .'"  aria-controls="' . strtolower( str_replace(', ', '', $direction ) ) . ' "' . $direction_selected . ' class="direction-input-' . $count_the_directions . '"/>';
                         echo '<label for="tab-' .  strtolower( $direction ) . '" direction="' .  strtolower( $direction )  . '" class="direction-' . $count_the_directions++ . '">' . $direction_text . '</label>';
                         $direction_count++;
                     } 
