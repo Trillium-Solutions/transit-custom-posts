@@ -960,8 +960,8 @@ function reverse_order_of_directions_in_legend() {
 	function reverse_selected_direction_on_page_load() {
 	// Switch the checked direction for outbound routes by clicking on the second direction
 	// This script finds the directions container and clicks the second button 
-	var directionsButtons = document.getElementById("direction"); // Get Directions container
-	var secondButton = directionsButtons.getElementsByClassName("direction-2")[0]; // Get 2nd direction button
+	let directionsButtons = document.getElementById("direction"); // Get Directions container
+	let secondButton = directionsButtons.getElementsByClassName("direction-2")[0]; // Get 2nd direction button
 	secondButton.click(); // Click the 2nd direction button
 	// secondButton.style.backgroundColor = "purple"; // FOR TESTING
 	}
