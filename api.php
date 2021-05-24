@@ -621,6 +621,9 @@ function the_timetables( $args = array() ) {
 			// Get timetable metadata
 			$table_dir  = get_post_meta( get_the_ID(), 'direction_label', true );
 			$table_days	= get_post_meta( get_the_ID(), 'days_of_week', true );
+			//TODO - Here is where we can probably add the start date and end date fields.
+			$start_date	= get_post_meta( get_the_ID(), 'start_date', true ); // TCPTEST3
+			$end_date	= get_post_meta( get_the_ID(), 'end_date', true ); // TCPTEST3
 
 			// Check for days with no direction or directions with no days
 			if ( ! $na_dir_button && ! empty ( $table_days ) && empty( $table_dir ) ) {
@@ -631,7 +634,7 @@ function the_timetables( $args = array() ) {
 			}
 
 						// TCP-Test-4 - Accordion timetables feature
-						// The following is displays conditionally for the attribute 'accordion'
+						// The following displays conditionally for the attribute 'accordion'
 						if ( array_key_exists( 'accordion', $args ) && $args['accordion'] ) {
 							// echo '<h2 class="has-text-success">Yes, the accordion attribute is enabled</h2>'; // FOR TESTING
 
@@ -652,9 +655,8 @@ function the_timetables( $args = array() ) {
 							</div>';
 
 						} else { //If no accordion attribute
-							// echo '<h2 class="has-text-danger">No, the accordion attribute is NOT enabled</h2>';
+							// echo '<h2 class="has-text-danger">No, the accordion attribute is NOT enabled</h2>'; FOR TESTING
 						}
-
 
 						// This is the default timetables! 
 						// This diplays if there are no attributes specified
@@ -665,7 +667,7 @@ function the_timetables( $args = array() ) {
 							!array_key_exists( 'legend', $args ) && !$args['legend']
 						 ) {
 
-							echo '<h2 class="has-text-success">No attributes</h2>';
+							// echo '<h2 class="has-text-success">No attributes</h2>'; // FOR TESTING
 
 							// Print tables without attributes like the timetable legend.
 							printf('<div class="timetable-holder noattributes nolegend" data-dir="%s" data-days="%s">', $table_dir, $table_days);
@@ -740,11 +742,11 @@ function the_timetables( $args = array() ) {
 * @param array $args {
 *     Optional. An array of arguments.
 *
-*     @type bool "upcoming" Return upcoming (not yet active) timetables
+*     @type bool "upcoming" Return upcoming timetables // TODO
 *         Default: false
-*     @type bool "use_expired" Return expired timetables if none are current
+*     @type bool "use_expired" Return expired timetables if none are current // CHANCE test this
 *         Default: WP_Option $tcp_timetable_expire
-*     @type string "upcoming_time" Time interval to fetch upcoming timetables
+*     @type string "upcoming_time" Time interval to fetch upcoming timetables // CHANCE test this
 *         Default: 'P14D'
 * }
 * @return WP_Query timetable query object
@@ -760,7 +762,7 @@ function get_timetables( $args = array() ) {
 	$use_expired = get_option('tcp_timetable_expire') === 'never';
 
 	$defaults = array(
-		'upcoming'			=> false,
+		'upcoming'			=> false, // TODO - Can I make this conditional, and add controls in WP
 		'use_expired'		=> $use_expired,
 		'upcoming_time'		=> 'P14D',
 	);
