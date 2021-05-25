@@ -143,13 +143,24 @@ function tcp_setup_fields() {
 		// TODO - Chance
 		array(
 			'uid' 		   => 'tcp_timetable_upcoming',
-			'label'  	   => 'Return upcoming timetables',
+			'label'  	   => 'Preview Upcoming Timetables',
 			'section'	   => 'tcp_timetable_options',
 			'type'		   => 'checkbox',
 			'options'	   => false,
 			'placeholder'  => '',
-			'helper'	   => '<span style="color:#666666;"><em>Check to return upcoming timetables.</em></span>',
+			'helper'	   => '<span style="color:#666666;"><em>Check to preview upcoming timetables.</em></span>',
 			'supplemental' => '',
+			'settings'     => 'tcp_cpt_fields',
+		),
+		array(
+			'uid' 		   => 'tcp_timetable_upcoming_time',
+			'label'  	   => 'Preview Duration',
+			'section'	   => 'tcp_timetable_options',
+			'type'		   => 'number',
+			'options'	   => false,
+			'default'      => '14', // days
+			'helper'	   => '<span style="color:#666666;"><em>How many days ahead would you like to preview?</em></span>',
+			'supplemental' => 'Requires "Preview Upcoming Timetables" enabled',
 			'settings'     => 'tcp_cpt_fields',
 		),
 		array(
