@@ -762,9 +762,9 @@ function get_timetables( $args = array() ) {
 	$use_expired = get_option('tcp_timetable_expire') === 'never';
 
 	$defaults = array(
-		'upcoming'			=> false, // TODO - Can I make this conditional, and add controls in WP
+		'upcoming'			=> get_option('tcp_timetable_upcoming' ), // Control from the settings page
 		'use_expired'		=> $use_expired,
-		'upcoming_time'		=> 'P14D',
+		'upcoming_time'		=> 'P14D', // TODO - Can I make this conditional, and add controls in WP
 	);
 	// Overwrite defaults with supplied $args
 	$args = wp_parse_args( $args, $defaults );

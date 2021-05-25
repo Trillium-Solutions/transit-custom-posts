@@ -140,6 +140,18 @@ function tcp_setup_fields() {
 			'supplemental' => '',
 			'settings'     => 'tcp_cpt_fields',
 		),
+		// TODO - Chance
+		array(
+			'uid' 		   => 'tcp_timetable_upcoming',
+			'label'  	   => 'Return upcoming timetables',
+			'section'	   => 'tcp_timetable_options',
+			'type'		   => 'checkbox',
+			'options'	   => false,
+			'placeholder'  => '',
+			'helper'	   => '<span style="color:#666666;"><em>Check to return upcoming timetables.</em></span>',
+			'supplemental' => '',
+			'settings'     => 'tcp_cpt_fields',
+		),
 		array(
 			'uid'		=> 'tcp_board_fields',
 			'label'		=> 'Board Meeting Fields',
