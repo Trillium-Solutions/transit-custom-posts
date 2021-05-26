@@ -624,6 +624,8 @@ function the_timetables( $args = array() ) {
 			//TODO - Here is where we can probably add the start date and end date fields.
 			$start_date	= get_post_meta( get_the_ID(), 'start_date', true ); // TCPTEST3
 			$end_date	= get_post_meta( get_the_ID(), 'end_date', true ); // TCPTEST3
+			$timetable_id	= get_post_meta( get_the_ID(), 'timetable_id', true ); // TCPTEST5
+			$timetable_order	= get_post_meta( get_the_ID(), 'timetable_order', true ); // TCPTEST5
 
 			// Check for days with no direction or directions with no days
 			if ( ! $na_dir_button && ! empty ( $table_days ) && empty( $table_dir ) ) {
@@ -633,52 +635,52 @@ function the_timetables( $args = array() ) {
 				$na_day_button = true;
 			}
 
-						// TCP-Test-4 - Accordion timetables feature
-						// The following displays conditionally for the attribute 'accordion'
-						if ( array_key_exists( 'accordion', $args ) && $args['accordion'] ) {
-							// echo '<h2 class="has-text-success">Yes, the accordion attribute is enabled</h2>'; // FOR TESTING
+							// TCP-Test-4 - Accordion timetables feature
+							// The following displays conditionally for the attribute 'accordion'
+							if ( array_key_exists( 'accordion', $args ) && $args['accordion'] ) {
+								// echo '<h2 class="has-text-success">Yes, the accordion attribute is enabled</h2>'; // FOR TESTING
 
-							// Echo the loop increments by number
-							// This counts up as it loops
-							// echo 'Loop Count:', $count_the_loops++;  // FOR TESTING
+								// Echo the loop increments by number
+								// This counts up as it loops
+								// echo 'Loop Count:', $count_the_loops++;  // FOR TESTING
 
-							// This needs to count up for each loop
-							echo '<div class="box title is-3 has-text-white has-background-primary timetable-accordion" data-toggle="collapse" data-target="#collapse-example-';
-							echo $count_the_loops;
-							echo '"aria-expanded="false" aria-controls="ways-to-pay">', $table_dir, ' ', $table_days, ' Timetable', '<img class="accordion-arrow" src="', plugins_url('/inc/images/icons/icon-arrow-down.svg', __FILE__), '"></div>';
+								// This needs to count up for each loop
+								echo '<div class="box title is-3 has-text-white has-background-primary timetable-accordion" data-toggle="collapse" data-target="#collapse-example-';
+								echo $count_the_loops;
+								echo '"aria-expanded="false" aria-controls="ways-to-pay" timetable-id="', $timetable_id, '" timetable-order="', $timetable_order, '">', $table_dir, ' ', $table_days, ' Timetable', '<img class="accordion-arrow" src="', plugins_url('/inc/images/icons/icon-arrow-down.svg', __FILE__), '"></div>';
 
-							printf('<div class="timetable-holder noattributes nolegend collapse" id="collapse-example-');
-							echo $count_the_loops++;
-							printf('"aria-expanded="false" data-dir="%s" data-days="%s"><div class="block">', $table_dir, $table_days);
-							the_content(); // The timetables
-							echo '</div>
-							</div>';
-							wp_enqueue_style('tcp-timetable-styles', plugins_url('/inc/css/timetables.css', __FILE__), '', rand() ); // for the icon styles
-							
+								printf('<div class="timetable-holder noattributes nolegend collapse" id="collapse-example-');
+								echo $count_the_loops++;
+								printf('"aria-expanded="false" data-dir="%s" data-days="%s"><div class="block">', $table_dir, $table_days);
+								the_content(); // The timetables
+								echo '</div>
+								</div>';
+								wp_enqueue_style('tcp-timetable-styles', plugins_url('/inc/css/accordion-timetables.css', __FILE__), '', rand() ); // for the icon styles
+								
 
-						} else { //If no accordion attribute
-							// echo '<h2 class="has-text-danger">No, the accordion attribute is NOT enabled</h2>'; FOR TESTING
-						}
+							} else { //If no accordion attribute
+								// echo '<h2 class="has-text-danger">No, the accordion attribute is NOT enabled</h2>'; FOR TESTING
+							}
 
-						// This is the default timetables! 
-						// This diplays if there are no attributes specified
-						// The following is displays conditionally for no attributes
-						// Add all new attributes to this list after they are established
-						if ( // If no attributes
-							!array_key_exists( 'accordion', $args ) && !$args['accordion'] &&
-							!array_key_exists( 'legend', $args ) && !$args['legend']
-						 ) {
+							// This is the default timetables! 
+							// This diplays if there are no attributes specified
+							// The following is displays conditionally for no attributes
+							// Add all new attributes to this list after they are established
+							if ( // If no attributes
+								!array_key_exists( 'accordion', $args ) && !$args['accordion'] &&
+								!array_key_exists( 'legend', $args ) && !$args['legend']
+							) {
 
-							// echo '<h2 class="has-text-success">No attributes</h2>'; // FOR TESTING
+								// echo '<h2 class="has-text-success">No attributes</h2>'; // FOR TESTING
 
-							// Print tables without attributes like the timetable legend.
-							printf('<div class="timetable-holder noattributes nolegend" data-dir="%s" data-days="%s">', $table_dir, $table_days);
-							the_content(); // The timetables
-							echo '</div>';
+								// Print tables without attributes like the timetable legend.
+								printf('<div class="timetable-holder noattributes nolegend" data-dir="%s" data-days="%s" timetable-id="%s">', $table_dir, $table_days, $timetable_id);
+								the_content(); // The timetables
+								echo '</div>';
 
-						} else {
-							// echo '<h2 class="has-text-danger">Yes, there are attributes</h2>'; // FOR TESTING
-						}
+							} else {
+								// echo '<h2 class="has-text-danger">Yes, there are attributes</h2>'; // FOR TESTING
+							}
 
 			// Create a timetable div with data attributes for optional JS manipulation
 			if ( array_key_exists( 'legend', $args ) && $args['legend'] ) {
@@ -744,11 +746,11 @@ function the_timetables( $args = array() ) {
 * @param array $args {
 *     Optional. An array of arguments.
 *
-*     @type bool "upcoming" Return upcoming timetables // TODO
+*     @type bool "upcoming" Return upcoming timetables
 *         Default: false
-*     @type bool "use_expired" Return expired timetables if none are current // CHANCE test this
+*     @type bool "use_expired" Return expired timetables if none are current
 *         Default: WP_Option $tcp_timetable_expire
-*     @type string "upcoming_time" Time interval to fetch upcoming timetables // CHANCE test this
+*     @type string "upcoming_time" Time interval to fetch upcoming timetables
 *         Default: 'P14D'
 * }
 * @return WP_Query timetable query object
@@ -801,12 +803,16 @@ function get_timetables( $args = array() ) {
 		$end['key'] = 'start_date';
 		$end['compare'] = '<=';
 	}
-
+	 
+	// Assign 'Order By', controlled from the route page // TCPTEST5
+	if( get_field('order_by') == 'timetable_order' ) { $order_by = 'timetable_order'; } else { $order_by = 'timetable_id'; };
+	if( get_field('order_by') == 'timetable_id' ) { $order_by = 'timetable_id'; };
+	
 	$timetable_args = array(
 		'post_type'			=> 'timetable',
 		'posts_per_page'	=> -1,
 		'orderby'			=> 'meta_value_num',
-		'meta_key'			=> 'timetable_id',
+		'meta_key'			=> $order_by, // TCPTEST5 reorder by conditional fields 'timetable_id' and 'timetable_order'
 		'order'				=> 'ASC',
 		'meta_query'		=> array(
 			'relation'	=> 'AND',
@@ -833,7 +839,7 @@ function get_timetables( $args = array() ) {
 		'post_type'			=> 'timetable',
 		'posts_per_page'	=> -1,
 		'orderby'			=> 'meta_value_num',
-		'meta_key'			=> 'timetable_id',
+		'meta_key'			=> $order_by, // TCPTEST5 reorder by conditional fields 'timetable_id' and 'timetable_order'
 		'order'				=> 'ASC',
 		'meta_query'		=> array(
 			'relation'	=> 'AND',

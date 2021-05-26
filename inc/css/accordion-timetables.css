@@ -1,0 +1,15 @@
+.timetable-accordion .accordion-title:afterXXXXXXXXXXXXXXXXX {
+    content: url("../images/icons/icon-arrow-down.svg");
+    fill: blue;
+    width: 20px;
+    float: right;
+    position: absolute;
+    right: 10px;
+    opacity: 0.7;
+  }
+
+  .accordion-arrow {
+    top: 5px;
+    left: 10px;
+    position: relative;
+  }

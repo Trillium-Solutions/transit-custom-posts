@@ -22,6 +22,7 @@ class TCP_Timetable extends TCP_CustomPostType {
 			'Service Notes'		=> array(),
 			'Start Date'		=> array(),
 			'End Date'			=> array(),	
+			'Timetable Order'	=> array('default'	=> '1',),	
 		), 'side');
 	}
 	

@@ -68,6 +68,30 @@
             "layout": "horizontal",
             "return_format": "value",
             "save_other_choice": 0
+        },
+        {
+            "key": "field_60adc48ecfb37",
+            "label": "Order by",
+            "name": "order_by",
+            "type": "radio",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "timetable_id": "Timetable ID Field",
+                "timetable_order": "Timetable Order Field"
+            },
+            "allow_null": 0,
+            "other_choice": 0,
+            "save_other_choice": 0,
+            "default_value": "timetable_id",
+            "layout": "horizontal",
+            "return_format": "value"
         }
     ],
     "location": [
@@ -87,5 +111,5 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1621538584
+    "modified": 1622001105
 }
