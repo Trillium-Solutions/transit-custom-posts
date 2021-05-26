@@ -643,9 +643,9 @@ function the_timetables( $args = array() ) {
 							// echo 'Loop Count:', $count_the_loops++;  // FOR TESTING
 
 							// This needs to count up for each loop
-							echo '<div class="box title is-3 has-text-white has-background-primary" data-toggle="collapse" data-target="#collapse-example-';
+							echo '<div class="box title is-3 has-text-white has-background-primary timetable-accordion" data-toggle="collapse" data-target="#collapse-example-';
 							echo $count_the_loops;
-							echo '"aria-expanded="false" aria-controls="ways-to-pay">', $table_dir, ' ', $table_days, ' Timetable', '(Add Icon here)', '</div>';
+							echo '"aria-expanded="false" aria-controls="ways-to-pay">', $table_dir, ' ', $table_days, ' Timetable', '<img class="accordion-arrow" src="', plugins_url('/inc/images/icons/icon-arrow-down.svg', __FILE__), '"></div>';
 
 							printf('<div class="timetable-holder noattributes nolegend collapse" id="collapse-example-');
 							echo $count_the_loops++;
@@ -653,6 +653,8 @@ function the_timetables( $args = array() ) {
 							the_content(); // The timetables
 							echo '</div>
 							</div>';
+							wp_enqueue_style('tcp-timetable-styles', plugins_url('/inc/css/timetables.css', __FILE__), '', rand() ); // for the icon styles
+							
 
 						} else { //If no accordion attribute
 							// echo '<h2 class="has-text-danger">No, the accordion attribute is NOT enabled</h2>'; FOR TESTING
