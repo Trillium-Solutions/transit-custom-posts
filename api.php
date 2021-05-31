@@ -927,28 +927,26 @@ function tcp_route_name_from_tag( $route_tag ) {
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 
-?>
-
-<script> // Reverse order of directions in legend
-	function reverse_order_of_directions_in_legend() {
-		// This script finds the directions container, selects button 1, and moves it to the end of the directions container 
-		let directionsButtons = document.getElementById("direction"); // Get directions container in legend
-		let firstButtonInput = directionsButtons.getElementsByClassName("direction-input-1")[0]; // Get 1st direction button
-		let firstButton = directionsButtons.getElementsByClassName("direction-1")[0]; // Get 1st direction button
-		let secondButton = directionsButtons.getElementsByClassName("direction-2")[0]; // Get 2nd direction button
-		// firstButton.style.backgroundColor = "pink"; // FOR TESTING
-		direction.appendChild(firstButtonInput); // Moves Button 1 input to the end of the inside of the directions container
-		direction.appendChild(firstButton); // Moves Button 1 to the end of the inside of the directions container
-
-	}
-</script>
-
-<?php
 
 function reverse_order_of_directions_in_legend() {
 	// Reverse order of directions in legend
 	if( get_field('reverse_order_of_directions_in_legend') == 'Yes' ) {
 		// echo 'YES, "Reverse order of directions in legend" is enabled';  // FOR TESTING ?>
+
+		<script> // Reverse order of directions in legend
+			function reverse_order_of_directions_in_legend() {
+				// This script finds the directions container, selects button 1, and moves it to the end of the directions container 
+				let directionsButtons = document.getElementById("direction"); // Get directions container in legend
+				let firstButtonInput = directionsButtons.getElementsByClassName("direction-input-1")[0]; // Get 1st direction button
+				let firstButton = directionsButtons.getElementsByClassName("direction-1")[0]; // Get 1st direction button
+				let secondButton = directionsButtons.getElementsByClassName("direction-2")[0]; // Get 2nd direction button
+				// firstButton.style.backgroundColor = "pink"; // FOR TESTING
+				direction.appendChild(firstButtonInput); // Moves Button 1 input to the end of the inside of the directions container
+				direction.appendChild(firstButton); // Moves Button 1 to the end of the inside of the directions container
+
+			}
+		</script>
+
 		<script>
 			// alert("Hello! I am an alert box!!"); // FOR TESTING
 			reverse_order_of_directions_in_legend(); 
@@ -957,27 +955,22 @@ function reverse_order_of_directions_in_legend() {
 
 }
 
-?>
-
-
-
-<script> // TODO - Extend this to 3 options: unset, button 1, or button 2
-	function reverse_selected_direction_on_page_load() {
-	// Switch the checked direction for outbound routes by clicking on the second direction
-	// This script finds the directions container and clicks the second button 
-	let directionsButtons = document.getElementById("direction"); // Get Directions container
-	let secondButton = directionsButtons.getElementsByClassName("direction-2")[0]; // Get 2nd direction button
-	secondButton.click(); // Click the 2nd direction button
-	// secondButton.style.backgroundColor = "purple"; // FOR TESTING
-	}
-</script>
-
-<?php
-
 function reverse_selected_direction_on_page_load() {
 	// Reverse selected direction on page load
 	if( get_field('reverse_selected_direction_on_page_load') == 'Yes' ) {
 		// echo 'YES, "Reverse selected direction on page load" is enabled';  // FOR TESTING ?>
+
+		<script> // TODO - Extend this to 3 options: unset, button 1, or button 2
+			function reverse_selected_direction_on_page_load() {
+			// Switch the checked direction for outbound routes by clicking on the second direction
+			// This script finds the directions container and clicks the second button 
+			let directionsButtons = document.getElementById("direction"); // Get Directions container
+			let secondButton = directionsButtons.getElementsByClassName("direction-2")[0]; // Get 2nd direction button
+			secondButton.click(); // Click the 2nd direction button
+			// secondButton.style.backgroundColor = "purple"; // FOR TESTING
+			}
+		</script>
+
 		<script>
 			// alert("Hello! I am an alert box!!"); // FOR TESTING
 			reverse_selected_direction_on_page_load(); 
