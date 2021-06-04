@@ -85,6 +85,15 @@ You can use Transit Custom Posts with the WP Transit Alerts Plugin by checking t
     - alert-desc - Allows addition of custom class for the alert description
     - alert-dates - Allows addition of custom class for the alert dates or meta
 
+## File Summary ##
+- api.php -  API custom functions
+- gtfs-update.php - Imports GTFS data
+- settings-page.php - Interface to control the plugin
+- transit-custom-posts.php - The base file
+- cpts/ - Location of the custom post types
+- Inc/ - CSS, JS, and media
+- acf-json/ - Advanced Custom Fields JSON to be imported
+
 ## How to Contribute
 
 Issues/bugs, pull-requests, feedback, and documentation are always appreciated. Please see the issue log for currently open and unassigned tasks.
