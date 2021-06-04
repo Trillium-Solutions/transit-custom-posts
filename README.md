@@ -58,3 +58,29 @@ The Wordpress ecosystem could use more themes compatible with this plugin! Feel 
 Created by Trillium Solutions, inc for the Northwest Oregon Transit Alliance
 
 Author: NomeQ 2017
+
+## Timetables ## 
+
+-Upcoming timetables are not visible until the current date is within their date range.
+-Expired timetables will disappear if there are still timetables within the current date range.
+-Expired timetables will be shown if all current timetables are expired.
+-If there are expired timetables, upcoming timetables, and no current timetables, then the expired timetables will be shown until the upcoming timetables become current.
+
+### Timetables options ###
+
+Timetable options are controlled from the Timetable options section of the TCP settings page. 
+
+There are 3 display options for timetables. 
+-Default: Timetables are displayed vertically, and ordered by the 'timetable id'.
+-Legend: Timetables are displayed with a legend to toggle between days and directions.
+-Accordion: Timetables are displayed in collapsed accordions, and ordered by the 'timetable id'.
+
+To enable the Legend or Accordion displays, use the checkboxes on the settings page.
+
+#### Vertically reorder timetables ####
+
+Timetables are sorted by the 'timetable id’ by default. To reorder timetables vertically, set the route to 'Order by': 'Timetable Order Field' and set the timetables 'Timetable Order' field in the numerical order you want the timetables to appear.
+
+#### Preview upcoming timetables ####
+
+To preview upcoming timetables, enable ‘Preview Upcoming Timetables’ from the settings page and below that designate the amount of days ahead you would like to preview in the ‘Preview Duration’ field.
