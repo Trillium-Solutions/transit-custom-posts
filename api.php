@@ -53,10 +53,10 @@ function tcp_list_routes( $args = array() ) {
 		'before'		=> '<div class="tcp_route_list">',
 		'after'			=> '</div>',
 		'sep'			=> ' ',
-		'use_color'		=> false,
+		'use_color'		=> false, // TODO - doesn't work
 		'show_circle'	=> false,
 		'route_name'	=> 'long_name',
-		'show_alert'	=> false,
+		'show_alert'	=> false, // TODO - doesn't work
     	'alert_markup' => 'default',
 
 	);
@@ -100,8 +100,33 @@ function tcp_list_routes( $args = array() ) {
 		// Add formatted route link to an array
 		$routes[] = '<a href="' . get_the_permalink($route->ID) . '" class="' . $route->post_name . '"' . $rcolor . '>' . get_route_name($route->ID) . $alert_icon . '</a>';
 	}
+
 	echo $args['before'] . join( $args['sep'], $routes ) . $args['after'];
+
 }
+
+
+// The function we want to turn into a shortcode has an echo, and that breaks shortcodes.
+// So we are using output buffering to turn the output into a string 
+function tcp_list_routes_shortcode() {
+	ob_start();
+	tcp_list_routes();
+	return ob_get_clean(); // return the buffer contents and delete
+}
+
+add_shortcode('tcp_list_routes', 'tcp_list_routes_shortcode'); // Shortcode for function: tcp_list_routes
+
+
+// The function we want to turn into a shortcode has an echo, and that breaks shortcodes.
+// So we are using output buffering to turn the output into a string 
+function tcp_list_routes_with_colors_shortcode() {
+	ob_start();
+	tcp_list_routes( array('use_color' => true) );
+	return ob_get_clean(); // return the buffer contents and delete
+}
+
+add_shortcode('tcp_list_routes_with_colors', 'tcp_list_routes_with_colors_shortcode'); // Shortcode for function: tcp_list_routes array('use_color' => true)
+
 
 /**
 * Displays the route title with formatting from plugin options.
@@ -143,6 +168,16 @@ function the_route_title() {
 		echo $html;
 	}
 }
+
+// The function we want to turn into a shortcode has an echo, and that breaks shortcodes.
+// So we are using output buffering to turn the output into a string 
+function the_route_title_shortcode() {
+	ob_start();
+	the_route_title();
+	return ob_get_clean(); // return the buffer contents and delete
+}
+
+add_shortcode('the_route_title', 'the_route_title_shortcode'); // Shortcode for function: the_route_title
 
 /**
 * Outputs formatted route name.
@@ -187,7 +222,7 @@ function get_route_name( $post_id = NULL ) {
 }
 
 /**
- * Not implemented.
+ * Not implemented. // TODO
  */
 function the_route_meta() {
 	return;
@@ -266,6 +301,16 @@ function the_route_description( $args = array() ) {
 
 	echo $args['before'] . $description . $args['after'];
 }
+
+// The function we want to turn into a shortcode has an echo, and that breaks shortcodes.
+// So we are using output buffering to turn the output into a string 
+function the_route_description_shortcode() {
+	ob_start();
+	the_route_description();
+	return ob_get_clean(); // return the buffer contents and delete
+}
+
+add_shortcode('the_route_description', 'the_route_description_shortcode'); // Shortcode for function: the_route_description
 
 /**
 * Outputs all current alerts with metadata and formatting.
@@ -558,6 +603,16 @@ function tcp_do_alerts( $args = array() ) {
 	}
 }
 
+// The function we want to turn into a shortcode has an echo, and that breaks shortcodes.
+// So we are using output buffering to turn the output into a string 
+function tcp_do_alerts_shortcode() {
+	ob_start();
+	tcp_do_alerts();
+	return ob_get_clean(); // return the buffer contents and delete
+}
+
+add_shortcode('tcp_do_alerts', 'tcp_do_alerts_shortcode'); // Shortcode for function: tcp_do_alerts
+
 /**
 * Creates text for alert effective date range.
 *
@@ -593,6 +648,8 @@ function tcp_get_alert_dates( $post_id = null ) {
 	}
 	return $date_text;
 }
+
+add_shortcode('tcp_get_alert_dates', 'tcp_get_alert_dates'); // Shortcode for function: tcp_get_alert_dates
 
 /**
 * Outputs all timetables for a route from inside the loop.
@@ -733,6 +790,16 @@ function the_timetables( $args = array() ) {
 	
 }
 
+// The function we want to turn into a shortcode has an echo, and that breaks shortcodes.
+// So we are using output buffering to turn the output into a string 
+function the_timetables_shortcode() {
+	ob_start();
+	the_timetables();
+	return ob_get_clean(); // return the buffer contents and delete
+}
+
+add_shortcode('the_timetables', 'the_timetables_shortcode'); // Shortcode for function: the_timetables
+
 /**
 * Returns a WP Query post object
 *
@@ -859,7 +926,7 @@ function get_timetables( $args = array() ) {
 }
 
 /**
-* Retrives and formats affected route postmeta from an alert.
+* Retrieves and formats affected route postmeta from an alert.
 *
 * @global WP_Post $post
 *
@@ -901,6 +968,16 @@ function tcp_get_affected( $post_id = null, $sep = ', ') {
 	return join($the_affected, $sep);
 }
 
+// The function we want to turn into a shortcode has an echo, and that breaks shortcodes.
+// So we are using output buffering to turn the output into a string 
+function tcp_get_affected_shortcode() {
+	ob_start();
+	tcp_get_affected();
+	return ob_get_clean(); // return the buffer contents and delete
+}
+
+add_shortcode('tcp_get_affected', 'tcp_get_affected_shortcode'); // Shortcode for function: tcp_get_affected
+
 /**
 * Gets the formatted route name using the route post slug.
 *
@@ -923,6 +1000,9 @@ function tcp_route_name_from_tag( $route_tag ) {
 	}
 	return get_route_name( $r_post->ID );
 }
+
+add_shortcode('tcp_route_name_from_tag', 'tcp_route_name_from_tag'); // Shortcode for function: tcp_route_name_from_tag
+
 
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
