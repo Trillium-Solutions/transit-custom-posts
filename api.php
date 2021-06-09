@@ -1059,4 +1059,175 @@ function reverse_selected_direction_on_page_load() {
 
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////
+// ACF Gutenberg Blocks - TODO
+////////////////////////////////////////
+
+// Add new Gutenberg block category for 'Trillium Blocks'
+
+// Check function exists.
+if( function_exists('trillium_block_category') ) {
+	// Nothing here
+}
+
+else {
+
+	function trillium_block_category( $categories, $post ) {
+		return array_merge(
+			$categories,
+			array(
+				array(
+					'slug' => 'trillium-blocks',
+					'title' => __( 'Trillium Blocks', 'trillium-blocks' ),
+				),
+			)
+		);
+	}
+	add_filter( 'block_categories', 'trillium_block_category', 10, 2);
+
+}
+
+
+// ACF Block TCP 1
+
+add_action('acf/init', 'acf_block_tcp_1');
+function acf_block_tcp_1() {
+
+    // Check function exists.
+    if( function_exists('acf_register_block_type') ) {
+
+        // register a testimonial block.
+        acf_register_block_type(array(
+            'name'              => 'tcp_list_routes',
+            'title'             => __('List Routes'),
+            'description'       => __('Outputs all route names with formatting'),
+            'render_callback' => 'tcp_list_routes', // a trillium function
+            'category'          => 'trillium-blocks',
+			'icon' => array(
+				'background' => '#fef9ef', // Specifying a background color to appear with the icon e.g.: in the inserter.
+				'foreground' => '#191E23',	// Specifying a color for the icon (optional: if not set, a readable color will be automatically defined)
+				'src' => 'car', // Specifying a dashicon for the block
+			),
+			'keywords'          => array( 'trillium', 'routes' ),
+        ));
+    }
+}
+
+
+// ACF Block TCP 2
+
+add_action('acf/init', 'acf_block_tcp_2');
+function acf_block_tcp_2() {
+
+    // Check function exists.
+    if( function_exists('acf_register_block_type') ) {
+
+        // register a testimonial block.
+        acf_register_block_type(array(
+            'name'              => 'the_route_title',
+            'title'             => __('Route Title'),
+            'description'       => __('Displays the route title with formatting from plugin options'),
+            'render_callback' => 'the_route_title', // a trillium function
+            'category'          => 'trillium-blocks',
+			'icon' => array(
+				'background' => '#fef9ef', // Specifying a background color to appear with the icon e.g.: in the inserter.
+				'foreground' => '#191E23',	// Specifying a color for the icon (optional: if not set, a readable color will be automatically defined)
+				'src' => 'car', // Specifying a dashicon for the block
+			),
+			'keywords'          => array( 'trillium', 'routes' ),
+        ));
+    }
+}
+
+
+// ACF Block TCP 3
+
+add_action('acf/init', 'acf_block_tcp_3');
+function acf_block_tcp_3() {
+
+    // Check function exists.
+    if( function_exists('acf_register_block_type') ) {
+
+        // register a testimonial block.
+        acf_register_block_type(array(
+            'name'              => 'the_route_description',
+            'title'             => __('Route Description'),
+            'description'       => __('Outputs route description from post meta'),
+            'render_callback' => 'the_route_description', // a trillium function
+            'category'          => 'trillium-blocks',
+			'icon' => array(
+				'background' => '#fef9ef', // Specifying a background color to appear with the icon e.g.: in the inserter.
+				'foreground' => '#191E23',	// Specifying a color for the icon (optional: if not set, a readable color will be automatically defined)
+				'src' => 'car', // Specifying a dashicon for the block
+			),
+			'keywords'          => array( 'trillium', 'routes' ),
+        ));
+    }
+}
+
+
+// ACF Block TCP 4
+
+add_action('acf/init', 'acf_block_tcp_4');
+function acf_block_tcp_4() {
+
+    // Check function exists.
+    if( function_exists('acf_register_block_type') ) {
+
+        // register a testimonial block.
+        acf_register_block_type(array(
+            'name'              => 'the_timetables',
+            'title'             => __('Timetables'),
+            'description'       => __('Outputs all timetables for a route from inside the loop'),
+            'render_callback' => 'the_timetables', // a trillium function
+            'category'          => 'trillium-blocks',
+			'icon' => array(
+				'background' => '#fef9ef', // Specifying a background color to appear with the icon e.g.: in the inserter.
+				'foreground' => '#191E23',	// Specifying a color for the icon (optional: if not set, a readable color will be automatically defined)
+				'src' => 'grid-view', // Specifying a dashicon for the block
+			),
+			'example'           => array(
+				'attributes' => array(
+					'mode' => 'preview',
+					'data' => array(
+						'testimonial'   => "Blocks are...",
+						'author'        => "Jane Smith",
+						'role'          => "Person",
+						'is_preview'    => true
+					)
+				)
+			),
+            'keywords'          => array( 'trillium', 'routes', 'timemtables' ),
+        ));
+    }
+}
+
+
+
+
+
+
+
+
+
+
 ?>

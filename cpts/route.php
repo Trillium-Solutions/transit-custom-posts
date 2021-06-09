@@ -12,6 +12,7 @@ class TCP_Route extends TCP_CustomPostType {
 				'rewrite'	=> array( 'slug' => 'routes' ),
 				'show_in_nav_menus'	=> true,
 				'show_in_menu'	=> true,
+				'show_in_rest' => true, // Gutenberg editor
 				'supports' => get_option('tcp_route_editor' ) ? array( 'title' ) : array('title', 'editor')
 		));
 		$this->add_meta_box('Route Fields', array(
