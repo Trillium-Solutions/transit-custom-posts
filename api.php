@@ -1004,6 +1004,171 @@ function tcp_route_name_from_tag( $route_tag ) {
 add_shortcode('tcp_route_name_from_tag', 'tcp_route_name_from_tag'); // Shortcode for function: tcp_route_name_from_tag
 
 
+// Trash routes with no current timetables
+
+function trash_routes_with_no_current_timetables() {
+
+	// Function to change post status
+	// $post_id - The ID of the post you'd like to change.
+	// $status -  The post status publish|pending|draft|private|static|object|attachment|inherit|future|trash.
+
+	function change_post_status($post_id,$status){
+		$current_post = get_post( $post_id, 'ARRAY_A' );
+		$current_post['post_status'] = $status;
+		wp_update_post($current_post);
+	}
+
+	// change_post_status(522,'draft'); // Example: Turns page with ID 522 to draft
+
+
+	function route_has_no_current_timetables() { // Not used anymore, but here for documentation. This has been hard coded below instead of being a function
+
+		// echo 'The route_has_no_current_timetables function fired! <br>'; // TEST
+
+		// $route_post_id = get_the_ID(); 
+		// echo 'microphone check' . $route_post_id . 'microphone check <br>';
+
+		// The route has no current timetables
+		// Let's see if we should keep the route published or turn it to draft
+		// Manual setting to keep route published if there are no timetables
+		// Controlled from the route editor
+		// Keep this route published when there are no timetables.
+		if( get_field('keep_route_published_if_timetables_are_expired_or_missing') == 'Yes' ) {
+			// Do nothing
+			// echo 'This route has keep_route_published... set to yes, so this route will stay published <br>'; // Test
+		}
+		// Disable this route by updating the status to draft when there are no timetables.
+		else {
+			// This is where the function goes
+			// echo 'This route has keep_route_published... set to no, so this route will become a draft <br>'; // Test
+			// echo 'Route ID ' . $route_post_id . ' will become a draft <br>'; // TEST
+			change_post_status($route_post_id,'trash'); // Example: Turns page with matching ID to draft
+		}
+
+	}
+
+	$all_routes_args = array(
+		'numberposts' => -1,
+		'post_type' => 'route',
+		// 'meta_key' => 'route_id',
+		// 'meta_value' => $the_routes_route_id
+	);
+	
+	$all_routes = new WP_Query( $all_routes_args ); 
+
+	if ( $all_routes->have_posts() ) { 
+		
+		while ( $all_routes->have_posts() ) {
+
+			$all_routes->the_post();
+
+			$route_post_id = get_the_ID(); 
+			// echo $route_post_id  . ' the page id<br>'; // TEST
+
+			$keep_route_published_if_timetables_are_expired_or_missing = get_field('keep_route_published_if_timetables_are_expired_or_missing');
+
+			// Get timetable metadata
+			//	$table_dir  = get_post_meta( get_the_ID(), 'direction_label', true );
+			//	$table_days	= get_post_meta( get_the_ID(), 'days_of_week', true );
+			//	$start_date	= get_post_meta( get_the_ID(), 'start_date', true ); // TCPTEST3
+			//	$end_date	= get_post_meta( get_the_ID(), 'end_date', true ); // TCPTEST3
+			//	$timetable_id	= get_post_meta( get_the_ID(), 'timetable_id', true ); // TCPTEST5
+			//	$timetable_order	= get_post_meta( get_the_ID(), 'timetable_order', true ); // TCPTEST5
+
+			$the_routes_route_id	= get_post_meta( get_the_ID(), 'route_id', true );
+
+			// echo ' ' . the_title() . ":"; // TEST
+			// echo $the_routes_route_id  . ' <br>'; // TEST
+
+			$timetable_matching_route_ids_args = array(
+				'numberposts' => -1,
+				'post_type' => 'timetable',
+				'meta_key' => 'route_id',
+				'meta_value' => $the_routes_route_id
+			);
+		
+			$timetable_matching_route_ids = new WP_Query( $timetable_matching_route_ids_args ); 
+		
+			if ( $timetable_matching_route_ids->have_posts() ) { 
+				
+				while ( $timetable_matching_route_ids->have_posts() ) {
+		
+					$timetable_matching_route_ids->the_post();
+				
+					// echo ' Yes Matching Route IDs ' . $the_routes_route_id . '<br>'; // TEST
+
+					// echo $route_post_id  . ' the page id<br>'; // TEST
+		
+					$start_date	= get_post_meta( get_the_ID(), 'start_date', true );
+					$end_date	= get_post_meta( get_the_ID(), 'end_date', true );
+					$timetable_id	= get_post_meta( get_the_ID(), 'timetable_id', true );
+					$date = new DateTime();
+					$today = intval($date->format('Ymd'));
+		
+					// echo 'start_date:' . $start_date . '<br>'; // TEST
+					// echo 'end_date:' . $end_date . '<br>'; // TEST
+					// echo 'timetable_id:' . $timetable_id . '<br>'; // TEST
+					// echo 'today:' . $today . '<br>'; // TEST
+
+					if ( $today <= $end_date ) {
+						// echo 'The Timetables are current. Do nothing! <br>'; // TEST
+					}
+
+					else {
+
+						if( $keep_route_published_if_timetables_are_expired_or_missing == 'Yes' ) {
+							// Do nothing
+						}
+						else {
+							change_post_status($route_post_id,'trash'); // Example: Turns page with matching ID to 'trash'
+						}
+					}
+					
+				}
+		
+				wp_reset_postdata();
+			}
+		
+			else {
+				// echo 'No Matching Route IDs'; // TEST
+				
+				if( $keep_route_published_if_timetables_are_expired_or_missing == 'Yes' ) {
+					// Do nothing
+				}
+				else {
+					change_post_status($route_post_id,'trash'); // Example: Turns page with matching ID to 'trash'
+				}
+			}
+
+			if ($the_routes_route_id == null ) { // If the route id is null
+				// echo 'No Route IDs'; // TEST
+				
+				if( $keep_route_published_if_timetables_are_expired_or_missing == 'Yes' ) {
+					// Do nothing
+				}
+				else {
+					change_post_status($route_post_id,'trash'); // Example: Turns page with matching ID to 'trash'
+				}
+			}
+			
+			// echo '<br>'; // TEST
+			
+		}
+
+		wp_reset_postdata();
+	}
+
+	else {
+		// echo ' No routes ' ; // TEST
+	}
+
+}
+
+	// Trash routes with no current timetables
+	add_action( 'init', 'trash_routes_with_no_current_timetables' );
+
+
+
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////
 

@@ -1,5 +1,5 @@
 {
-    "key": "group_5e30qse22ce9a",
+    "key": "group_5e30qds223e9a",
     "title": "Route Controls",
     "fields": [
         {
@@ -83,7 +83,7 @@
                 "id": ""
             },
             "choices": {
-                "timetable_id": "Timetable ID Field",
+                "timetable_id": "Timetable ID",
                 "timetable_order": "Timetable Order Field"
             },
             "allow_null": 0,
@@ -92,6 +92,30 @@
             "default_value": "timetable_id",
             "layout": "horizontal",
             "return_format": "value"
+        },
+        {
+            "key": "field_60c07fac12a04",
+            "label": "Keep route published if timetables are expired or missing",
+            "name": "keep_route_published_if_timetables_are_expired_or_missing",
+            "type": "radio",
+            "instructions": "By default, routes are moved to trash if timetables are expired or missing. Enable to keep this route published.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "No": "No",
+                "Yes": "Yes"
+            },
+            "allow_null": 0,
+            "other_choice": 0,
+            "default_value": "No",
+            "layout": "horizontal",
+            "return_format": "value",
+            "save_other_choice": 0
         }
     ],
     "location": [
@@ -111,5 +135,5 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1622001105
+    "modified": 1623230752
 }

@@ -161,6 +161,7 @@ function tcp_gtfs_update() {
 
 	// We have passed the gauntlet of potential errors. Return success.
 	tcp_status_redirect('200');
+
 }
 
 function tcp_download_feed() {
