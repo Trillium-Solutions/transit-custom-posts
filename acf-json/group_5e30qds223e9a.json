@@ -1,5 +1,5 @@
 {
-    "key": "group_5e30qds223e9a",
+    "key": "group_5e60qas223e9a",
     "title": "Route Controls",
     "fields": [
         {
@@ -116,6 +116,44 @@
             "layout": "horizontal",
             "return_format": "value",
             "save_other_choice": 0
+        },
+        {
+            "key": "field_60c92d0f71a6b",
+            "label": "DRT Pickup Message",
+            "name": "drt_pickup_message",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_60c92d1a71a6c",
+            "label": "Eligibility Restricted",
+            "name": "eligibility_restricted",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
         }
     ],
     "location": [
@@ -135,5 +173,5 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1623230752
+    "modified": 1623798496
 }
