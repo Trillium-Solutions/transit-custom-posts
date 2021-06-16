@@ -63,6 +63,15 @@ These shortcodes can be used in the WP editor.
 - the_route_description - Outputs route description from post meta. Single routes.
 - the_timetables - Outputs all timetables for a route from inside the loop. Single routes.
 
+### Gutenberg Blocks ### 
+
+These blocks can be used in the Gutenberg editor.
+
+- List Routes - Outputs all route names with formatting. Use anywhere.
+- Route Title - Displays the route title with formatting from plugin options. Single routes.
+- Route Description - Outputs route description from post meta. Single routes.
+- Timetables - Outputs all timetables for a route from inside the loop. Single routes.
+
 ### Hooks and Filters ### 
 
 The Transit Custom Posts plugin offers several hooks and filters for easily extending and customizing core plugin functions. These include: 
