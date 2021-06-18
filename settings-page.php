@@ -114,6 +114,17 @@ function tcp_setup_fields() {
 			'settings'     => 'tcp_cpt_fields',
 		),
 		array(
+			'uid' 		   => 'trash_routes_with_no_current_timetables_settings',
+			'label' 	   => 'Delete expired routes',
+			'section'	   => 'tcp_routes_options',
+			'type'		   => 'checkbox',
+			'options' 	   => false,
+			'placeholder'  => '',
+			'helper'	   => '<span style="color:#666666;"><em>Move routes with expired or missing timetables to trash.</em></span>',
+			'supplemental' => '',
+			'settings'     => 'tcp_cpt_fields',
+		),
+		array(
 			'uid' 		=> 'tcp_timetable_expire',
 			'label' 	=> 'Timetable Expiration',
 			'section'	=> 'tcp_timetable_options',

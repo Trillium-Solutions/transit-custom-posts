@@ -98,7 +98,7 @@
             "label": "Keep route published if timetables are expired or missing",
             "name": "keep_route_published_if_timetables_are_expired_or_missing",
             "type": "radio",
-            "instructions": "By default, routes are moved to trash if timetables are expired or missing. Enable to keep this route published.",
+            "instructions": "if 'Delete expired routes' is enabled on the TCP settings page, routes are moved to trash if timetables are expired or missing. Enable to keep this route published.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
