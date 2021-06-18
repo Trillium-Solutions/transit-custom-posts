@@ -1231,6 +1231,63 @@ function reverse_selected_direction_on_page_load() {
 
 
 
+// Flex Features
+
+
+// Display flex field "Eligibility Restricted"
+// This is a route field
+function tcp_flex_eligibility_restricted() {
+
+	if ( get_field('eligibility_restricted') ) {
+		the_field('eligibility_restricted');
+	}
+
+}
+
+
+// Display flex field "DRT Pickup Message"
+// This is a trip field that we pas to routes by comparing route id's
+function tcp_flex_drt_pickup_message() {
+
+	$the_routes_route_id	= get_post_meta( get_the_ID(), 'route_id', true );
+
+	$tripidea_matching_route_ids_args = array(
+		'posts_per_page' => 1,
+		'post_type' => 'tripidea',
+		'meta_key' => 'route_id',
+		'meta_value' => $the_routes_route_id,
+		'order'	=> 'ASC',
+	);
+
+	$tripidea_matching_route_ids = new WP_Query( $tripidea_matching_route_ids_args ); 
+
+	if ( $tripidea_matching_route_ids->have_posts() ) { 
+		
+		while ( $tripidea_matching_route_ids->have_posts() ) {
+
+			$tripidea_matching_route_ids->the_post();
+		
+			if ( get_field('drt_pickup_message') ) {
+				the_field('drt_pickup_message');
+			}
+			
+		}
+
+		wp_reset_postdata();
+	}
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
