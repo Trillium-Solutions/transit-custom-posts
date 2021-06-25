@@ -330,19 +330,29 @@ function tcp_update_timetables( $timetable_file ) {
     array_walk( $gtfs_data, '_combine_array', $header );
 	$timetable_ids = array_column( $gtfs_data, 'timetable_id' );
 
-	// delete any existing timetables that are not in the new GTFS
-	$args = array(
-		'post_type'		=> 'timetable',
-		'numberposts'	=> -1,
-		'meta_key'		=> 'timetable_id',
-		'meta_value'    => $timetable_ids,
-		'meta_compare'  => 'NOT IN',
-	);
-	$expired_timetables = get_posts( $args );
-	foreach( $expired_timetables as $to_delete ) {
-		wp_delete_post( $to_delete->ID, true );
+
+	// Keep or delete existing timetables during GTFS feed upload
+	// Control from the settings page
+	if ( get_option( 'keep_existing_routes_during_gtfs_feed_upload' ) ) {
+		// Do Nothing
+	} 
+		
+	else {
+		// delete any existing timetables that are not in the new GTFS
+		$args = array(
+			'post_type'		=> 'timetable',
+			'numberposts'	=> -1,
+			'meta_key'		=> 'timetable_id',
+			'meta_value'    => $timetable_ids,
+			'meta_compare'  => 'NOT IN',
+		);
+		$expired_timetables = get_posts( $args );
+		foreach( $expired_timetables as $to_delete ) {
+			wp_delete_post( $to_delete->ID, true );
+		}
+		wp_reset_postdata();
 	}
-	wp_reset_postdata();
+	
 
 	foreach( $gtfs_data as $ind => $timetable ) {
 		// Figure out days of week for timetable
