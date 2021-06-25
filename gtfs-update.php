@@ -228,19 +228,29 @@ function tcp_update_routes( $route_file ) {
     array_walk( $gtfs_data, '_combine_array', $header );
 	$route_ids = array_column( $gtfs_data, 'route_id' );
 
-	// delete any existing route posts that are not in the new GTFS
-	$args = array(
-		'post_type'		=> 'route',
-		'numberposts'	=> -1,
-		'meta_key'		=> 'route_id',
-		'meta_value'	=> $route_ids,
-		'meta_compare'	=> 'NOT IN',
-	);
-	$expired_routes = get_posts( $args );
-	foreach( $expired_routes as $to_delete ) {
-		wp_delete_post( $to_delete->ID, true );
+	
+	// Keep or delete existing routes during GTFS feed upload
+	// Control from the settings page
+	if ( get_option( 'keep_existing_routes_during_gtfs_feed_upload' ) ) {
+		// Do Nothing
+	} 
+		
+	else {
+		// delete any existing route posts that are not in the new GTFS
+		$args = array(
+			'post_type'		=> 'route',
+			'numberposts'	=> -1,
+			'meta_key'		=> 'route_id',
+			'meta_value'	=> $route_ids,
+			'meta_compare'	=> 'NOT IN',
+		);
+		$expired_routes = get_posts( $args );
+		foreach( $expired_routes as $to_delete ) {
+			wp_delete_post( $to_delete->ID, true );
+		}
+		wp_reset_postdata();
 	}
-	wp_reset_postdata();
+	
 
     foreach( $gtfs_data as $ind=>$route ) {
         // If route_long_name exists, use it as the default name for post title and name

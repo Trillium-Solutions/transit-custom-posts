@@ -125,6 +125,17 @@ function tcp_setup_fields() {
 			'settings'     => 'tcp_cpt_fields',
 		),
 		array(
+			'uid' 		   => 'keep_existing_routes_during_gtfs_feed_upload',
+			'label' 	   => 'Keep existing routes during GTFS feed upload',
+			'section'	   => 'tcp_routes_options',
+			'type'		   => 'checkbox',
+			'options' 	   => false,
+			'placeholder'  => '',
+			'helper'	   => '<span style="color:#666666;"><em>Keep any existing route posts that are not in the new GTFS</em></span>',
+			'supplemental' => '',
+			'settings'     => 'tcp_cpt_fields',
+		),
+		array(
 			'uid' 		=> 'tcp_timetable_expire',
 			'label' 	=> 'Timetable Expiration',
 			'section'	=> 'tcp_timetable_options',
