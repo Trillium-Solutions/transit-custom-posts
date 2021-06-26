@@ -84,7 +84,7 @@ function tcp_setup_fields() {
 			'supplemental' => 'Custom route name to display when a route short name is not available for a route circle.',
 			'settings' => 'tcp_cpt_fields',
 			'classes'  => 'regular-text',
-	),
+		),
 		array(
 			'uid' 		=> 'tcp_route_sortorder',
 			'label' 	=> 'Sort Order',
@@ -134,6 +134,22 @@ function tcp_setup_fields() {
 			'helper'	   => '<span style="color:#666666;"><em>Keep any existing route posts that are not in the new GTFS</em></span>',
 			'supplemental' => '',
 			'settings'     => 'tcp_cpt_fields',
+		),
+		array(
+			'uid' 		=> 'route_title_source',
+			'label' 	=> 'Route title source',
+			'section'	=> 'tcp_routes_options',
+			'type'		=> 'select',
+			'options'	=> array(
+				'route_short_name' => 'Short Name',
+				'route_long_name'  => 'Long Name',
+			),
+			'placeholder'  => '',
+			'helper'	   => '',
+			'supplemental' => '',
+			'default'      => 'route_short_name',
+			'settings'     => 'tcp_cpt_fields',
+			'classes'      => '',
 		),
 		array(
 			'uid' 		=> 'tcp_timetable_expire',

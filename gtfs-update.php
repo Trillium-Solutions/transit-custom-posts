@@ -250,12 +250,23 @@ function tcp_update_routes( $route_file ) {
 		}
 		wp_reset_postdata();
 	}
-	
+
+
+
+	$route_title_source = get_option('route_title_source'); // either 'route_short_name' or 'route_long_name'
 
     foreach( $gtfs_data as $ind=>$route ) {
-        // If route_long_name exists, use it as the default name for post title and name
-        $default_name = ( $route['route_short_name'] == "") ? $route['route_long_name'] : 'Route ' . $route['route_short_name'];
-        $tag_name     = tcp_route_url( $default_name );
+
+		if ($route_title_source == 'route_short_name') {
+			// If no route_short_name exists, use route_long_name
+			$default_name = ( $route['route_short_name'] == "") ? $route['route_long_name'] : 'Route ' . $route['route_short_name'];
+		}
+	
+		if ($route_title_source == 'route_long_name') {
+			$default_name = $route['route_long_name'];
+		}
+
+		$tag_name     = tcp_route_url( $default_name );
         $route_id     = $route['route_id'];
 
 		//Check if the route post already exists. If not, create new route
@@ -352,7 +363,7 @@ function tcp_update_timetables( $timetable_file ) {
 		}
 		wp_reset_postdata();
 	}
-	
+
 
 	foreach( $gtfs_data as $ind => $timetable ) {
 		// Figure out days of week for timetable
