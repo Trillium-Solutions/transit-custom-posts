@@ -252,7 +252,6 @@ function tcp_update_routes( $route_file ) {
 	}
 
 
-
 	$route_title_source = get_option('route_title_source'); // either 'route_short_name' or 'route_long_name'
 
     foreach( $gtfs_data as $ind=>$route ) {
@@ -305,6 +304,21 @@ function tcp_update_routes( $route_file ) {
 				update_post_meta( $post_to_update_id, $key, $value );
             }
 		}
+
+		// Flex features
+		// Pass drt_pickup_message from trips.txt to routes
+		// Use the route_id column to compare and pass data
+
+		$trip_txt_url = plugin_dir_path( __FILE__ ) . 'transit-data/trips.txt'; // The url of trips.txt
+		$trip_txt_data = array_map( 'str_getcsv', file( $trip_txt_url ) ); // The data from trips.txt
+		$header = array_shift( $trip_txt_data );
+		array_walk( $trip_txt_data, '_combine_array', $header );
+		$route_ids_from_trips_txt = array_column( $trip_txt_data, 'route_id' ); // The route_id trips.txt array
+		$route_id_key_from_trips_txt = array_search ($route_id, $route_ids_from_trips_txt); // Get's the key for the route ID value
+		$drt_pickup_message_from_route_id_key = array_column( $trip_txt_data, 'drt_pickup_message' )[$route_id_key_from_trips_txt]; // The same key as the route_id key for of the 'drt_pickup_message' data	
+		update_post_meta( $post_to_update_id, 'drt_pickup_message', $drt_pickup_message_from_route_id_key );
+		// update_post_meta( $post_to_update_id, 'drt_pickup_message', 'This will be in the field of the post' ); Test update a field. It works!
+
 
 		// Add additional custom functions to run after inserting/updating route
 		do_action('after_tcp_route_update', $post_to_update_id, $route );
@@ -589,3 +603,42 @@ function tcp_timetable_days( $timetable ) {
 function _combine_array( &$row, $key, $header ) {
   $row = array_combine( $header, $row );
 }
+
+
+
+
+	// FLEX Development
+
+	// CURRENT ISSUES
+	// ' are closing the php
+
+	// $drt_pickup_messages = array_column( $trip_txt_data, 'drt_pickup_message' ); // An array of the 'drt_pickup_message' data
+	// $drt_pickup_messages_3 = array_column( $trip_txt_data, 'drt_pickup_message' )[3]; // #3 of the 'drt_pickup_message' data
+	// print_r ($drt_pickup_messages_3);
+
+	// $test_console_log_i_1 = '<script>console.log("' . $drt_pickup_messages . '")</script>';
+	// echo $test_console_log_i_1;
+	// echo "<script>console.log('" . json_encode($drt_pickup_messages) . "');</script>";
+	// print_r ($trip_txt_data); // Prints the data from trips.txt
+	// print_r ($drt_pickup_messages);
+
+
+	// if (in_array("491", $route_ids_from_trips_txt)) {
+	// 	echo "The route ID 491 was found!!!";
+	// }
+
+	// Find the array # (key?) of a specific value in the route-id column,
+	// Use the array # (key?) above to retrieve the row value for 'drt_pickup_message' data
+
+	function flexforsafekeeping() {
+		$trip_txt_url = plugin_dir_path( __FILE__ ) . 'transit-data/trips.txt'; // The url of trips.txt
+		$trip_txt_data = array_map( 'str_getcsv', file( $trip_txt_url ) ); // The data from trips.txt
+		$header = array_shift( $trip_txt_data );
+		array_walk( $trip_txt_data, '_combine_array', $header );
+		$route_ids_from_trips_txt = array_column( $trip_txt_data, 'route_id' ); // The route_id trips.txt array
+		// print_r ($route_ids_from_trips_txt); // Prints the route_id array from trips.txt
+		$route_id_key_from_trips_txt = array_search ('497', $route_ids_from_trips_txt); // Get's the key for the route ID value (currently of 491)
+		echo $route_id_key_from_trips_txt;
+		$drt_pickup_message_from_route_id_key = array_column( $trip_txt_data, 'drt_pickup_message' )[$route_id_key_from_trips_txt]; // The same key as the route_id key for of the 'drt_pickup_message' data
+		echo $drt_pickup_message_from_route_id_key;
+	}
