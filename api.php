@@ -297,7 +297,7 @@ function the_route_description( $args = array() ) {
 	);
 	$args = wp_parse_args( $args, $defaults );
 
-	$description = get_post_meta( $post->ID, 'route_description', true );
+	$description = get_post_meta( $post->ID, 'route_desc', true );
 
 	echo $args['before'] . $description . $args['after'];
 }

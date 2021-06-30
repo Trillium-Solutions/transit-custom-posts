@@ -22,7 +22,7 @@ class TCP_Route extends TCP_CustomPostType {
 			'Route ID' 			=> array(),
 			'Route Short Name' 	=> array(),
 			'Route Long Name'	=> array(),
-			'Route Description'	=> array(),
+			'Route Desc'	=> array(),
 			'Route Color'		=> array(),
 			'Route Text Color'	=> array(),
 			'Route Sort Order'	=> array(),
