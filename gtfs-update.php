@@ -315,9 +315,23 @@ function tcp_update_routes( $route_file ) {
 		array_walk( $trip_txt_data, '_combine_array', $header );
 		$route_ids_from_trips_txt = array_column( $trip_txt_data, 'route_id' ); // The route_id trips.txt array
 		$route_id_key_from_trips_txt = array_search ($route_id, $route_ids_from_trips_txt); // Get's the key for the route ID value
-		$drt_pickup_message_from_route_id_key = array_column( $trip_txt_data, 'drt_pickup_message' )[$route_id_key_from_trips_txt]; // The same key as the route_id key for of the 'drt_pickup_message' data	
+		$drt_pickup_message_from_route_id_key = array_column( $trip_txt_data, 'drt_pickup_message' )[$route_id_key_from_trips_txt]; // The same key as the route_id key gets the 'drt_pickup_message' data	
 		update_post_meta( $post_to_update_id, 'drt_pickup_message', $drt_pickup_message_from_route_id_key );
-		// update_post_meta( $post_to_update_id, 'drt_pickup_message', 'This will be in the field of the post' ); Test update a field. It works!
+		// update_post_meta( $post_to_update_id, 'drt_pickup_message', 'This will be in the field of the post' ); // Test update a field. It works!
+
+
+		// Is Route A Flex Route
+
+		$routes_eligibility_restricted = $route['eligibility_restricted'];
+
+		if ($drt_pickup_message_from_route_id_key or $routes_eligibility_restricted) {
+			update_post_meta( $post_to_update_id, 'is_route_flex', 'Yes' );
+		} else {
+			update_post_meta( $post_to_update_id, 'is_route_flex', 'No' );
+		}
+
+
+
 
 
 		// Add additional custom functions to run after inserting/updating route
