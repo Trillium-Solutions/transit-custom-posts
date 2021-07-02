@@ -323,13 +323,13 @@ function tcp_update_routes( $route_file ) {
 		// update_post_meta( $post_to_update_id, 'drt_pickup_message', 'This will be in the field of the post' ); // Test update a field. It works!
 
 		if ( $routes_eligibility_restricted == "0" ) {
-			update_post_meta( $post_to_update_id, 'eligibility_restricted', 'The field is 0' );
+			update_post_meta( $post_to_update_id, 'eligibility_restricted', 'This service is open to the general public.' );
         }
 		if ( $routes_eligibility_restricted == "1" ) {
-			update_post_meta( $post_to_update_id, 'eligibility_restricted', 'The field is 1' );
+			update_post_meta( $post_to_update_id, 'eligibility_restricted', 'This service has eligibility requirements.' );
         }
 		if ( $routes_eligibility_restricted == "2" ) {
-			update_post_meta( $post_to_update_id, 'eligibility_restricted', 'The field is 2' );
+			update_post_meta( $post_to_update_id, 'eligibility_restricted', 'Fixed-route stops are open to the general public, but deviated service has eligibility requirements.' );
         }
 
 
