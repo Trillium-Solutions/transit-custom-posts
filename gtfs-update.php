@@ -267,6 +267,8 @@ function tcp_update_routes( $route_file ) {
 
 		$tag_name     = tcp_route_url( $default_name );
         $route_id     = $route['route_id'];
+		$routes_eligibility_restricted = $route['eligibility_restricted'];
+
 
 		//Check if the route post already exists. If not, create new route
 		$post_to_update_id = null;
@@ -313,16 +315,25 @@ function tcp_update_routes( $route_file ) {
 		$trip_txt_data = array_map( 'str_getcsv', file( $trip_txt_url ) ); // The data from trips.txt
 		$header = array_shift( $trip_txt_data );
 		array_walk( $trip_txt_data, '_combine_array', $header );
+		
 		$route_ids_from_trips_txt = array_column( $trip_txt_data, 'route_id' ); // The route_id trips.txt array
 		$route_id_key_from_trips_txt = array_search ($route_id, $route_ids_from_trips_txt); // Get's the key for the route ID value
 		$drt_pickup_message_from_route_id_key = array_column( $trip_txt_data, 'drt_pickup_message' )[$route_id_key_from_trips_txt]; // The same key as the route_id key gets the 'drt_pickup_message' data	
 		update_post_meta( $post_to_update_id, 'drt_pickup_message', $drt_pickup_message_from_route_id_key );
 		// update_post_meta( $post_to_update_id, 'drt_pickup_message', 'This will be in the field of the post' ); // Test update a field. It works!
 
+		if ( $routes_eligibility_restricted == "0" ) {
+			update_post_meta( $post_to_update_id, 'eligibility_restricted', 'The field is 0' );
+        }
+		if ( $routes_eligibility_restricted == "1" ) {
+			update_post_meta( $post_to_update_id, 'eligibility_restricted', 'The field is 1' );
+        }
+		if ( $routes_eligibility_restricted == "2" ) {
+			update_post_meta( $post_to_update_id, 'eligibility_restricted', 'The field is 2' );
+        }
+
 
 		// Is Route A Flex Route
-
-		$routes_eligibility_restricted = $route['eligibility_restricted'];
 
 		if ($drt_pickup_message_from_route_id_key or $routes_eligibility_restricted) {
 			update_post_meta( $post_to_update_id, 'is_route_flex', 'Yes' );
@@ -624,17 +635,20 @@ function _combine_array( &$row, $key, $header ) {
 	// FLEX Development
 
 	// CURRENT ISSUES
-	// ' are closing the php
-
-	// $drt_pickup_messages = array_column( $trip_txt_data, 'drt_pickup_message' ); // An array of the 'drt_pickup_message' data
-	// $drt_pickup_messages_3 = array_column( $trip_txt_data, 'drt_pickup_message' )[3]; // #3 of the 'drt_pickup_message' data
-	// print_r ($drt_pickup_messages_3);
+	// ' are closing the php // https://www.php.net/manual/en/function.addslashes.php
+	//$trip_txt_url = plugin_dir_path( __FILE__ ) . 'transit-data/trips.txt'; // The url of trips.txt
+	//$trip_txt_data = array_map( 'str_getcsv', file( $trip_txt_url ) ); // The data from trips.txt
+	//$header = array_shift( $trip_txt_data );
+	//array_walk( $trip_txt_data, '_combine_array', $header );
+	//$drt_pickup_messages = array_column( $trip_txt_data, 'drt_pickup_message' ); // An array of the 'drt_pickup_message' data
+	//$drt_pickup_messages_3 = array_column( $trip_txt_data, 'drt_pickup_message' )[3]; // #3 of the 'drt_pickup_message' data
+	//print_r ($drt_pickup_messages_3);
 
 	// $test_console_log_i_1 = '<script>console.log("' . $drt_pickup_messages . '")</script>';
 	// echo $test_console_log_i_1;
 	// echo "<script>console.log('" . json_encode($drt_pickup_messages) . "');</script>";
 	// print_r ($trip_txt_data); // Prints the data from trips.txt
-	// print_r ($drt_pickup_messages);
+	print_r ($drt_pickup_messages);
 
 
 	// if (in_array("491", $route_ids_from_trips_txt)) {
